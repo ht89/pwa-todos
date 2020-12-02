@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "pwa-todos-9fd3e": {
+      "hosting": {
+        "pwa-todos": [
+          "pwa-todos-9fd3e"
+        ]
+      }
+    }
+  }
+}

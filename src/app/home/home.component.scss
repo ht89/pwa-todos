@@ -1,0 +1,19 @@
+@import "src/theme/theme-variables";
+
+.container {
+  text-align: center;
+  padding: 1em;
+  border-radius: 0.5em;
+  background: $container-color;
+}
+
+.logo {
+  width: 100px;
+  vertical-align: middle;
+}
+
+q {
+  font-style: italic;
+  font-size: 1.2rem;
+  quotes: "« " " »";
+}

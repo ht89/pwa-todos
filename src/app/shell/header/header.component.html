@@ -1,0 +1,17 @@
+<header class="header">
+  <a class="brand" href="https://github.com/ngx-rocket" translate>APP_NAME</a>
+  <nav>
+    <a class="nav-item" routerLink="/home" routerLinkActive="active" translate>Home</a>
+    <a class="nav-item" routerLink="/about" routerLinkActive="active" translate>About</a>
+  </nav>
+  <div class="spacer"></div>
+  <div>
+    <app-language-selector></app-language-selector>
+    <div class="logout">
+      <div>
+        <span translate>Logged in as</span> <b>{{ username }}</b>
+      </div>
+      <button (click)="logout()" translate>Logout</button>
+    </div>
+  </div>
+</header>
