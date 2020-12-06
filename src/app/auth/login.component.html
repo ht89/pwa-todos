@@ -1,41 +1,35 @@
-<div class="login-container">
-  <div class="login-box">
-    <h1 translate>APP_NAME</h1>
-    <div>
-      <strong>v{{ version }}</strong>
+<div class="login-body">
+  <div class="p-grid p-nogutter">
+    <div class="p-col-12" style="text-align: center">
+      <img src="assets/layout/images/logo-manhattan.png" alt="manhattan-layout" class="logo" />
     </div>
-    <div class="container">
-      <form (ngSubmit)="login()" [formGroup]="loginForm" novalidate>
-        <div class="error" [hidden]="!error || isLoading" translate>Username or password incorrect.</div>
-        <label class="form-control">
-          <input type="text" formControlName="username" autocomplete="username" placeholder="Username" />
-          <span hidden translate>Username</span>
-          <div [hidden]="loginForm.controls.username.valid || loginForm.controls.username.untouched" class="invalid">
-            <small translate>Username is required</small>
+  </div>
+  <div class="login-panel">
+    <div class="p-grid">
+      <div class="p-col-12 p-lg-6 left-side">
+        <img src="assets/layout/images/login/login-photo.png" alt="manhattan-layout" class="login-image" />
+      </div>
+      <div class="p-col-12 p-lg-6 right-side p-fluid">
+        <div class="p-col-12 container">
+          <h3>Welcome guest!</h3>
+          <h2>Sign in to Manhattan Network</h2>
+        </div>
+        <div class="p-col-12">
+          <div class="input-wrapper p-input-icon-left">
+            <i class="pi pi-user"></i>
+            <input type="text" autocomplete="off" placeholder="Username" pInputText />
           </div>
-        </label>
-        <label class="form-control">
-          <input
-            type="password"
-            formControlName="password"
-            autocomplete="current-password"
-            placeholder="Password"
-            required
-          />
-          <span hidden translate>Password</span>
-          <div [hidden]="loginForm.controls.password.valid || loginForm.controls.password.untouched" class="invalid">
-            <small translate>Password is required</small>
+        </div>
+        <div class="p-col-12">
+          <div class="input-wrapper p-input-icon-left">
+            <i class="pi pi-lock"></i>
+            <input type="password" autocomplete="off" placeholder="Password" pInputText />
           </div>
-        </label>
-        <label class="form-control">
-          <input type="checkbox" formControlName="remember" />
-          <span translate>Remember me</span>
-        </label>
-        <button class="form-control" type="submit" [disabled]="loginForm.invalid || isLoading">
-          <i class="fa fa-cog fa-spin" [hidden]="!isLoading"></i>
-          <span translate>Login</span>
-        </button>
-      </form>
+        </div>
+        <div class="p-col-12 button-container">
+          <button type="button" pButton label="Sign In" class="p-button-raised" [routerLink]="['/']"></button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
