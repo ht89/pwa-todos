@@ -19,101 +19,8 @@
         <ul class="fadeInDown animated">
           <li role="menuitem">
             <a href="#" (click)="app.onTopbarSubItemClick($event)">
-              <i class="pi pi-fw pi-user"></i>
-              <span>Profile</span>
-              <span class="topbar-badge">5</span>
-            </a>
-          </li>
-          <li role="menuitem">
-            <a href="#" (click)="app.onTopbarSubItemClick($event)">
-              <i class="pi pi-fw pi-lock"></i>
-              <span>Privacy</span>
-              <span class="topbar-badge">2</span>
-            </a>
-          </li>
-          <li role="menuitem">
-            <a href="#" (click)="app.onTopbarSubItemClick($event)">
-              <i class="pi pi-fw pi-cog"></i>
-              <span>Settings</span>
-            </a>
-          </li>
-          <li role="menuitem">
-            <a href="#" (click)="app.onTopbarSubItemClick($event)">
               <i class="pi pi-fw pi-sign-out"></i>
               <span>Logout</span>
-            </a>
-          </li>
-        </ul>
-      </li>
-      <li #messages [ngClass]="{ 'active-topmenuitem': app.activeTopbarItem === messages }">
-        <a href="#" (click)="app.onTopbarItemClick($event, messages)">
-          <i class="topbar-icon swing pi pi-fw pi-envelope"></i>
-          <span class="topbar-badge rubberBand">5</span>
-          <span class="topbar-item-name">Messages</span>
-        </a>
-        <ul class="fadeInDown animated">
-          <li role="menuitem">
-            <a href="#" class="topbar-message" (click)="app.onTopbarSubItemClick($event)">
-              <img src="assets/layout/images/avatar1.png" alt="manhattan-layout" width="35" />
-              <span>Give me a call</span>
-            </a>
-          </li>
-          <li role="menuitem">
-            <a href="#" class="topbar-message" (click)="app.onTopbarSubItemClick($event)">
-              <img src="assets/layout/images/avatar2.png" alt="manhattan-layout" width="35" />
-              <span>Reports attached</span>
-            </a>
-          </li>
-          <li role="menuitem">
-            <a href="#" class="topbar-message" (click)="app.onTopbarSubItemClick($event)">
-              <img src="assets/layout/images/avatar3.png" alt="manhattan-layout" width="35" />
-              <span>About your invoice</span>
-            </a>
-          </li>
-          <li role="menuitem">
-            <a href="#" class="topbar-message" (click)="app.onTopbarSubItemClick($event)">
-              <img src="assets/layout/images/avatar2.png" alt="manhattan-layout" width="35" />
-              <span>Meeting today</span>
-            </a>
-          </li>
-          <li role="menuitem">
-            <a href="#" class="topbar-message" (click)="app.onTopbarSubItemClick($event)">
-              <img src="assets/layout/images/avatar4.png" alt="manhattan-layout" width="35" />
-              <span>Out of office</span>
-            </a>
-          </li>
-        </ul>
-      </li>
-      <li #notifications [ngClass]="{ 'active-topmenuitem': app.activeTopbarItem === notifications }">
-        <a href="#" (click)="app.onTopbarItemClick($event, notifications)">
-          <i class="topbar-icon pi pi-fw pi-globe"></i>
-          <span class="topbar-badge rubberBand">2</span>
-          <span class="topbar-item-name">Notifications</span>
-        </a>
-        <ul class="fadeInDown animated">
-          <li role="menuitem">
-            <a href="#" (click)="app.onTopbarSubItemClick($event)">
-              <i class="pi pi-fw pi-sliders-h"></i>
-              <span>Pending tasks</span>
-              <span class="topbar-badge">6</span>
-            </a>
-          </li>
-          <li role="menuitem">
-            <a href="#" (click)="app.onTopbarSubItemClick($event)">
-              <i class="pi pi-fw pi-calendar"></i>
-              <span>Meeting today</span>
-            </a>
-          </li>
-          <li role="menuitem">
-            <a href="#" (click)="app.onTopbarSubItemClick($event)">
-              <i class="pi pi-fw pi-download"></i>
-              <span>Download</span>
-            </a>
-          </li>
-          <li role="menuitem">
-            <a href="#" (click)="app.onTopbarSubItemClick($event)">
-              <i class="pi pi-fw pi-ticket"></i>
-              <span>Book flight</span>
             </a>
           </li>
         </ul>
@@ -122,15 +29,6 @@
 
     <a href="#" class="topbar-menu-btn" (click)="app.onTopbarMenuButtonClick($event)">
       <img src="assets/layout/images/avatar.png" alt="manhattan-layout" />
-    </a>
-
-    <a
-      href="#"
-      class="rightpanel-btn"
-      [ngClass]="{ 'rightpanel-btn-active': app.rightPanelActive }"
-      (click)="app.onRightPanelButtonClick($event)"
-    >
-      <i class="topbar-icon pi pi-fw pi-align-right"></i>
     </a>
   </div>
 </div>
