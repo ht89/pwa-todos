@@ -3,14 +3,8 @@
  * Component-specific style should not go here and be included directly as part of the components.
  */
 
-// Theme variables, must be included before the libraries to allow overriding defaults
-@import "theme/theme-variables";
-
 // 3rd party libraries
 @import "~primeicons/primeicons.css";
 @import "~primeng/resources/primeng.min.css";
 @import "assets/theme/theme-teal-yellow.css";
 @import "assets/layout/css/layout-teal-yellow.css";
-
-// Theme customization
-@import "theme/theme";
