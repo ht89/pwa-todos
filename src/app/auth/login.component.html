@@ -3,18 +3,12 @@
     <h1 translate>APP_NAME</h1>
     <div>
       <strong>v{{ version }}</strong>
-      <app-language-selector></app-language-selector>
     </div>
     <div class="container">
       <form (ngSubmit)="login()" [formGroup]="loginForm" novalidate>
         <div class="error" [hidden]="!error || isLoading" translate>Username or password incorrect.</div>
         <label class="form-control">
-          <input
-            type="text"
-            formControlName="username"
-            autocomplete="username"
-            [placeholder]="'Username' | translate"
-          />
+          <input type="text" formControlName="username" autocomplete="username" placeholder="Username" />
           <span hidden translate>Username</span>
           <div [hidden]="loginForm.controls.username.valid || loginForm.controls.username.untouched" class="invalid">
             <small translate>Username is required</small>
@@ -25,7 +19,7 @@
             type="password"
             formControlName="password"
             autocomplete="current-password"
-            [placeholder]="'Password' | translate"
+            placeholder="Password"
             required
           />
           <span hidden translate>Password</span>

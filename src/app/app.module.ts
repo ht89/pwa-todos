@@ -2,7 +2,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { TranslateModule } from '@ngx-translate/core';
 
 import { CoreModule } from '@core';
 import { SharedModule } from '@shared';
@@ -17,7 +16,6 @@ import { AppRoutingModule } from './app-routing.module';
     BrowserModule,
     FormsModule,
     HttpClientModule,
-    TranslateModule.forRoot(),
     CoreModule,
     SharedModule,
     ShellModule,
