@@ -1,4 +1,33 @@
-<app-header></app-header>
-<div class="content">
-  <router-outlet></router-outlet>
+<div
+  class="layout-wrapper"
+  [ngClass]="{
+    'layout-horizontal': menuMode === 'horizontal',
+    'layout-static': menuMode === 'static',
+    'layout-slim': menuMode === 'slim',
+    'layout-slim-active': slimMenuActive && menuMode === 'slim',
+    'layout-slim-anchored': slimMenuAnchor,
+    'layout-slim-restore': menuMode !== 'slim' && slimMenuAnchor,
+    'layout-toggle': menuMode === 'toggle',
+    'layout-toggle-active': toggleMenuActive,
+    'layout-overlay': menuMode === 'overlay',
+    'layout-overlay-active': overlayMenuActive,
+    'layout-light': lightMenu === true,
+    'layout-mobile-active': staticMenuMobileActive,
+    'layout-static-inactive': staticMenuDesktopInactive,
+    'p-input-filled': inputStyle === 'filled',
+    'p-ripple-disabled': !ripple
+  }"
+  (click)="onLayoutClick()"
+>
+  <div class="layout-main">
+    <app-header></app-header>
+
+    <div class="layout-content">
+      <router-outlet></router-outlet>
+    </div>
+
+    <div class="layout-main-mask"></div>
+  </div>
+
+  <app-menu></app-menu>
 </div>

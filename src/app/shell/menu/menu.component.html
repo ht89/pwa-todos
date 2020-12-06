@@ -1,0 +1,27 @@
+<div
+  class="layout-sidebar"
+  (click)="onMenuClick($event)"
+  (mouseenter)="app.onMenuMouseEnter($event)"
+  (mouseleave)="app.onMenuMouseLeave($event)"
+>
+  <div class="layout-sidebar-logo">
+    <a href="/">
+      <img src="assets/layout/images/logo-manhattan.png" alt="manhattan-layout" />
+    </a>
+    <a
+      href="#"
+      id="layout-sidebar-anchor"
+      class="layout-sidebar-anchor"
+      title="Slim Menu"
+      (click)="app.onAnchorClick($event)"
+    >
+      <i class="pi" [ngClass]="{ 'pi-circle-on': app.slimMenuAnchor, 'pi-circle-off': !app.slimMenuAnchor }"></i>
+    </a>
+  </div>
+
+  <div class="layout-menu-container">
+    <ul class="layout-menu">
+      <li app-menuitem *ngFor="let item of model; let i = index" [item]="item" [index]="i" [root]="true"></li>
+    </ul>
+  </div>
+</div>
