@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "ng",
     "build": "npm run env -s && ng build --prod",
-    "start": "npm run env -s && ng serve --proxy-config proxy.conf.js",
+    "start": "npm run env -s && ng serve",
     "deploy": "npm run env -s && firebase deploy --only hosting:pwatodos",
     "lint": "ng lint && stylelint \"src/**/*.scss\" --syntax scss && htmlhint \"src\" --config .htmlhintrc",
     "test": "npm run env -s && ng test",
@@ -48,7 +48,6 @@
     "firebase-tools": "^8.0.0",
     "fuzzy": "^0.1.3",
     "htmlhint": "^0.14.1",
-    "https-proxy-agent": "^5.0.0",
     "husky": "^4.2.5",
     "inquirer": "^6.2.2",
     "inquirer-autocomplete-prompt": "^1.0.1",

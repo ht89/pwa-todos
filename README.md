@@ -38,7 +38,6 @@ src/                         project source code
 |- polyfills.ts              polyfills needed by Angular
 +- test.ts                   unit tests entry point
 reports/                     test and coverage reports
-proxy.conf.js                backend proxy configuration
 ```
 
 # Main tasks
@@ -64,7 +63,6 @@ The default build configuration is `prod`.
 
 Run `npm start` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change
 any of the source files.
-You should not use `ng serve` directly, as it does not use the backend proxy configuration by default.
 
 ## Code scaffolding
 
@@ -100,7 +98,7 @@ Development, build and quality processes are based on [angular-cli](https://gith
 [NPM scripts](https://docs.npmjs.com/misc/scripts), which includes:
 
 - Optimized build and bundling process with [Webpack](https://webpack.github.io)
-- [Development server](https://webpack.github.io/docs/webpack-dev-server.html) with backend proxy and live reload
+- [Development server](https://webpack.github.io/docs/webpack-dev-server.html) with live reload
 - Cross-browser CSS with [autoprefixer](https://github.com/postcss/autoprefixer) and
   [browserslist](https://github.com/ai/browserslist)
 - Asset revisioning for [better cache management](https://webpack.github.io/docs/long-term-caching.html)
