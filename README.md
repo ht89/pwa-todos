@@ -113,7 +113,6 @@ Development, build and quality processes are based on [angular-cli](https://gith
 
 - [Angular](https://angular.io)
 - [RxJS](http://reactivex.io/rxjs)
-- [ngx-translate](https://github.com/ngx-translate/core)
 
 #### Coding guides
 
@@ -122,7 +121,6 @@ Development, build and quality processes are based on [angular-cli](https://gith
 - [Sass](docs/coding-guides/sass.md)
 - [HTML](docs/coding-guides/html.md)
 - [Unit tests](docs/coding-guides/unit-tests.md)
-- [End-to-end tests](docs/coding-guides/e2e-tests.md)
 
 #### Other documentation
 
