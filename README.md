@@ -22,7 +22,6 @@ npm start
 ```
 dist/                        web app production build
 docs/                        project docs and coding guides
-e2e/                         end-to-end tests
 src/                         project source code
 |- app/                      app components
 |  |- core/                  core module (singleton services and single-use components)
@@ -33,8 +32,6 @@ src/                         project source code
 |  +- ...                    additional modules and components
 |- assets/                   app assets (images, fonts, sounds...)
 |- environments/             values for various build environments
-|- theme/                    app global scss variables and theme
-|- translations/             translations files
 |- index.html                html entry point
 |- main.scss                 global style entry point
 |- main.ts                   app entry point
