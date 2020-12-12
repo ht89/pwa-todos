@@ -10,20 +10,13 @@
       "initGit": true,
       "usePrefix": true,
       "appName": "pwa-todos",
-      "target": [
-        "web"
-      ],
+      "target": ["web"],
       "pwa": false,
       "auth": true,
       "lazy": true,
       "angulartics": false,
-      "languages": [
-        "en-US"
-      ],
-      "tools": [
-        "prettier",
-        "hads"
-      ],
+      "languages": ["en-US"],
+      "tools": ["prettier"],
       "utility": [],
       "deploy": "firebase",
       "projectName": "pwa-todos",
