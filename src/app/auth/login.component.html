@@ -13,26 +13,18 @@
 
       <div class="p-col-12 p-lg-6 right-side p-fluid">
         <div class="p-col-12 container">
-          <h3>Welcome guest!</h3>
-          <h2>Sign in to Manhattan Network</h2>
-        </div>
-
-        <div class="p-col-12">
-          <div class="input-wrapper p-input-icon-left">
-            <i class="pi pi-user"></i>
-            <input type="text" autocomplete="off" placeholder="Username" pInputText />
-          </div>
-        </div>
-
-        <div class="p-col-12">
-          <div class="input-wrapper p-input-icon-left">
-            <i class="pi pi-lock"></i>
-            <input type="password" autocomplete="off" placeholder="Password" pInputText />
-          </div>
+          <h3>Welcome!</h3>
+          <h2>Sign in to PWA Todos</h2>
         </div>
 
         <div class="p-col-12 button-container">
-          <button type="button" pButton label="Sign In" class="p-button-raised" [routerLink]="['/']"></button>
+          <p-button
+            styleClass="p-button-raised p-button-danger"
+            label="Login with Google"
+            icon="pi pi-google"
+          ></p-button>
+
+          <p-button styleClass="p-button-raised" label="Login with Facebook" icon="pi pi-facebook"></p-button>
         </div>
       </div>
     </div>
