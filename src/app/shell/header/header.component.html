@@ -8,12 +8,12 @@
     <i class="pi pi-search"></i>
   </div>
 
-  <div class="layout-topbar-menu-wrapper">
+  <div *ngIf="authService.userState as user" class="layout-topbar-menu-wrapper">
     <ul class="topbar-menu fadeInDown" [ngClass]="{ 'topbar-menu-active': app.topbarMenuActive }">
       <li class="profile-item" #profile [ngClass]="{ 'active-topmenuitem': app.activeTopbarItem === profile }">
         <a href="#" (click)="app.onTopbarItemClick($event, profile)">
-          <img src="assets/layout/images/avatar.png" alt="manhattan-layout" />
-          <span class="topbar-item-name profile-name">Madison Hughes</span>
+          <img [src]="user.photoURL" alt="user photo" />
+          <span class="topbar-item-name profile-name">{{ user.displayName }}</span>
         </a>
 
         <ul class="fadeInDown animated">
@@ -28,7 +28,7 @@
     </ul>
 
     <a href="#" class="topbar-menu-btn" (click)="app.onTopbarMenuButtonClick($event)">
-      <img src="assets/layout/images/avatar.png" alt="manhattan-layout" />
+      <img [src]="user.photoURL" alt="user photo" />
     </a>
   </div>
 </div>

@@ -9,7 +9,7 @@ import { ShellComponent } from '../shell.component';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit {
-  constructor(private authService: AuthenticationService, public app: ShellComponent) {}
+  constructor(public authService: AuthenticationService, public app: ShellComponent) {}
 
   ngOnInit() {}
 

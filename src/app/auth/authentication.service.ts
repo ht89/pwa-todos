@@ -22,7 +22,7 @@ export interface User {
   providedIn: 'root',
 })
 export class AuthenticationService {
-  userState: any;
+  userState: User;
 
   constructor(
     private afAuth: AngularFireAuth,
@@ -88,8 +88,6 @@ export class AuthenticationService {
       } else {
         localStorage.setItem(LocalStorageEnum.User, null);
       }
-
-      // JSON.parse(localStorage.getItem(LocalStorageEnum.User));
     });
   }
 }
