@@ -6,6 +6,7 @@ import { filter, map, switchMap } from 'rxjs/operators';
 
 import { environment } from '@env/environment';
 import { Logger, untilDestroyed } from '@core';
+import { PrimeNGConfig } from 'primeng/api';
 
 const log = new Logger('App');
 
@@ -15,7 +16,12 @@ const log = new Logger('App');
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
-  constructor(private router: Router, private activatedRoute: ActivatedRoute, private titleService: Title) {}
+  constructor(
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
+    private titleService: Title,
+    private primengConfig: PrimeNGConfig
+  ) {}
 
   ngOnInit() {
     // Setup logger
@@ -26,6 +32,8 @@ export class AppComponent implements OnInit, OnDestroy {
     log.debug('init');
 
     this.onNavigationEnd();
+
+    this.configurePrimeng();
   }
 
   ngOnDestroy() {}
@@ -53,5 +61,9 @@ export class AppComponent implements OnInit, OnDestroy {
           this.titleService.setTitle(title);
         }
       });
+  }
+
+  private configurePrimeng() {
+    this.primengConfig.ripple = true;
   }
 }
