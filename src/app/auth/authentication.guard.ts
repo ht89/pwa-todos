@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
 import { Logger } from '@core';
-import { CredentialsService } from './credentials.service';
+import { AuthenticationService } from './authentication.service';
 
 const log = new Logger('AuthenticationGuard');
 
@@ -10,10 +10,10 @@ const log = new Logger('AuthenticationGuard');
   providedIn: 'root',
 })
 export class AuthenticationGuard implements CanActivate {
-  constructor(private router: Router, private credentialsService: CredentialsService) {}
+  constructor(private router: Router, private authService: AuthenticationService) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    if (this.credentialsService.isAuthenticated()) {
+    if (this.authService.isAuthenticated()) {
       return true;
     }
 
