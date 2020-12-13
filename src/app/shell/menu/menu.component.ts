@@ -13,7 +13,7 @@ export class MenuComponent implements OnInit {
 
   ngOnInit() {
     this.model = [
-      { label: 'Tasks', icon: 'pi pi-fw pi-list', routerLink: ['/'] },
+      { label: 'Tasks', icon: 'pi pi-fw pi-list', routerLink: ['home'] },
       {
         label: 'Timeline',
         icon: 'pi pi-fw pi-calendar',
@@ -22,7 +22,7 @@ export class MenuComponent implements OnInit {
       {
         label: 'Projects',
         icon: 'pi pi-fw pi-briefcase',
-        routerLink: ['/projects'],
+        routerLink: ['projects'],
       },
     ];
   }
