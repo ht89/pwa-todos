@@ -25,10 +25,16 @@ export class AppComponent implements OnInit, OnDestroy {
 
     log.debug('init');
 
+    this.onNavigationEnd();
+  }
+
+  ngOnDestroy() {}
+
+  private onNavigationEnd() {
     const onNavigationEnd = this.router.events.pipe(filter((event) => event instanceof NavigationEnd));
 
-    // Change page title on navigation or language change, based on route data
-    merge(onNavigationEnd)
+    // Change page title on navigation based on route data
+    onNavigationEnd
       .pipe(
         map(() => {
           let route = this.activatedRoute;
@@ -48,6 +54,4 @@ export class AppComponent implements OnInit, OnDestroy {
         }
       });
   }
-
-  ngOnDestroy() {}
 }
