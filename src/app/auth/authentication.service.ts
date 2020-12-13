@@ -1,17 +1,10 @@
 import { Injectable, NgZone } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { LocalStorageEnum } from '@app/@shared';
-import { Observable, of } from 'rxjs';
 import firebase from 'firebase/app';
 
 import { Router } from '@angular/router';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
-
-export interface LoginContext {
-  username: string;
-  password: string;
-  remember?: boolean;
-}
 
 export interface User {
   uid: string;
