@@ -9,11 +9,11 @@ import { ShellComponent } from '../shell.component';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit {
-  constructor(private authenticationService: AuthenticationService, public app: ShellComponent) {}
+  constructor(private authService: AuthenticationService, public app: ShellComponent) {}
 
   ngOnInit() {}
 
   logout() {
-    this.authenticationService.logout();
+    this.authService.logout();
   }
 }
