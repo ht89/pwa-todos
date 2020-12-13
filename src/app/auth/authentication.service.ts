@@ -33,7 +33,7 @@ export class AuthenticationService {
     this.subscribeToAuthState();
   }
 
-  loginWithGoogle() {
+  loginWithGoogle(): Promise<void> {
     return this.login(new firebase.auth.GoogleAuthProvider());
   }
 
@@ -66,7 +66,16 @@ export class AuthenticationService {
 
   private setUserData(user: User): Promise<void> {
     const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${user.uid}`);
-    return userRef.set(user, { merge: true });
+
+    const userState: User = {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+      photoURL: user.photoURL,
+      emailVerified: user.emailVerified,
+    };
+
+    return userRef.set(userState, { merge: true });
   }
 
   private subscribeToAuthState() {
