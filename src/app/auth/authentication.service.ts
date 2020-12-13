@@ -48,7 +48,7 @@ export class AuthenticationService {
    * Checks is the user is authenticated.
    * @return True if the user is authenticated.
    */
-  isAuthenticated(): boolean {
+  get isAuthenticated(): boolean {
     const user = JSON.parse(localStorage.getItem(LocalStorageEnum.User));
     return user?.emailVerified;
   }
@@ -57,8 +57,6 @@ export class AuthenticationService {
     return this.afAuth
       .signInWithPopup(provider)
       .then((result) => {
-        this.ngZone.run(() => this.router.navigate(['/']));
-
         this.setUserData(result.user);
       })
       .catch((err) => window.alert(err));
@@ -83,11 +81,15 @@ export class AuthenticationService {
       if (user) {
         this.userState = user;
         localStorage.setItem(LocalStorageEnum.User, JSON.stringify(this.userState));
+
+        this.ngZone.run(() => {
+          this.router.navigate(['/']);
+        });
       } else {
         localStorage.setItem(LocalStorageEnum.User, null);
       }
 
-      JSON.parse(localStorage.getItem(LocalStorageEnum.User));
+      // JSON.parse(localStorage.getItem(LocalStorageEnum.User));
     });
   }
 }
