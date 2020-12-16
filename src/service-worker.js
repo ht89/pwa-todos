@@ -23,3 +23,7 @@ const CACHED_URLS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(CACHED_URLS)));
 });
+
+self.addEventListener('fetch', (event) => {
+  const requestUrl = new URL(event.request.url);
+});
