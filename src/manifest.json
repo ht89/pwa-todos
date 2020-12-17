@@ -1,0 +1,22 @@
+{
+  "short_name": "PWA Todos",
+  "name": "PWA Todos & Time Tracking",
+  "description": "Keep track of your daily tasks using the latest technologies of the Web",
+  "start_url": "/home",
+  "scope": "/",
+  "display": "fullscreen",
+  "icons": [
+    {
+      "src": "/src/assets/app/icons/todo.png",
+      "type": "image/png",
+      "sizes": "128x128"
+    },
+    {
+      "src": "/src/assets/app/icons/todo-lg.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "theme_color": "#136a8a",
+  "background_color": "#f4f3f8"
+}
