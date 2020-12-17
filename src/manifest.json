@@ -7,12 +7,12 @@
   "display": "fullscreen",
   "icons": [
     {
-      "src": "/src/assets/app/icons/todo.png",
+      "src": "/assets/app/icons/todo.png",
       "type": "image/png",
       "sizes": "128x128"
     },
     {
-      "src": "/src/assets/app/icons/todo-lg.png",
+      "src": "/assets/app/icons/todo-lg.png",
       "type": "image/png",
       "sizes": "512x512"
     }
