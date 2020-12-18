@@ -5,6 +5,7 @@
   "scripts": {
     "ng": "ng",
     "build": "npm run env -s && ng build --prod",
+    "build:dev": "npm run env -s && ng build --prod --watch",
     "start": "npm run env -s && ng serve",
     "deploy": "npm run env -s && firebase deploy --only hosting:pwatodos",
     "lint": "ng lint && stylelint \"src/**/*.scss\" --syntax scss && htmlhint \"src\" --config .htmlhintrc",
