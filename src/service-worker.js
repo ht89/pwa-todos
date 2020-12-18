@@ -6,22 +6,27 @@ const CACHED_URLS = [
   // JS
   '/runtime.js',
   '/polyfills.js',
-  '/styles.js',
-  '/vendor.js',
   '/main.js',
   '/firebase-auth.js',
 
   // CSS
+  '/styles.css',
 
   // JSON
   '/manifest.json',
 
   // Fonts
   '/source-sans-pro-v10-latin-ext_latin-regular.woff2',
+  '/source-sans-pro-v10-latin-ext_latin-700.woff2',
   '/primeicons.ttf',
 
   // Images
   '/assets/layout/images/logo-manhattan.png',
+  '/assets/layout/images/login/login-photo.png',
+  '/assets/app/icons/favicon-32x32.png',
+  '/assets/app/icons/favicon-16x16.png',
+  '/assets/app/icons/todo.png',
+  '/assets/app/icons/todo-lg.png',
 ];
 
 self.addEventListener('install', (event) => {

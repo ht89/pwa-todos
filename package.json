@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "ng",
     "build": "npm run env -s && ng build --prod",
-    "build:dev": "npm run env -s && ng build --prod --watch",
+    "build:dev": "npm run env -s && ng build --prod --output-hashing none --named-chunks --watch",
     "start": "npm run env -s && ng serve",
     "server": "cd dist && http-server -S -C ../config/ssl/cert.pem -K ../config/ssl/key.pem -o",
     "deploy": "npm run env -s && firebase deploy --only hosting:pwatodos",
