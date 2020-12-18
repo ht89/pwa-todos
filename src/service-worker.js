@@ -1,5 +1,8 @@
 const CACHE_NAME = 'pwa-todos-v1';
 const CACHED_URLS = [
+  // HTML
+  '/index.html',
+
   // JS
   '/runtime.js',
   '/polyfills.js',
@@ -16,8 +19,6 @@ const CACHED_URLS = [
 
   // Images
   '/assets/layout/images/logo-manhattan.png',
-  '/assets/ngx-rocket-logo.png',
-  '/favicon.ico',
 ];
 
 self.addEventListener('install', (event) => {
@@ -26,4 +27,21 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const requestUrl = new URL(event.request.url);
+
+  // Stratery: cache, falling back to network w frequent updates
+  // TODO: add more routes later
+  if (requestUrl.pathname === '/' || requestUrl.pathname === '/home') {
+    event.respondWith(
+      caches.open(CACHE_NAME).then(async (cache) => {
+        return cache.match('/index.html').then((cachedResponse) => {
+          const fetchPromise = fetch('/index.html').then((networkResponse) => {
+            cache.put('/index.html', networkResponse.clone());
+            return networkResponse;
+          });
+
+          return cachedResponse || fetchPromise;
+        });
+      })
+    );
+  }
 });
