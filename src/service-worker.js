@@ -13,6 +13,9 @@ const CACHED_URLS = [
 
   // CSS
 
+  // JSON
+  '/manifest.json',
+
   // Fonts
   '/source-sans-pro-v10-latin-ext_latin-regular.woff2',
   '/primeicons.ttf',
@@ -31,17 +34,21 @@ self.addEventListener('fetch', (event) => {
   // Stratery: cache, falling back to network w frequent updates
   // TODO: add more routes later
   if (requestUrl.pathname === '/' || requestUrl.pathname === '/home') {
-    event.respondWith(
-      caches.open(CACHE_NAME).then(async (cache) => {
-        return cache.match('/index.html').then((cachedResponse) => {
-          const fetchPromise = fetch('/index.html').then((networkResponse) => {
-            cache.put('/index.html', networkResponse.clone());
-            return networkResponse;
-          });
-
-          return cachedResponse || fetchPromise;
-        });
-      })
-    );
+    this.handlePages(event);
   }
 });
+
+const handlePages = (event) => {
+  event.respondWith(
+    caches.open(CACHE_NAME).then(async (cache) => {
+      return cache.match('/index.html').then((cachedResponse) => {
+        const fetchPromise = fetch('/index.html').then((networkResponse) => {
+          cache.put('/index.html', networkResponse.clone());
+          return networkResponse;
+        });
+
+        return cachedResponse || fetchPromise;
+      });
+    })
+  );
+};

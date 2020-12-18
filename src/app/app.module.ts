@@ -33,7 +33,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
     AngularFirestoreModule,
-    ServiceWorkerModule.register('../service-worker.js'),
+    ServiceWorkerModule.register('../service-worker.js', { enabled: environment.production }),
   ],
   declarations: [AppComponent],
   providers: [],

@@ -14,7 +14,6 @@ export const environment = {
   ...defaultEnvironment,
   production: false,
   hmr: true,
-  serverUrl: '/api',
 };
 
 /*

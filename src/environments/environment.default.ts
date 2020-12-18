@@ -4,6 +4,7 @@ export const defaultEnvironment = {
   version: env.npm_package_version,
   defaultLanguage: 'en-US',
   supportedLanguages: ['en-US'],
+  serverUrl: '',
   firebase: {
     apiKey: 'AIzaSyBo92Qd1Z5iDgZE68v1wVp1MggYJ1bxhwI',
     authDomain: 'pwa-todos-9fd3e.firebaseapp.com',

@@ -10,5 +10,4 @@ export const environment = {
   ...defaultEnvironment,
   production: true,
   hmr: false,
-  serverUrl: 'https://api.chucknorris.io',
 };
