@@ -36,14 +36,17 @@ self.addEventListener('install', (event) => {
 self.addEventListener('fetch', (event) => {
   const requestUrl = new URL(event.request.url);
 
-  // Stratery: cache, falling back to network w frequent updates
   // TODO: add more routes later
   if (requestUrl.pathname === '/' || requestUrl.pathname === '/home') {
     this.handlePages(event);
+  } else if (['/runtime.js', '/polyfills.js', 'main.js'].includes(requestUrl.pathname)) {
+    // Strategy: cache, falling back to network
+    event.respondWith(caches.match(event.request).then((response) => response || fetch(event.request)));
   }
 });
 
 const handlePages = (event) => {
+  // Stratery: cache, falling back to network w frequent updates
   event.respondWith(
     caches.open(CACHE_NAME).then(async (cache) => {
       return cache.match('/index.html').then((cachedResponse) => {
