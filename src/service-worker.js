@@ -29,6 +29,7 @@ const CACHED_URLS = [
   '/assets/app/icons/todo-lg.png',
 ];
 
+/* Lifecycle Handlers */
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(CACHED_URLS)));
 });
@@ -45,6 +46,22 @@ self.addEventListener('fetch', (event) => {
   }
 });
 
+self.addEventListener('activate', (event) => {
+  // delete old cache
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (CACHE_NAME !== cacheName && cacheName.startsWith('pwa-todos')) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+});
+
+/* Functions */
 const handlePages = (event) => {
   // Stratery: cache, falling back to network w frequent updates
   event.respondWith(
