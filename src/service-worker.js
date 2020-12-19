@@ -1,20 +1,8 @@
+importScripts('https://cdnjs.cloudflare.com/ajax/libs/cache.adderall/1.0.0/cache.adderall.js');
+
 const CACHE_NAME = 'pwa-todos-v1';
-const CACHED_URLS = [
-  // HTML
-  '/index.html',
 
-  // JS
-  '/runtime.js',
-  '/polyfills.js',
-  '/main.js',
-  '/firebase-auth.js',
-
-  // CSS
-  '/styles.css',
-
-  // JSON
-  '/manifest.json',
-
+const STATIC_FILES = [
   // Fonts
   '/source-sans-pro-v10-latin-ext_latin-regular.woff2',
   '/source-sans-pro-v10-latin-ext_latin-700.woff2',
@@ -29,9 +17,26 @@ const CACHED_URLS = [
   '/assets/app/icons/todo-lg.png',
 ];
 
+const MUTABLE_FILES = [
+  // HTML
+  '/index.html',
+
+  // JS
+  '/runtime.js',
+  '/polyfills.js',
+  '/main.js',
+  '/firebase-auth.js',
+
+  // CSS
+  '/styles.css',
+
+  // JSON
+  '/manifest.json',
+];
+
 /* Lifecycle Handlers */
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(CACHED_URLS)));
+  event.waitUntil(caches.open(CACHE_NAME).then((cache) => adderall.addAll(cache, STATIC_FILES, MUTABLE_FILES)));
 });
 
 self.addEventListener('fetch', (event) => {
@@ -40,12 +45,13 @@ self.addEventListener('fetch', (event) => {
   // TODO: add more routes later
   if (requestUrl.pathname === '/' || requestUrl.pathname === '/home') {
     this.handlePages(event);
-  } else if (CACHED_URLS.includes(requestUrl.pathname)) {
+  } else if ([...STATIC_FILES, ...MUTABLE_FILES].includes(requestUrl.pathname)) {
     // Strategy: cache, falling back to network
     event.respondWith(caches.match(event.request).then((response) => response || fetch(event.request)));
   }
 });
 
+// when installed/waiting SW is ready to become active
 self.addEventListener('activate', (event) => {
   // delete old cache
   event.waitUntil(
