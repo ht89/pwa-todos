@@ -39,7 +39,7 @@ self.addEventListener('fetch', (event) => {
   // TODO: add more routes later
   if (requestUrl.pathname === '/' || requestUrl.pathname === '/home') {
     this.handlePages(event);
-  } else if (['/runtime.js', '/polyfills.js', 'main.js'].includes(requestUrl.pathname)) {
+  } else if (CACHED_URLS.includes(requestUrl.pathname)) {
     // Strategy: cache, falling back to network
     event.respondWith(caches.match(event.request).then((response) => response || fetch(event.request)));
   }
