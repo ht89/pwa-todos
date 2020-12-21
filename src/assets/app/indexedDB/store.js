@@ -25,6 +25,22 @@ const openDatabase = () => {
   });
 };
 
+const openObjectStore = (db, storeName, transactionMode) =>
+  db.transaction(storeName, transactionMode).objectStore(storeName);
+
+const addToObjectStore = (storeName, object) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const db = await openDatabase();
+      const store = openObjectStore(db, storeName);
+
+      store.add(object).onsuccess = resolve;
+    } catch(err) {
+      reject(err);
+    }
+  });
+}
+
 const handleProjectStoreOnUpgrade = (db, transaction) => {
   let projectStore;
 
