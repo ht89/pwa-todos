@@ -41,12 +41,38 @@ const addToObjectStore = (storeName, object) => {
   });
 }
 
+const updateInObjectStore = (storeName, id, object) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const db = await openDatabase();
+      const store = openObjectStore(db, storeName, 'readwrite');
+
+      store.openCursor().onsuccess = event => {
+        const cursor = event.target.result;
+
+        if (!cursor) {
+          reject(`Record not found in ${storeName} store`);
+        }
+
+        if (cursor.value.id === id) {
+          cursor.update(object).onsuccess = resolve;
+          return;
+        }
+
+        cursor.continue();
+      }
+    } catch(err) {
+      reject(err);
+    }
+  })
+}
+
 const handleProjectStoreOnUpgrade = (db, transaction) => {
   let projectStore;
 
   if (!db.objectStoreNames.contains('projects')) {
     projectStore = db.createObjectStore('projects', {
-      keyPath: 'name',
+      autoIncrement: true
     });
 
     // create index on name key for querying purposes
