@@ -20,7 +20,7 @@ export const openDatabase = () => {
     request.onupgradeneeded = (event) => {
       const { result: db, transaction } = event.target;
 
-      this.handleProjectStoreOnUpgrade(db, transaction);
+      handleProjectStoreOnUpgrade(db, transaction);
     };
   });
 };
@@ -74,10 +74,12 @@ const handleProjectStoreOnUpgrade = (db, transaction) => {
     projectStore = db.createObjectStore('projects', {
       autoIncrement: true,
     });
-
-    // create index on name key for querying purposes
-    projectStore.createIndex('name_idx', 'name');
   } else {
     projectStore = transaction.objectStore('projects');
+  }
+
+  // create index on name key for querying purposes
+  if (!projectStore.indexNames.contains('idx_name')) {
+    projectStore.createIndex('idx_name', 'name');
   }
 };
