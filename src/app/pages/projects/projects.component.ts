@@ -1,14 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Project } from './projects.model';
 import { openDatabase, openObjectStore } from '../../../indexedDB/store.js';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
+import { untilDestroyed } from '@app/@core';
 
 @Component({
   selector: 'app-projects',
   templateUrl: './projects.component.html',
   styleUrls: ['./projects.component.scss'],
 })
-export class ProjectsComponent implements OnInit {
+export class ProjectsComponent implements OnInit, OnDestroy {
   data: Project[] = [];
 
   constructor(private afs: AngularFirestore) {}
@@ -16,6 +18,8 @@ export class ProjectsComponent implements OnInit {
   async ngOnInit() {
     this.data = await this.getData();
   }
+
+  ngOnDestroy() {}
 
   private async getData(indexName: string = '', indexValue: string = ''): Promise<Project[]> {
     return new Promise(async (resolve, reject) => {
@@ -31,7 +35,7 @@ export class ProjectsComponent implements OnInit {
           cursor = objectStore.openCursor();
         }
 
-        cursor.onsuccess = async (event: any) => {
+        cursor.onsuccess = (event: any) => {
           const currentCursor = event.target.result;
 
           if (currentCursor) {
@@ -41,28 +45,29 @@ export class ProjectsComponent implements OnInit {
             if (data.length > 0) {
               resolve(data);
             } else {
-              const serverData = await this.getDataFromServer();
-              if (!serverData) {
-                return;
-              }
+              this.getDataFromServer()
+                .pipe(untilDestroyed(this))
+                .subscribe((serverData: Project[]) => {
+                  const readwriteStore = openObjectStore(db, 'projects', 'readwrite');
 
-              const readwriteStore = openObjectStore(db, 'projects', 'readwrite');
+                  serverData.forEach((item: Project) => {
+                    readwriteStore.add(item);
+                  });
 
-              serverData.forEach((item: Project) => {
-                readwriteStore.add(item);
-              });
-
-              resolve(serverData);
+                  resolve(serverData);
+                });
             }
           }
         };
       } catch (err) {
-        this.getDataFromServer().then((data) => resolve(data));
+        this.getDataFromServer()
+          .pipe(untilDestroyed(this))
+          .subscribe((data) => resolve(data));
       }
     });
   }
 
-  private async getDataFromServer(): Promise<Project[]> {
-    return this.afs.collection<Project>('projects').valueChanges().toPromise();
+  private getDataFromServer(): Observable<Project[]> {
+    return this.afs.collection<Project>('projects').valueChanges();
   }
 }
