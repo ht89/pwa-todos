@@ -25,7 +25,7 @@
             "aot": true,
             "assets": ["src/robots.txt", "src/assets", "src/service-worker.js", "src/manifest.json"],
             "styles": ["src/main.scss"],
-            "scripts": []
+            "scripts": ["src/indexedDB/store.js"]
           },
           "configurations": {
             "production": {

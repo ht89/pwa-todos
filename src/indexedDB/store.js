@@ -1,7 +1,7 @@
 const DB_VERSION = 1;
 const DB_NAME = 'pwa-todos';
 
-const openDatabase = () => {
+export const openDatabase = () => {
   return new Promise((resolve, reject) => {
     if (!self.indexedDB) {
       reject('IndexedDB not supported');
@@ -25,29 +25,29 @@ const openDatabase = () => {
   });
 };
 
-const openObjectStore = (db, storeName, transactionMode) =>
+export const openObjectStore = (db, storeName, transactionMode) =>
   db.transaction(storeName, transactionMode).objectStore(storeName);
 
-const addToObjectStore = (storeName, object) => {
-  return new Promise((resolve, reject) => {
+export const addToObjectStore = (storeName, object) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const db = await openDatabase();
       const store = openObjectStore(db, storeName);
 
       store.add(object).onsuccess = resolve;
-    } catch(err) {
+    } catch (err) {
       reject(err);
     }
   });
-}
+};
 
-const updateInObjectStore = (storeName, id, object) => {
-  return new Promise((resolve, reject) => {
+export const updateInObjectStore = (storeName, id, object) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const db = await openDatabase();
       const store = openObjectStore(db, storeName, 'readwrite');
 
-      store.openCursor().onsuccess = event => {
+      store.openCursor().onsuccess = (event) => {
         const cursor = event.target.result;
 
         if (!cursor) {
@@ -60,19 +60,19 @@ const updateInObjectStore = (storeName, id, object) => {
         }
 
         cursor.continue();
-      }
-    } catch(err) {
+      };
+    } catch (err) {
       reject(err);
     }
-  })
-}
+  });
+};
 
 const handleProjectStoreOnUpgrade = (db, transaction) => {
   let projectStore;
 
   if (!db.objectStoreNames.contains('projects')) {
     projectStore = db.createObjectStore('projects', {
-      autoIncrement: true
+      autoIncrement: true,
     });
 
     // create index on name key for querying purposes
