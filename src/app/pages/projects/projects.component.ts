@@ -24,9 +24,9 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   private async getData(indexName: string = '', indexValue: string = ''): Promise<Project[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const db = await openDatabase();
-        const objectStore = openObjectStore(db, 'projects');
-        let cursor;
+        const db: IDBOpenDBRequest = await openDatabase();
+        const objectStore: IDBObjectStore = openObjectStore(db, 'projects');
+        let cursor: IDBRequest;
         const data: Project[] = [];
 
         if (indexName && indexValue) {
@@ -36,7 +36,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
         }
 
         cursor.onsuccess = (event: any) => {
-          const currentCursor = event.target.result;
+          const currentCursor: IDBCursorWithValue = event.target.result;
 
           if (currentCursor) {
             data.push(currentCursor.value);
