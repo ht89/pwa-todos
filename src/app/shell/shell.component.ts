@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MenuService } from './menu/menu.service';
 import { PrimeNGConfig } from 'primeng/api';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-shell',
@@ -48,7 +49,7 @@ export class ShellComponent implements OnInit {
 
   ripple: boolean;
 
-  constructor(private menuService: MenuService, private primengConfig: PrimeNGConfig) {}
+  constructor(private menuService: MenuService, private primengConfig: PrimeNGConfig, public titleService: Title) {}
 
   ngOnInit() {
     this.primengConfig.ripple = true;
