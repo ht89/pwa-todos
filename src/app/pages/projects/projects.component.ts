@@ -3,9 +3,9 @@ import { Project } from './projects.model';
 import { openDatabase, openObjectStore } from '../../../indexedDB/store.js';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { untilDestroyed } from '@app/@core';
-import { AppService } from '@app/app.service';
+import { PublishSubscribeService, untilDestroyed } from '@app/@core';
 import { Table } from 'primeng/table';
+import { PubSubChannel } from '@app/@shared/enums/publish-subscribe';
 
 @Component({
   selector: 'app-projects',
@@ -17,7 +17,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
   @ViewChild('pt') table: Table;
 
-  constructor(private afs: AngularFirestore, private appService: AppService) {}
+  constructor(private afs: AngularFirestore, private pubSubService: PublishSubscribeService<string>) {}
 
   async ngOnInit() {
     this.data = await this.getData();
@@ -77,7 +77,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   private subscribeToSearch() {
-    this.appService.searchObservable.subscribe((query) => {
+    this.pubSubService.subscribe(PubSubChannel.Search, (query) => {
       if (query === undefined || query === null) {
         return;
       }

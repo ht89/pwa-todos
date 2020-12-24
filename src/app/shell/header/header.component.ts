@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from '@app/auth';
 import { ShellComponent } from '../shell.component';
-import { AppService } from '@app/app.service';
 import { FormControl } from '@angular/forms';
+import { PubSubChannel } from '@shared/enums/publish-subscribe';
+import { PublishSubscribeService } from '@app/@core';
 
 @Component({
   selector: 'app-header',
@@ -12,7 +13,11 @@ import { FormControl } from '@angular/forms';
 export class HeaderComponent implements OnInit {
   queryField = new FormControl();
 
-  constructor(public authService: AuthenticationService, public app: ShellComponent, private appService: AppService) {}
+  constructor(
+    public authService: AuthenticationService,
+    public app: ShellComponent,
+    private pubSubService: PublishSubscribeService<string>
+  ) {}
 
   ngOnInit() {
     this.subscribeToQueryField();
@@ -23,9 +28,6 @@ export class HeaderComponent implements OnInit {
   }
 
   private subscribeToQueryField() {
-    this.queryField.valueChanges.subscribe((query) => {
-      console.log(query);
-      this.appService.searchKey = query;
-    });
+    this.queryField.valueChanges.subscribe((query) => this.pubSubService.publish(PubSubChannel.Search, query));
   }
 }
