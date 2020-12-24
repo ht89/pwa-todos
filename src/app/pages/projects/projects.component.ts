@@ -1,9 +1,11 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Project } from './projects.model';
 import { openDatabase, openObjectStore } from '../../../indexedDB/store.js';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { untilDestroyed } from '@app/@core';
+import { AppService } from '@app/app.service';
+import { Table } from 'primeng/table';
 
 @Component({
   selector: 'app-projects',
@@ -13,10 +15,13 @@ import { untilDestroyed } from '@app/@core';
 export class ProjectsComponent implements OnInit, OnDestroy {
   data: Project[] = [];
 
-  constructor(private afs: AngularFirestore) {}
+  @ViewChild('pt') table: Table;
+
+  constructor(private afs: AngularFirestore, private appService: AppService) {}
 
   async ngOnInit() {
     this.data = await this.getData();
+    this.subscribeToSearch();
   }
 
   ngOnDestroy() {}
@@ -69,5 +74,15 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
   private getDataFromServer(): Observable<Project[]> {
     return this.afs.collection<Project>('projects').valueChanges();
+  }
+
+  private subscribeToSearch() {
+    this.appService.searchObservable.subscribe((query) => {
+      if (query === undefined || query === null) {
+        return;
+      }
+
+      this.table.filterGlobal(query, 'contains');
+    });
   }
 }

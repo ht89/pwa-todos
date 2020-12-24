@@ -1,4 +1,4 @@
-<p-table [value]="data">
+<p-table #pt [value]="data" [globalFilterFields]="['name']">
   <ng-template pTemplate="header">
     <tr>
       <th>Name</th>
