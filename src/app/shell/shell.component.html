@@ -23,9 +23,15 @@
     <app-header></app-header>
 
     <div class="layout-content">
-      <h1>{{ titleService.getTitle() }}</h1>
+      <div class="p-grid">
+        <div class="p-col-12">
+          <div class="card">
+            <h1>{{ titleService.getTitle() }}</h1>
 
-      <router-outlet></router-outlet>
+            <router-outlet></router-outlet>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="layout-main-mask"></div>
