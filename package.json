@@ -7,7 +7,7 @@
     "build": "npm run env -s && ng build --prod",
     "build:dev": "npm run env -s && ng build --prod --optimization false --build-optimizer false --watch",
     "start": "npm run env -s && ng serve",
-    "server": "watch-http-server dist",
+    "server": "angular-http-server --path dist",
     "deploy": "npm run env -s && firebase deploy --only hosting:pwatodos",
     "lint": "ng lint && stylelint \"src/**/*.scss\" --syntax scss && htmlhint \"src\" --config .htmlhintrc",
     "env": "ngx-scripts env npm_package_version",

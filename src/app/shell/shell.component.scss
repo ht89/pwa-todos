@@ -1,3 +1,16 @@
+:host ::ng-deep {
+  .add-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+
+    &.p-button.p-button-icon-only {
+      height: 3.125rem;
+      width: 3.125rem;
+    }
+  }
+}
+
 .content {
   padding: 1em;
 }
