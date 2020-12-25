@@ -72,7 +72,7 @@ const handleProjectStoreOnUpgrade = (db, transaction) => {
 
   if (!db.objectStoreNames.contains('projects')) {
     projectStore = db.createObjectStore('projects', {
-      autoIncrement: true,
+      keyPath: 'id',
     });
   } else {
     projectStore = transaction.objectStore('projects');

@@ -99,7 +99,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   private getDataFromServer(): Observable<Project[]> {
-    return this.afs.collection<Project>('projects').valueChanges();
+    return this.afs.collection<Project>('projects').valueChanges({ idField: 'id' });
   }
 
   private subscribeToSearch() {
