@@ -1,12 +1,17 @@
 :host ::ng-deep {
-  .add-btn {
+  .add-btn.p-button {
     position: fixed;
     bottom: 2rem;
     right: 2rem;
+    transition: all 0.3s ease-in-out;
 
-    &.p-button.p-button-icon-only {
-      height: 3.125rem;
-      width: 3.125rem;
+    &.p-button-icon-only {
+      height: 60px;
+      width: 60px;
+    }
+
+    &:enabled:hover {
+      transform: scale(1.25) rotate(-10deg);
     }
   }
 }
