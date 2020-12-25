@@ -2,14 +2,8 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { HomeComponent } from './home.component';
-import { Shell } from '@app/shell/shell.service';
 
-const routes: Routes = [
-  Shell.childRoutes([
-    { path: '', redirectTo: '/home', pathMatch: 'full' },
-    { path: 'home', component: HomeComponent, data: { title: 'Home' } },
-  ]),
-];
+const routes: Routes = [{ path: '', component: HomeComponent, data: { title: 'Home' } }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

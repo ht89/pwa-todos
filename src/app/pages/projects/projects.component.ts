@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { PublishSubscribeService, untilDestroyed } from '@app/@core';
 import { Table } from 'primeng/table';
 import { PubSubChannel } from '@app/@shared/enums/publish-subscribe';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-projects',
@@ -14,10 +15,15 @@ import { PubSubChannel } from '@app/@shared/enums/publish-subscribe';
 })
 export class ProjectsComponent implements OnInit, OnDestroy {
   data: Project[] = [];
+  clonedData: { [s: string]: Project } = {};
 
   @ViewChild('pt') table: Table;
 
-  constructor(private afs: AngularFirestore, private pubSubService: PublishSubscribeService<string>) {}
+  constructor(
+    private afs: AngularFirestore,
+    private pubSubService: PublishSubscribeService<string>,
+    private messageService: MessageService
+  ) {}
 
   async ngOnInit() {
     this.data = await this.getData();
@@ -27,6 +33,24 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {}
 
   onAddBtnClick(): void {}
+
+  onRowEditInit(item: Project) {
+    this.clonedData[item.id] = { ...item };
+  }
+
+  onRowEditSave(item: Project) {
+    if (item.name) {
+      delete this.clonedData[item.id];
+      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
+    } else {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Project Update failed' });
+    }
+  }
+
+  onRowEditCancel(item: Project, index: number) {
+    this.data[index] = this.clonedData[item.id];
+    delete this.data[item.id];
+  }
 
   private async getData(indexName: string = '', indexValue: string = ''): Promise<Project[]> {
     return new Promise(async (resolve, reject) => {
