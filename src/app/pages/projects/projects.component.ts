@@ -26,6 +26,8 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {}
 
+  onAddBtnClick(): void {}
+
   private async getData(indexName: string = '', indexValue: string = ''): Promise<Project[]> {
     return new Promise(async (resolve, reject) => {
       try {

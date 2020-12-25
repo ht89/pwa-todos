@@ -6,10 +6,9 @@ import { HeaderComponent } from './header/header.component';
 import { MenuComponent } from './menu/menu.component';
 import { MenuItemComponent } from './menu/menu-item.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
 
 @NgModule({
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, ButtonModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule],
   declarations: [HeaderComponent, ShellComponent, MenuComponent, MenuItemComponent],
 })
 export class ShellModule {}
