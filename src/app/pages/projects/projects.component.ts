@@ -69,13 +69,12 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   onRowEditCancel(item: Project, index: number) {
-    if (!item.name) {
-      this.data = this.data.filter((datum, i) => i !== index);
-    } else {
-      this.data[index] = this.clonedData[item.id];
-    }
-
+    this.data[index] = { ...this.clonedData[item.id] };
     delete this.clonedData[item.id];
+
+    if (!this.data[index].name) {
+      this.data = this.data.filter((datum, i) => i !== index);
+    }
   }
 
   private async getData(indexName: string = '', indexValue: string = ''): Promise<Project[]> {
