@@ -61,6 +61,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     if (item.name) {
       this.data[index].status = ProjectStatus.Processing;
       delete this.clonedData[item.id];
+
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
     } else {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Project Update failed' });
@@ -68,8 +69,13 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   onRowEditCancel(item: Project, index: number) {
-    this.data[index] = this.clonedData[item.id];
-    delete this.data[item.id];
+    if (!item.name) {
+      this.data = this.data.filter((datum, i) => i !== index);
+    } else {
+      this.data[index] = this.clonedData[item.id];
+    }
+
+    delete this.clonedData[item.id];
   }
 
   private async getData(indexName: string = '', indexValue: string = ''): Promise<Project[]> {
