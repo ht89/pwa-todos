@@ -1,4 +1,11 @@
-<p-table #pt [value]="data" dataKey="id" editMode="row" [globalFilterFields]="['name']">
+<p-table
+  #pt
+  [value]="data"
+  dataKey="id"
+  editMode="row"
+  [editingRowKeys]="editingRowKeys"
+  [globalFilterFields]="['name']"
+>
   <ng-template pTemplate="header">
     <tr>
       <th>Name</th>
@@ -14,7 +21,7 @@
       <td pEditableColumn>
         <p-cellEditor>
           <ng-template pTemplate="input">
-            <input pInputText type="text" [(ngModel)]="item.name" required />
+            <input pInputText type="text" [(ngModel)]="item.name" required cdkTrapFocus cdkTrapFocusAutoCapture />
           </ng-template>
 
           <ng-template pTemplate="output">{{ item.name }}</ng-template>
@@ -22,7 +29,13 @@
       </td>
 
       <td>
-        <i class="pi" [ngClass]="item.status === ProjectStatus.Processing ? 'pi-cloud-upload' : 'pi-check'"></i>
+        <i
+          class="pi"
+          [ngClass]="{
+            'pi-cloud-upload': item.status === ProjectStatus.Processing,
+            'pi-check': item.status === ProjectStatus.Synced
+          }"
+        ></i>
       </td>
 
       <td style="text-align: center">

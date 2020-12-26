@@ -12,8 +12,20 @@ import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 
+// Angular Cdk
+import { A11yModule } from '@angular/cdk/a11y';
+
 @NgModule({
   declarations: [ProjectsComponent],
-  imports: [CommonModule, FormsModule, SharedModule, ProjectsRoutingModule, TableModule, InputTextModule, ButtonModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    SharedModule,
+    ProjectsRoutingModule,
+    TableModule,
+    InputTextModule,
+    ButtonModule,
+    A11yModule,
+  ],
 })
 export class ProjectsModule {}

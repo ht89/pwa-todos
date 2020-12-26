@@ -13,7 +13,6 @@ import { AngularFirestore } from '@angular/fire/firestore';
 // Primeng
 import { Table } from 'primeng/table';
 import { MessageService } from 'primeng/api';
-import { InputText } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-projects',
@@ -23,6 +22,7 @@ import { InputText } from 'primeng/inputtext';
 export class ProjectsComponent implements OnInit, OnDestroy {
   data: Project[] = [];
   clonedData: { [s: string]: Project } = {};
+  editingRowKeys: { [s: string]: boolean } = {};
 
   ProjectStatus = ProjectStatus;
 
@@ -49,6 +49,8 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     });
 
     this.data.push(newItem);
+
+    setTimeout(() => (this.editingRowKeys[newId] = true), 100);
   }
 
   onRowEditInit(item: Project) {
