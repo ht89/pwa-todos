@@ -64,6 +64,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
     } else {
+      this.onRowEditCancel(item, index);
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Project Update failed' });
     }
   }
