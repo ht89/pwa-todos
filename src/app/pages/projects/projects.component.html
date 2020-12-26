@@ -3,6 +3,8 @@
     <tr>
       <th>Name</th>
 
+      <th>Status</th>
+
       <th style="width: 8rem"></th>
     </tr>
   </ng-template>
@@ -17,6 +19,10 @@
 
           <ng-template pTemplate="output">{{ item.name }}</ng-template>
         </p-cellEditor>
+      </td>
+
+      <td>
+        <i class="pi" [ngClass]="item.status === ProjectStatus.Processing ? 'pi-cloud-upload' : 'pi-check'"></i>
       </td>
 
       <td style="text-align: center">
@@ -38,7 +44,7 @@
           type="button"
           pSaveEditableRow
           icon="pi pi-check"
-          (click)="onRowEditSave(item)"
+          (click)="onRowEditSave(item, ri)"
           class="p-button-rounded p-button-text p-button-success p-mr-2"
         ></button>
 

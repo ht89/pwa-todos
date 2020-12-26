@@ -1,12 +1,19 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Project } from './projects.model';
-import { openDatabase, openObjectStore } from '../../../indexedDB/store.js';
-import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { PublishSubscribeService, untilDestroyed } from '@app/@core';
-import { Table } from 'primeng/table';
+
+// App
+import { Project, ProjectStatus } from './projects.model';
+import { openDatabase, openObjectStore } from '../../../indexedDB/store.js';
 import { PubSubChannel } from '@app/@shared/enums/publish-subscribe';
+
+// Firebase
+import { AngularFirestore } from '@angular/fire/firestore';
+
+// Primeng
+import { Table } from 'primeng/table';
 import { MessageService } from 'primeng/api';
+import { InputText } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-projects',
@@ -16,6 +23,8 @@ import { MessageService } from 'primeng/api';
 export class ProjectsComponent implements OnInit, OnDestroy {
   data: Project[] = [];
   clonedData: { [s: string]: Project } = {};
+
+  ProjectStatus = ProjectStatus;
 
   @ViewChild('pt') table: Table;
 
@@ -32,14 +41,23 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {}
 
-  onAddBtnClick(): void {}
+  onAddBtnClick(): void {
+    const newId = this.afs.createId();
+    const newItem = new Project({
+      id: newId,
+      name: '',
+    });
+
+    this.data.push(newItem);
+  }
 
   onRowEditInit(item: Project) {
     this.clonedData[item.id] = { ...item };
   }
 
-  onRowEditSave(item: Project) {
+  onRowEditSave(item: Project, index: number) {
     if (item.name) {
+      this.data[index].status = ProjectStatus.Processing;
       delete this.clonedData[item.id];
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
     } else {
