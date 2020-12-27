@@ -12,19 +12,23 @@ import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 
-// Angular Cdk
+// Angular CDK
 import { A11yModule } from '@angular/cdk/a11y';
 
 @NgModule({
   declarations: [ProjectsComponent],
   imports: [
+    // Angular
     CommonModule,
     FormsModule,
+    // App
     SharedModule,
     ProjectsRoutingModule,
+    // Primeng
     TableModule,
     InputTextModule,
     ButtonModule,
+    // Angular CDK
     A11yModule,
   ],
 })
