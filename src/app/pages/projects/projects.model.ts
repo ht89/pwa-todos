@@ -1,6 +1,6 @@
 export class Project {
   id: string;
-  name: string;
+  name = '';
   status: ProjectStatus;
 
   constructor(obj: any) {
