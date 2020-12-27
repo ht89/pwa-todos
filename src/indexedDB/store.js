@@ -32,7 +32,7 @@ export const addToObjectStore = (storeName, object) => {
   return new Promise(async (resolve, reject) => {
     try {
       const db = await openDatabase();
-      const store = openObjectStore(db, storeName);
+      const store = openObjectStore(db, storeName, 'readwrite');
 
       store.add(object).onsuccess = resolve;
     } catch (err) {

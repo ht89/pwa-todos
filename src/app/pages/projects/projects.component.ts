@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs';
-import { PublishSubscribeService, untilDestroyed } from '@app/@core';
+import { Logger, PublishSubscribeService, untilDestroyed } from '@app/@core';
 
 // App
 import { Project, ProjectStatus } from './projects.model';
-import { openDatabase, openObjectStore } from '../../../indexedDB/store.js';
+import { openDatabase, openObjectStore, addToObjectStore } from '../../../indexedDB/store.js';
 import { PubSubChannel } from '@app/@shared/enums/publish-subscribe';
+const log = new Logger('Projects');
 
 // Firebase
 import { AngularFirestore } from '@angular/fire/firestore';
@@ -25,6 +26,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   editingRowKeys: { [s: string]: boolean } = {};
 
   ProjectStatus = ProjectStatus;
+  readonly storeName = 'projects';
 
   @ViewChild('pt') table: Table;
 
@@ -57,7 +59,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     this.clonedData[item.id] = { ...item };
   }
 
-  onRowEditSave(item: Project, index: number) {
+  async onRowEditSave(item: Project, index: number) {
     if (!item.name) {
       return;
     }
@@ -65,7 +67,13 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     this.data[index].status = ProjectStatus.Processing;
     delete this.clonedData[item.id];
 
-    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
+    try {
+      await addToObjectStore(this.storeName, this.data[index]);
+      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
+    } catch (err) {
+      log.debug(err);
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Project update failed.' });
+    }
   }
 
   onRowEditCancel(item: Project, index: number) {
@@ -81,7 +89,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     return new Promise(async (resolve, reject) => {
       try {
         const db: IDBOpenDBRequest = await openDatabase();
-        const objectStore: IDBObjectStore = openObjectStore(db, 'projects');
+        const objectStore: IDBObjectStore = openObjectStore(db, this.storeName);
         let cursor: IDBRequest;
         const data: Project[] = [];
 
@@ -104,7 +112,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
               this.getDataFromServer()
                 .pipe(untilDestroyed(this))
                 .subscribe((serverData: Project[]) => {
-                  const readwriteStore = openObjectStore(db, 'projects', 'readwrite');
+                  const readwriteStore = openObjectStore(db, this.storeName, 'readwrite');
 
                   serverData.forEach((item: Project) => {
                     readwriteStore.add(item);
@@ -124,7 +132,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   private getDataFromServer(): Observable<Project[]> {
-    return this.afs.collection<Project>('projects').valueChanges({ idField: 'id' });
+    return this.afs.collection<Project>(this.storeName).valueChanges({ idField: 'id' });
   }
 
   private subscribeToSearch() {
