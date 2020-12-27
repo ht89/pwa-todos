@@ -59,6 +59,7 @@
           icon="pi pi-check"
           (click)="onRowEditSave(item, ri)"
           class="p-button-rounded p-button-text p-button-success p-mr-2"
+          [disabled]="!item.name"
         ></button>
 
         <button

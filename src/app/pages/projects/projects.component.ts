@@ -58,22 +58,21 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   onRowEditSave(item: Project, index: number) {
-    if (item.name) {
-      this.data[index].status = ProjectStatus.Processing;
-      delete this.clonedData[item.id];
-
-      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
-    } else {
-      this.onRowEditCancel(item, index);
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Project Update failed' });
+    if (!item.name) {
+      return;
     }
+
+    this.data[index].status = ProjectStatus.Processing;
+    delete this.clonedData[item.id];
+
+    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
   }
 
   onRowEditCancel(item: Project, index: number) {
     this.data[index] = { ...this.clonedData[item.id] };
     delete this.clonedData[item.id];
 
-    if (!this.data[index].name) {
+    if (!this.data[index].name && !item.name) {
       this.data = this.data.filter((datum, i) => i !== index);
     }
   }
