@@ -9,7 +9,7 @@ import { PubSubChannel } from '@app/@shared/enums/publish-subscribe';
 const log = new Logger('Projects');
 
 // Firebase
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 
 // Primeng
 import { Table } from 'primeng/table';
@@ -21,14 +21,16 @@ import { MessageService } from 'primeng/api';
   styleUrls: ['./projects.component.scss'],
 })
 export class ProjectsComponent implements OnInit, OnDestroy {
-  data: Project[] = [];
+  items: Project[] = [];
   clonedData: { [s: string]: Project } = {};
   editingRowKeys: { [s: string]: boolean } = {};
 
   ProjectStatus = ProjectStatus;
-  readonly storeName = 'projects';
+  readonly entityName = 'projects';
 
   @ViewChild('pt') table: Table;
+
+  private itemsCollection: AngularFirestoreCollection<Project>;
 
   constructor(
     private afs: AngularFirestore,
@@ -37,7 +39,8 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   ) {}
 
   async ngOnInit() {
-    this.data = await this.getData();
+    this.itemsCollection = this.afs.collection<Project>(this.entityName);
+    this.items = await this.getItems();
     this.subscribeToSearch();
   }
 
@@ -50,7 +53,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
       name: '',
     });
 
-    this.data.push(newItem);
+    this.items.push(newItem);
 
     setTimeout(() => (this.editingRowKeys[newId] = true), 100);
   }
@@ -64,11 +67,13 @@ export class ProjectsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.data[index].status = ProjectStatus.Processing;
+    this.items[index].status = ProjectStatus.Processing;
     delete this.clonedData[item.id];
 
     try {
-      await addToObjectStore(this.storeName, this.data[index]);
+      await addToObjectStore(this.entityName, this.items[index]);
+      this.syncData(item);
+
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
     } catch (err) {
       log.debug(err);
@@ -77,19 +82,19 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   onRowEditCancel(item: Project, index: number) {
-    this.data[index] = { ...this.clonedData[item.id] };
+    this.items[index] = { ...this.clonedData[item.id] };
     delete this.clonedData[item.id];
 
-    if (!this.data[index].name && !item.name) {
-      this.data = this.data.filter((datum, i) => i !== index);
+    if (!this.items[index].name && !item.name) {
+      this.items = this.items.filter((datum, i) => i !== index);
     }
   }
 
-  private async getData(indexName: string = '', indexValue: string = ''): Promise<Project[]> {
+  private async getItems(indexName: string = '', indexValue: string = ''): Promise<Project[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const db: IDBOpenDBRequest = await openDatabase();
-        const objectStore: IDBObjectStore = openObjectStore(db, this.storeName);
+        const objectStore: IDBObjectStore = openObjectStore(db, this.entityName);
         let cursor: IDBRequest;
         const data: Project[] = [];
 
@@ -112,7 +117,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
               this.getDataFromServer()
                 .pipe(untilDestroyed(this))
                 .subscribe((serverData: Project[]) => {
-                  const readwriteStore = openObjectStore(db, this.storeName, 'readwrite');
+                  const readwriteStore = openObjectStore(db, this.entityName, 'readwrite');
 
                   serverData.forEach((item: Project) => {
                     readwriteStore.add(item);
@@ -132,7 +137,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   private getDataFromServer(): Observable<Project[]> {
-    return this.afs.collection<Project>(this.storeName).valueChanges({ idField: 'id' });
+    return this.afs.collection<Project>(this.entityName).valueChanges({ idField: 'id' });
   }
 
   private subscribeToSearch() {
@@ -143,5 +148,13 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
       this.table.filterGlobal(query, 'contains');
     });
+  }
+
+  private syncData(item: Project) {
+    if ('serviceWorker' in navigator && 'SyncManager' in window) {
+      navigator.serviceWorker.ready.then((registration) => registration.sync.register('sync-projects'));
+    } else {
+      this.itemsCollection.doc(item.id).set(item);
+    }
   }
 }
