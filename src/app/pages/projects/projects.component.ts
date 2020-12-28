@@ -4,8 +4,8 @@ import { Logger, PublishSubscribeService, untilDestroyed } from '@app/@core';
 
 // App
 import { Project, ProjectStatus } from './projects.model';
-import { openDatabase, openObjectStore, addToObjectStore } from '../../../indexedDB/store.js';
 import { PubSubChannel } from '@app/@shared/enums/publish-subscribe';
+import { StoreService } from '@core/services/indexed-db/store.service';
 const log = new Logger('Projects');
 
 // Firebase
@@ -35,7 +35,8 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   constructor(
     private afs: AngularFirestore,
     private pubSubService: PublishSubscribeService<string>,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private store: StoreService
   ) {}
 
   async ngOnInit() {
@@ -72,7 +73,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     delete this.clonedData[item.id];
 
     try {
-      await addToObjectStore(this.entityName, this.items[index]);
+      await this.store.addToObjectStore(this.entityName, this.items[index]);
       this.syncData(item);
 
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
@@ -94,8 +95,8 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   private async getItems(indexName: string = '', indexValue: string = ''): Promise<Project[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const db: IDBOpenDBRequest = await openDatabase();
-        const objectStore: IDBObjectStore = openObjectStore(db, this.entityName);
+        const db = await this.store.openDatabase();
+        const objectStore = this.store.openObjectStore(db, this.entityName);
         let cursor: IDBRequest;
         const data: Project[] = [];
 
@@ -118,7 +119,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
               this.getDataFromServer()
                 .pipe(untilDestroyed(this))
                 .subscribe((serverData: Project[]) => {
-                  const readwriteStore = openObjectStore(db, this.entityName, 'readwrite');
+                  const readwriteStore = this.store.openObjectStore(db, this.entityName, 'readwrite');
 
                   serverData.forEach((item: Project) => {
                     readwriteStore.add(item);
