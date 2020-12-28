@@ -78,8 +78,8 @@ const handleProjectStoreOnUpgrade = (db, transaction) => {
     projectStore = transaction.objectStore('projects');
   }
 
-  // create index on name key for querying purposes
-  if (!projectStore.indexNames.contains('idx_name')) {
-    projectStore.createIndex('idx_name', 'name');
+  // create index on status key for querying purposes
+  if (!projectStore.indexNames.contains('idx_status')) {
+    projectStore.createIndex('idx_status', 'status');
   }
 };

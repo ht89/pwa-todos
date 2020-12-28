@@ -41,6 +41,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.itemsCollection = this.afs.collection<Project>(this.entityName);
     this.items = await this.getItems();
+
     this.subscribeToSearch();
   }
 

@@ -1,4 +1,5 @@
 importScripts('https://cdnjs.cloudflare.com/ajax/libs/cache.adderall/1.0.0/cache.adderall.js');
+importScripts('./indexedDB/store.js');
 
 const CACHE_NAME = 'pwa-todos-v1';
 
@@ -67,6 +68,12 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'sync-projects') {
+    event.waitUntil(syncProjects());
+  }
+});
+
 /* Functions */
 const handlePages = (event) => {
   // Stratery: cache, falling back to network w frequent updates
@@ -81,5 +88,22 @@ const handlePages = (event) => {
         return cachedResponse || fetchPromise;
       });
     })
+  );
+};
+
+const syncProjects = () => {
+  // TODO: define getProjects, communiate between SW & projects component
+  return getProjects('idx_status', 'Processing').then((items) =>
+    Promise.all(
+      items.map((item) => {
+        const itemUrl = createReservationUrl(item);
+
+        return fetch(itemUrl)
+          .then((response) => response.json())
+          .then((newItem) => {
+            return updateInObjectStore('projects', newItem.id, newItem);
+          });
+      })
+    )
   );
 };
