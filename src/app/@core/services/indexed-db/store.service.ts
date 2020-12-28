@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
-import { ProjectsService } from './projects.service';
+import { PubSubChannel } from '@app/@shared/enums/publish-subscribe';
+
+// App
+import { PublishSubscribeService } from '../publish-subscribe.service';
 
 @Injectable({ providedIn: 'root' })
 export class StoreService {
   readonly DB_VERSION = 1;
   readonly DB_NAME = 'pwa-todos';
 
-  constructor(private projectsService: ProjectsService) {}
+  constructor(private pubSubService: PublishSubscribeService<{ db: IDBDatabase; transaction: IDBTransaction }>) {}
 
   openDatabase(): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
@@ -27,7 +30,7 @@ export class StoreService {
       request.onupgradeneeded = () => {
         const { result: db, transaction } = request;
 
-        this.projectsService.handleProjectStoreOnUpgrade(db, transaction);
+        this.pubSubService.publish(PubSubChannel.OnDBUpgrade, { db, transaction });
       };
     });
   }

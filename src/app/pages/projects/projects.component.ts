@@ -1,12 +1,12 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Logger, PublishSubscribeService, untilDestroyed } from '@app/@core';
 
 // App
 import { Project, ProjectStatus } from './projects.model';
 import { PubSubChannel } from '@app/@shared/enums/publish-subscribe';
 import { StoreService } from '@core/services/indexed-db/store.service';
-const log = new Logger('Projects');
+import { DBUpgradePayload } from '@shared/models/indexed-db';
+import { ProjectsService } from '@app/@core/services/indexed-db/projects.service';
+import { Logger, PublishSubscribeService } from '@app/@core';
 
 // Firebase
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
@@ -14,6 +14,9 @@ import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/fire
 // Primeng
 import { Table } from 'primeng/table';
 import { MessageService } from 'primeng/api';
+
+// Const
+const log = new Logger('Projects');
 
 @Component({
   selector: 'app-projects',
@@ -26,7 +29,6 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   editingRowKeys: { [s: string]: boolean } = {};
 
   ProjectStatus = ProjectStatus;
-  readonly entityName = 'projects';
 
   @ViewChild('pt') table: Table;
 
@@ -34,16 +36,18 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
   constructor(
     private afs: AngularFirestore,
-    private pubSubService: PublishSubscribeService<string>,
+    private pubSubService: PublishSubscribeService<string | DBUpgradePayload>,
     private messageService: MessageService,
-    private store: StoreService
+    private store: StoreService,
+    private projectsService: ProjectsService
   ) {}
 
   async ngOnInit() {
-    this.itemsCollection = this.afs.collection<Project>(this.entityName);
-    this.items = await this.getItems();
+    this.itemsCollection = this.afs.collection<Project>(this.projectsService.entityName);
+    this.items = await this.projectsService.getItems();
 
     this.subscribeToSearch();
+    this.subcribeToDBUpgrade();
   }
 
   ngOnDestroy() {}
@@ -73,7 +77,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     delete this.clonedData[item.id];
 
     try {
-      await this.store.addToObjectStore(this.entityName, this.items[index]);
+      await this.store.addToObjectStore(this.projectsService.entityName, this.items[index]);
       this.syncData(item);
 
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
@@ -92,56 +96,6 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     }
   }
 
-  private async getItems(indexName: string = '', indexValue: string = ''): Promise<Project[]> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const db = await this.store.openDatabase();
-        const objectStore = this.store.openObjectStore(db, this.entityName);
-        let cursor: IDBRequest;
-        const data: Project[] = [];
-
-        if (indexName && indexValue) {
-          cursor = objectStore.index(indexName).openCursor(indexValue);
-        } else {
-          cursor = objectStore.openCursor();
-        }
-
-        cursor.onsuccess = (event: any) => {
-          const currentCursor: IDBCursorWithValue = event.target.result;
-
-          if (currentCursor) {
-            data.push(currentCursor.value);
-            currentCursor.continue();
-          } else {
-            if (data.length > 0) {
-              resolve(data);
-            } else {
-              this.getDataFromServer()
-                .pipe(untilDestroyed(this))
-                .subscribe((serverData: Project[]) => {
-                  const readwriteStore = this.store.openObjectStore(db, this.entityName, 'readwrite');
-
-                  serverData.forEach((item: Project) => {
-                    readwriteStore.add(item);
-                  });
-
-                  resolve(serverData);
-                });
-            }
-          }
-        };
-      } catch (err) {
-        this.getDataFromServer()
-          .pipe(untilDestroyed(this))
-          .subscribe((data) => resolve(data));
-      }
-    });
-  }
-
-  private getDataFromServer(): Observable<Project[]> {
-    return this.afs.collection<Project>(this.entityName).valueChanges({ idField: 'id' });
-  }
-
   private subscribeToSearch() {
     this.pubSubService.subscribe(PubSubChannel.Search, (query) => {
       if (query === undefined || query === null) {
@@ -150,6 +104,21 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
       this.table.filterGlobal(query, 'contains');
     });
+  }
+
+  private subcribeToDBUpgrade() {
+    this.pubSubService.subscribe(
+      PubSubChannel.OnDBUpgrade,
+      (value: { db: IDBDatabase; transaction: IDBTransaction }) => {
+        const { db, transaction } = value;
+
+        if (!db || !transaction) {
+          return;
+        }
+
+        this.projectsService.handleStoreOnUpgrade(db, transaction);
+      }
+    );
   }
 
   private syncData(item: Project) {
