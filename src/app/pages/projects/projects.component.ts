@@ -42,6 +42,11 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     private projectsService: ProjectsService
   ) {
     this.subcribeToDBUpgrade();
+
+    // TODO: remove event listener
+    navigator.serviceWorker.addEventListener('message', (event) => {
+      this.syncData();
+    });
   }
 
   async ngOnInit() {
@@ -122,11 +127,21 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     );
   }
 
-  private syncData(item: Project) {
-    if ('serviceWorker' in navigator && 'SyncManager' in window) {
-      navigator.serviceWorker.ready.then((registration) => registration.sync.register('sync-projects'));
-    } else {
-      this.itemsCollection.doc(item.id).set(item);
+  private async syncData() {
+    const items = await this.projectsService.getItems('idx_status', 'Processing');
+    if (!items || items.length === 0) {
+      return;
     }
+
+    items.forEach(async (item) => {
+      try {
+        await this.itemsCollection.doc(item.id).set(item);
+
+        item.status = ProjectStatus.Synced;
+        this.store.updateInObjectStore(this.projectsService.entityName, item.id, item);
+
+        // TODO: update related table item
+      } catch (err) {}
+    });
   }
 }
