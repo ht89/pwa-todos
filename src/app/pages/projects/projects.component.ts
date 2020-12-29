@@ -40,14 +40,15 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     private messageService: MessageService,
     private store: StoreService,
     private projectsService: ProjectsService
-  ) {}
+  ) {
+    this.subcribeToDBUpgrade();
+  }
 
   async ngOnInit() {
     this.itemsCollection = this.afs.collection<Project>(this.projectsService.entityName);
     this.items = await this.projectsService.getItems();
 
     this.subscribeToSearch();
-    this.subcribeToDBUpgrade();
   }
 
   ngOnDestroy() {}

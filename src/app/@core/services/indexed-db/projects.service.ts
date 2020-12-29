@@ -56,24 +56,20 @@ export class ProjectsService {
             if (data.length > 0) {
               resolve(data);
             } else {
-              this.getDataFromServer()
-                .pipe(untilDestroyed(this))
-                .subscribe((serverData: Project[]) => {
-                  const readwriteStore = this.store.openObjectStore(db, this.entityName, 'readwrite');
+              this.getDataFromServer().subscribe((serverData: Project[]) => {
+                const readwriteStore = this.store.openObjectStore(db, this.entityName, 'readwrite');
 
-                  serverData.forEach((item: Project) => {
-                    readwriteStore.add(item);
-                  });
-
-                  resolve(serverData);
+                serverData.forEach((item: Project) => {
+                  readwriteStore.add(item);
                 });
+
+                resolve(serverData);
+              });
             }
           }
         };
       } catch (err) {
-        this.getDataFromServer()
-          .pipe(untilDestroyed(this))
-          .subscribe((data) => resolve(data));
+        this.getDataFromServer().subscribe((data) => resolve(data));
       }
     });
   }
