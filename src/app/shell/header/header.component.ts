@@ -1,16 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
+
+// App
 import { AuthenticationService } from '@app/auth';
 import { ShellComponent } from '../shell.component';
-import { FormControl } from '@angular/forms';
 import { PubSubChannel } from '@shared/enums/publish-subscribe';
-import { PublishSubscribeService } from '@app/@core';
+import { PublishSubscribeService, untilDestroyed } from '@app/@core';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
   queryField = new FormControl();
 
   constructor(
@@ -23,11 +25,15 @@ export class HeaderComponent implements OnInit {
     this.subscribeToQueryField();
   }
 
+  ngOnDestroy() {}
+
   logout() {
     this.authService.logout();
   }
 
   private subscribeToQueryField() {
-    this.queryField.valueChanges.subscribe((query) => this.pubSubService.publish(PubSubChannel.Search, query));
+    this.queryField.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((query) => this.pubSubService.publish(PubSubChannel.Search, query));
   }
 }
