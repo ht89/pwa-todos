@@ -84,7 +84,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
     try {
       await this.store.addToObjectStore(this.projectsService.entityName, this.items[index]);
-      this.syncData(item);
+      this.syncData();
 
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
     } catch (err) {
@@ -140,8 +140,23 @@ export class ProjectsComponent implements OnInit, OnDestroy {
         item.status = ProjectStatus.Synced;
         this.store.updateInObjectStore(this.projectsService.entityName, item.id, item);
 
-        // TODO: update related table item
-      } catch (err) {}
+        this.updateItem(item);
+      } catch (err) {
+        log.debug(err);
+      }
     });
+  }
+
+  private updateItem(val: Project) {
+    if (!val) {
+      return;
+    }
+
+    const idx = this.items.findIndex((item) => item.id === val.id);
+    if (idx === -1) {
+      return;
+    }
+
+    this.items[idx] = val;
   }
 }

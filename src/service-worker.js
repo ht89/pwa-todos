@@ -42,8 +42,7 @@ self.addEventListener('install', (event) => {
 self.addEventListener('fetch', (event) => {
   const requestUrl = new URL(event.request.url);
 
-  // TODO: add more routes later
-  if (requestUrl.pathname === '/' || requestUrl.pathname === '/home') {
+  if (requestUrl.pathname === '/') {
     this.handlePages(event);
   } else if ([...STATIC_FILES, ...MUTABLE_FILES].includes(requestUrl.pathname)) {
     // Strategy: cache, falling back to network
