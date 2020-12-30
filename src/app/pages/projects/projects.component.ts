@@ -4,7 +4,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Project, ProjectStatus } from './projects.model';
 import { PubSubChannel } from '@app/@shared/enums/publish-subscribe';
 import { StoreService } from '@core/services/indexed-db/store.service';
-import { DBUpgradePayload } from '@shared/models/indexed-db';
+import { DBUpgradePayload } from '@app/@shared';
 import { ProjectsService } from '@app/@core/services/indexed-db/projects.service';
 import { Logger, PublishSubscribeService } from '@app/@core';
 
@@ -42,11 +42,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     private projectsService: ProjectsService
   ) {
     this.subcribeToDBUpgrade();
-
-    // TODO: remove event listener
-    navigator.serviceWorker.addEventListener('message', (event) => {
-      this.syncData();
-    });
+    navigator.serviceWorker.addEventListener('message', this.onMessageListener);
   }
 
   async ngOnInit() {
@@ -56,7 +52,11 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     this.subscribeToSearch();
   }
 
-  ngOnDestroy() {}
+  ngOnDestroy() {
+    if (navigator.serviceWorker) {
+      detachEventListener(navigator.serviceWorker, 'message', this.onMessageListener);
+    }
+  }
 
   onAddBtnClick(): void {
     const newId = this.afs.createId();
@@ -101,6 +101,10 @@ export class ProjectsComponent implements OnInit, OnDestroy {
       this.items = this.items.filter((datum, i) => i !== index);
     }
   }
+
+  private onMessageListener = () => {
+    this.syncData();
+  };
 
   private subscribeToSearch() {
     this.pubSubService.subscribe(PubSubChannel.Search, (query) => {
