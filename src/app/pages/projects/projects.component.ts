@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Subscription } from 'rxjs';
 
 // App
 import { Project, ProjectStatus } from './projects.model';
@@ -33,6 +34,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   @ViewChild('pt') table: Table;
 
   private itemsCollection: AngularFirestoreCollection<Project>;
+  private subcriptions: Subscription[] = [];
 
   constructor(
     private afs: AngularFirestore,
@@ -55,6 +57,10 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (navigator.serviceWorker) {
       detachEventListener(navigator.serviceWorker, 'message', this.onMessageListener);
+    }
+
+    if (this.subcriptions.length > 0) {
+      this.subcriptions.forEach((sub) => sub.unsubscribe());
     }
   }
 
@@ -107,29 +113,33 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   };
 
   private subscribeToSearch() {
-    this.pubSubService.subscribe(PubSubChannel.Search, (query) => {
-      console.log(query);
+    this.subcriptions.push(
+      this.pubSubService.subscribe(PubSubChannel.Search, (query) => {
+        console.log(query);
 
-      if (query === undefined || query === null) {
-        return;
-      }
-
-      this.table.filterGlobal(query, 'contains');
-    });
-  }
-
-  private subcribeToDBUpgrade() {
-    this.pubSubService.subscribe(
-      PubSubChannel.OnDBUpgrade,
-      (value: { db: IDBDatabase; transaction: IDBTransaction }) => {
-        const { db, transaction } = value;
-
-        if (!db || !transaction) {
+        if (query === undefined || query === null) {
           return;
         }
 
-        this.projectsService.handleStoreOnUpgrade(db, transaction);
-      }
+        this.table.filterGlobal(query, 'contains');
+      })
+    );
+  }
+
+  private subcribeToDBUpgrade() {
+    this.subcriptions.push(
+      this.pubSubService.subscribe(
+        PubSubChannel.OnDBUpgrade,
+        (value: { db: IDBDatabase; transaction: IDBTransaction }) => {
+          const { db, transaction } = value;
+
+          if (!db || !transaction) {
+            return;
+          }
+
+          this.projectsService.handleStoreOnUpgrade(db, transaction);
+        }
+      )
     );
   }
 
