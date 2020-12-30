@@ -6,6 +6,7 @@ import { AuthenticationService } from '@app/auth';
 import { ShellComponent } from '../shell.component';
 import { PubSubChannel } from '@shared/enums/publish-subscribe';
 import { PublishSubscribeService, untilDestroyed } from '@app/@core';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-header',
@@ -33,7 +34,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   private subscribeToQueryField() {
     this.queryField.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(untilDestroyed(this), distinctUntilChanged(), debounceTime(500))
       .subscribe((query) => this.pubSubService.publish(PubSubChannel.Search, query));
   }
 }
