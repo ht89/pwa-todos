@@ -4,7 +4,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Project, ProjectStatus } from './projects.model';
 import { PubSubChannel } from '@app/@shared/enums/publish-subscribe';
 import { StoreService } from '@core/services/indexed-db/store.service';
-import { DBUpgradePayload } from '@app/@shared';
+import { DBUpgradePayload, detachEventListener } from '@app/@shared';
 import { ProjectsService } from '@app/@core/services/indexed-db/projects.service';
 import { Logger, PublishSubscribeService } from '@app/@core';
 
@@ -46,10 +46,10 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+    this.subscribeToSearch();
+
     this.itemsCollection = this.afs.collection<Project>(this.projectsService.entityName);
     this.items = await this.projectsService.getItems();
-
-    this.subscribeToSearch();
   }
 
   ngOnDestroy() {
@@ -108,6 +108,8 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
   private subscribeToSearch() {
     this.pubSubService.subscribe(PubSubChannel.Search, (query) => {
+      console.log(query);
+
       if (query === undefined || query === null) {
         return;
       }
