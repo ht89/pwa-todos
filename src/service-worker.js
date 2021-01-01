@@ -60,9 +60,9 @@ self.addEventListener('activate', (event) => {
           if (CACHE_NAME !== cacheName && cacheName.startsWith('pwa-todos')) {
             return caches.delete(cacheName);
           }
-        })
+        }),
       );
-    })
+    }),
   );
 });
 
@@ -85,7 +85,7 @@ const handlePages = (event) => {
 
         return cachedResponse || fetchPromise;
       });
-    })
+    }),
   );
 };
 
