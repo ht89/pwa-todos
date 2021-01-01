@@ -83,7 +83,7 @@ export class StoreService {
    * @param key string
    * @param store IDBObjectStore
    */
-  createIndex(key: string, store: IDBObjectStore, options: {[key: string]: any} = {}) {
+  createIndex(key: string, store: IDBObjectStore, options: { [key: string]: any } = {}) {
     const indexName = `idx_${key}`;
 
     if (!store.indexNames.contains(indexName)) {

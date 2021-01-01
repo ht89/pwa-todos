@@ -1,6 +1,6 @@
 // App
 import { StoreName } from '@app/@shared';
- 
+
 // Ahead of time compiles requires an exported function for factories
 export function migrationFactory() {
   // Define more migrations as key-value pairs (key = version)

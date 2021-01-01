@@ -1,3 +1,3 @@
 export enum StoreName {
-  Projects = 'projects'
+  Projects = 'projects',
 }

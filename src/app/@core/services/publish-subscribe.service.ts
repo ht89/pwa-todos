@@ -24,7 +24,7 @@ export class PublishSubscribeService<T> {
     return this.emitter
       .pipe(
         filter((emission) => emission.channel === channel),
-        map((emission) => emission.event)
+        map((emission) => emission.event),
       )
       .subscribe(handler);
   }

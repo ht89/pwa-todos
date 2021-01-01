@@ -28,7 +28,7 @@ export class AuthenticationService {
     private afAuth: AngularFireAuth,
     private afs: AngularFirestore,
     private ngZone: NgZone,
-    private router: Router
+    private router: Router,
   ) {
     this.subscribeToAuthState();
   }

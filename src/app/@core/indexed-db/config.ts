@@ -2,7 +2,7 @@ import { DBConfig } from 'ngx-indexed-db';
 
 // App
 import { StoreName } from '@app/@shared';
-import { migrationFactory} from './migrations';
+import { migrationFactory } from './migrations';
 
 const projectStore = {
   store: StoreName.Projects,
@@ -18,5 +18,5 @@ export const dbConfig: DBConfig = {
   version: 1,
   objectStoresMeta: [projectStore],
   // provide the migration factory to the DBConfig
-  migrationFactory
+  migrationFactory,
 };

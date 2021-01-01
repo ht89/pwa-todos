@@ -44,7 +44,7 @@ export class AppComponent implements OnInit, OnDestroy {
         }),
         filter((route) => route.outlet === 'primary'),
         switchMap((route) => route.data),
-        untilDestroyed(this)
+        untilDestroyed(this),
       )
       .subscribe((event) => {
         const title = event.title;

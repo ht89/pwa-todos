@@ -19,7 +19,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   constructor(
     public authService: AuthenticationService,
     public app: ShellComponent,
-    private pubSubService: PublishSubscribeService<string>
+    private pubSubService: PublishSubscribeService<string>,
   ) {}
 
   ngOnInit() {

@@ -44,7 +44,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     private messageService: MessageService,
     private store: StoreService,
     private projectsService: ProjectsService,
-    private dbService: NgxIndexedDBService
+    private dbService: NgxIndexedDBService,
   ) {
     navigator.serviceWorker.addEventListener('message', this.onMessageListener);
   }
@@ -124,7 +124,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
         }
 
         this.table.filterGlobal(query, 'contains');
-      })
+      }),
     );
   }
 
