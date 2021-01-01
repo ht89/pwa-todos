@@ -7,13 +7,9 @@ import { RouteReuseStrategy, RouterModule } from '@angular/router';
 import { RouteReusableStrategy } from './route-reusable-strategy';
 import { ApiPrefixInterceptor } from './http/api-prefix.interceptor';
 import { ErrorHandlerInterceptor } from './http/error-handler.interceptor';
-import { dbConfig } from './indexed-db/config';
-
-// IndexedDB
-import { NgxIndexedDBModule } from 'ngx-indexed-db';
 
 @NgModule({
-  imports: [CommonModule, HttpClientModule, RouterModule, NgxIndexedDBModule.forRoot(dbConfig)],
+  imports: [CommonModule, HttpClientModule, RouterModule],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,

@@ -3,11 +3,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 
 // App
-import { CoreModule } from '@core';
-import { SharedModule } from '@shared';
+import { CoreModule, dbConfig } from '@core';
 import { AuthModule } from '@app/auth';
 import { ShellModule } from './shell/shell.module';
 import { AppComponent } from './app.component';
@@ -18,6 +16,9 @@ import { environment } from '@env/environment';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
+
+// IndexedDB
+import { NgxIndexedDBModule } from 'ngx-indexed-db';
 
 // SW
 import { ServiceWorkerModule } from '@angular/service-worker';
@@ -30,7 +31,6 @@ import { MessageService } from 'primeng/api';
     // Angular
     BrowserModule,
     BrowserAnimationsModule,
-    FormsModule,
     // App
     CoreModule,
     ShellModule,
@@ -39,6 +39,8 @@ import { MessageService } from 'primeng/api';
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
     AngularFirestoreModule,
+    // IndexedDB
+    NgxIndexedDBModule.forRoot(dbConfig),
     // SW
     ServiceWorkerModule.register('../service-worker.js', { enabled: environment.production }),
     // App Routes
