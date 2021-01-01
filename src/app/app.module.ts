@@ -31,19 +31,18 @@ import { MessageService } from 'primeng/api';
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
-    HttpClientModule,
     // App
     CoreModule,
-    SharedModule,
     ShellModule,
     AuthModule,
-    AppRoutingModule, // must be imported as the last module as it contains the fallback route
     // Firebase
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
     AngularFirestoreModule,
     // SW
     ServiceWorkerModule.register('../service-worker.js', { enabled: environment.production }),
+    // App Routes
+    AppRoutingModule, // must be imported as the last module as it contains the fallback route
   ],
   declarations: [AppComponent],
   providers: [MessageService],
