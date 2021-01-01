@@ -6,16 +6,14 @@ export class MenuService {
   private menuSource = new Subject<string>();
   private resetSource = new Subject();
 
-  // tslint:disable-next-line: member-ordering
   menuSource$ = this.menuSource.asObservable();
-  // tslint:disable-next-line: member-ordering
   resetSource$ = this.resetSource.asObservable();
 
-  onMenuStateChange(key: string) {
+  onMenuStateChange(key: string): void {
     this.menuSource.next(key);
   }
 
-  reset() {
+  reset(): void {
     this.resetSource.next();
   }
 }

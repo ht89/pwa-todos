@@ -7,9 +7,7 @@ import { MenuService } from './menu.service';
 import { ShellComponent } from '../shell.component';
 
 @Component({
-  /* tslint:disable:component-selector */
   selector: '[app-menuitem]',
-  /* tslint:enable:component-selector */
   template: `
     <ng-container>
       <a
@@ -64,33 +62,33 @@ import { ShellComponent } from '../shell.component';
         'void',
         style({
           height: '0px',
-        })
+        }),
       ),
       state(
         'hiddenAnimated',
         style({
           height: '0px',
-        })
+        }),
       ),
       state(
         'visibleAnimated',
         style({
           height: '*',
-        })
+        }),
       ),
       state(
         'visible',
         style({
           height: '*',
           'z-index': 100,
-        })
+        }),
       ),
       state(
         'hidden',
         style({
           height: '0px',
           'z-index': '*',
-        })
+        }),
       ),
       transition('visibleAnimated => hiddenAnimated', animate('400ms cubic-bezier(0.86, 0, 0.07, 1)')),
       transition('hiddenAnimated => visibleAnimated', animate('400ms cubic-bezier(0.86, 0, 0.07, 1)')),
@@ -119,7 +117,7 @@ export class MenuItemComponent implements OnInit, OnDestroy {
     public app: ShellComponent,
     public router: Router,
     private cd: ChangeDetectorRef,
-    private menuService: MenuService
+    private menuService: MenuService,
   ) {
     this.menuSourceSubscription = this.menuService.menuSource$.subscribe((key) => {
       // deactivate current active menu
