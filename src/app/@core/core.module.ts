@@ -3,12 +3,17 @@ import { CommonModule } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { RouteReuseStrategy, RouterModule } from '@angular/router';
 
+// App
 import { RouteReusableStrategy } from './route-reusable-strategy';
 import { ApiPrefixInterceptor } from './http/api-prefix.interceptor';
 import { ErrorHandlerInterceptor } from './http/error-handler.interceptor';
+import { dbConfig } from './indexed-db/config';
+
+// IndexedDB
+import { NgxIndexedDBModule } from 'ngx-indexed-db';
 
 @NgModule({
-  imports: [CommonModule, HttpClientModule, RouterModule],
+  imports: [CommonModule, HttpClientModule, RouterModule, NgxIndexedDBModule.forRoot(dbConfig)],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,

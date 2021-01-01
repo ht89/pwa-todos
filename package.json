@@ -29,6 +29,7 @@
     "@angular/router": "^10.1.4",
     "@angular/service-worker": "^11.0.4",
     "firebase": "^7.0 || ^8.0",
+    "ngx-indexed-db": "^6.1.2",
     "primeflex": "2.0.0",
     "primeicons": "4.0.0",
     "primeng": "10.0.3",
