@@ -181,11 +181,10 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   private async modifyItemInStore(item: Project): Promise<void> {
     const items = await this.projectsService.getItems('idx_id', item.id);
     if (items?.length === 0) {
-      this.store.addToObjectStore(this.projectsService.entityName, item);
-    } else {
-      this.store.updateInObjectStore(this.projectsService.entityName, item.id, item);
+      return this.store.addToObjectStore(this.projectsService.entityName, item);
     }
 
+    return this.store.updateInObjectStore(this.projectsService.entityName, item.id, item);
   }
 
   private registerSyncEvent(item: Project) {
