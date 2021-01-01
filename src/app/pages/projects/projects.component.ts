@@ -92,7 +92,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
     try {
       await this.modifyItemInStore(this.items[index]);
-      this.registerSyncEvent(this.items[index]);
+      // this.registerSyncEvent(this.items[index]);
 
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
     } catch (err) {
@@ -163,13 +163,13 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     this.items[idx] = item;
   }
 
-  private async modifyItemInStore(item: Project): Promise<void> {
+  private async modifyItemInStore(item: Project): Promise<number | Project[]> {
     const items = await this.dbService.getByKey(StoreName.Projects, item.id).toPromise();
     if (items?.length === 0) {
-      return this.store.addToObjectStore(this.projectsService.entityName, item);
+      return this.dbService.add(StoreName.Projects, item).toPromise();
     }
 
-    return this.store.updateInObjectStore(this.projectsService.entityName, item.id, item);
+    return this.dbService.update(StoreName.Projects, item).toPromise();
   }
 
   private registerSyncEvent(item: Project) {
