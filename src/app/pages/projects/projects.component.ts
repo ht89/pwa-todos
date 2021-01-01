@@ -90,7 +90,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
     try {
       await this.store.addToObjectStore(this.projectsService.entityName, this.items[index]);
-      this.syncData();
+      this.registerSyncEvent();
 
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
     } catch (err) {
@@ -154,8 +154,8 @@ export class ProjectsComponent implements OnInit, OnDestroy {
         await this.itemsCollection.doc(item.id).set(item);
 
         item.status = ProjectStatus.Synced;
-        this.store.updateInObjectStore(this.projectsService.entityName, item.id, item);
 
+        this.store.updateInObjectStore(this.projectsService.entityName, item.id, item);
         this.updateItem(item);
       } catch (err) {
         log.debug(err);
@@ -174,5 +174,17 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     }
 
     this.items[idx] = val;
+  }
+
+  private registerSyncEvent() {
+    if ('serviceWorker' in navigator && 'SyncManager' in window) {
+      navigator.serviceWorker.ready.then((registration) =>
+        registration.sync.register('sync-projects')
+      );
+    } else {
+      // $.getJSON('/make-reservation', reservationDetails, function (data) {
+      //   updateReservationDisplay(data);
+      // });
+    }
   }
 }

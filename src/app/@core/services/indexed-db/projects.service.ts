@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { untilDestroyed } from '@app/@core';
 
 // App
 import { Project } from '@app/pages/projects/projects.model';
@@ -18,18 +17,16 @@ export class ProjectsService {
   handleStoreOnUpgrade(db: IDBDatabase, transaction: IDBTransaction) {
     let projectStore: IDBObjectStore;
 
-    if (!db.objectStoreNames.contains('projects')) {
-      projectStore = db.createObjectStore('projects', {
+    if (!db.objectStoreNames.contains(this.entityName)) {
+      projectStore = db.createObjectStore(this.entityName, {
         keyPath: 'id',
       });
     } else {
-      projectStore = transaction.objectStore('projects');
+      projectStore = transaction.objectStore(this.entityName);
     }
 
-    // create index on status key for querying purposes
-    if (!projectStore.indexNames.contains('idx_status')) {
-      projectStore.createIndex('idx_status', 'status');
-    }
+    this.createIndex('id', projectStore);
+    this.createIndex('status', projectStore);
   }
 
   async getItems(indexName: string = '', indexValue: string = ''): Promise<Project[]> {
@@ -76,5 +73,18 @@ export class ProjectsService {
 
   private getDataFromServer(): Observable<Project[]> {
     return this.afs.collection<Project>(this.entityName).valueChanges({ idField: 'id' });
+  }
+
+  /**
+   * create index on key for querying purposes
+   * @param key string
+   * @param store IDBObjectStore
+   */
+  private createIndex(key: string, store: IDBObjectStore) {
+    const indexName = `idx_${key}`;
+
+    if (!store.indexNames.contains(indexName)) {
+      store.createIndex(indexName, key);
+    }
   }
 }
