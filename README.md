@@ -51,7 +51,6 @@ Task automation is based on [NPM scripts](https://docs.npmjs.com/misc/scripts).
 | `npm run deploy`                                | Deploy app to Firebase                                                                                           |
 | `npm test`                                      | Run unit tests via [Karma](https://karma-runner.github.io) in watch mode                                         |
 | `npm run test:ci`                               | Lint code and run unit tests once for continuous integration                                                     |
-| `npm run lint`                                  | Lint code                                                                                                        |
 | `npm run prettier`                              | Automatically format all `.ts`, `.js` & `.scss` files                                                            |
 
 When building the application, you can specify the target configuration using the additional flag

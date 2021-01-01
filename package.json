@@ -9,7 +9,7 @@
     "start": "npm run env -s && ng serve",
     "server": "http-server dist -c-1 --proxy http://localhost:8080?",
     "deploy": "npm run env -s && firebase deploy --only hosting:pwatodos",
-    "lint": "ng lint && stylelint \"src/**/*.scss\" --syntax scss && htmlhint \"src\" --config .htmlhintrc",
+    "lint": "stylelint \"src/**/*.scss\" --syntax scss && htmlhint \"src\" --config .htmlhintrc",
     "env": "ngx-scripts env npm_package_version",
     "prettier": "prettier --write \"./{src,e2e}/**/*.{ts,js,html,scss}\"",
     "prettier:check": "prettier --list-different \"./{src,e2e}/**/*.{ts,js,html,scss}\"",
