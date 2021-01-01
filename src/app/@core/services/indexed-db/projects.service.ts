@@ -19,14 +19,14 @@ export class ProjectsService {
 
     if (!db.objectStoreNames.contains(this.entityName)) {
       projectStore = db.createObjectStore(this.entityName, {
-        keyPath: 'id',
+        keyPath: 'id', // like primary key
       });
     } else {
       projectStore = transaction.objectStore(this.entityName);
     }
 
-    this.createIndex('id', projectStore);
-    this.createIndex('status', projectStore);
+    this.store.createIndex('id', projectStore);
+    this.store.createIndex('status', projectStore, {unique: false});
   }
 
   async getItems(indexName: string = '', indexValue: string = ''): Promise<Project[]> {
@@ -75,16 +75,5 @@ export class ProjectsService {
     return this.afs.collection<Project>(this.entityName).valueChanges({ idField: 'id' });
   }
 
-  /**
-   * create index on key for querying purposes
-   * @param key string
-   * @param store IDBObjectStore
-   */
-  private createIndex(key: string, store: IDBObjectStore) {
-    const indexName = `idx_${key}`;
-
-    if (!store.indexNames.contains(indexName)) {
-      store.createIndex(indexName, key);
-    }
-  }
+  
 }
