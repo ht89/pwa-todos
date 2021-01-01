@@ -89,8 +89,8 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     delete this.clonedData[item.id];
 
     try {
-      await this.store.addToObjectStore(this.projectsService.entityName, this.items[index]);
-      this.registerSyncEvent();
+      await this.modifyItemInStore(this.items[index]);
+      this.registerSyncEvent(this.items[index]);
 
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
     } catch (err) {
@@ -149,42 +149,50 @@ export class ProjectsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    items.forEach(async (item) => {
-      try {
-        await this.itemsCollection.doc(item.id).set(item);
-
-        item.status = ProjectStatus.Synced;
-
-        this.store.updateInObjectStore(this.projectsService.entityName, item.id, item);
-        this.updateItem(item);
-      } catch (err) {
-        log.debug(err);
-      }
-    });
+    items.forEach(async (item) => this.syncItem(item));
   }
 
-  private updateItem(val: Project) {
-    if (!val) {
+  private async syncItem(item: Project) {
+    try {
+      await this.itemsCollection.doc(item.id).set(item);
+
+      item.status = ProjectStatus.Synced;
+
+      this.store.updateInObjectStore(this.projectsService.entityName, item.id, item);
+      this.updateDisplayedItem(item);
+    } catch (err) {
+      log.debug(err);
+    }
+  }
+
+  private updateDisplayedItem(item: Project) {
+    if (!item) {
       return;
     }
 
-    const idx = this.items.findIndex((item) => item.id === val.id);
+    const idx = this.items.findIndex((currentItem) => currentItem.id === item.id);
     if (idx === -1) {
       return;
     }
 
-    this.items[idx] = val;
+    this.items[idx] = item;
   }
 
-  private registerSyncEvent() {
-    if ('serviceWorker' in navigator && 'SyncManager' in window) {
-      navigator.serviceWorker.ready.then((registration) =>
-        registration.sync.register('sync-projects')
-      );
+  private async modifyItemInStore(item: Project): Promise<void> {
+    const items = await this.projectsService.getItems('idx_id', item.id);
+    if (items?.length === 0) {
+      this.store.addToObjectStore(this.projectsService.entityName, item);
     } else {
-      // $.getJSON('/make-reservation', reservationDetails, function (data) {
-      //   updateReservationDisplay(data);
-      // });
+      this.store.updateInObjectStore(this.projectsService.entityName, item.id, item);
+    }
+
+  }
+
+  private registerSyncEvent(item: Project) {
+    if ('serviceWorker' in navigator && 'SyncManager' in window) {
+      navigator.serviceWorker.ready.then((registration) => registration.sync.register('sync-projects'));
+    } else {
+      this.syncItem(item);
     }
   }
 }
