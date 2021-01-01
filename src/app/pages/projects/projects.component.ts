@@ -3,10 +3,9 @@ import { Subscription } from 'rxjs';
 
 // App
 import { Project, ProjectStatus } from './projects.model';
-import { StoreService } from '@core/services/indexed-db/store.service';
 import { DBUpgradePayload, detachEventListener, PubSubChannel, StoreName } from '@app/@shared';
-import { ProjectsService } from '@app/@core/services/indexed-db/projects.service';
 import { Logger, PublishSubscribeService } from '@app/@core';
+import { ProjectsService } from './projects.service';
 
 // Firebase
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
@@ -42,7 +41,6 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     private afs: AngularFirestore,
     private pubSubService: PublishSubscribeService<string | DBUpgradePayload>,
     private messageService: MessageService,
-    private store: StoreService,
     private projectsService: ProjectsService,
     private dbService: NgxIndexedDBService,
   ) {
@@ -143,7 +141,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
       item.status = ProjectStatus.Synced;
 
-      this.store.updateInObjectStore(this.projectsService.entityName, item.id, item);
+      // this.store.updateInObjectStore(this.projectsService.entityName, item.id, item);
       this.updateDisplayedItem(item);
     } catch (err) {
       log.debug(err);

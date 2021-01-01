@@ -3,9 +3,8 @@ import { Injectable } from '@angular/core';
 // App
 import { Project } from '@app/pages/projects/projects.model';
 import { Observable } from 'rxjs';
-import { StoreService } from './store.service';
 import { StoreName } from '@app/@shared';
-import { Logger } from '../logger.service';
+import { Logger } from '@core';
 
 // Firebase
 import { AngularFirestore } from '@angular/fire/firestore';
@@ -20,7 +19,7 @@ const log = new Logger('ProjectsService');
 export class ProjectsService {
   readonly entityName = 'projects';
 
-  constructor(private store: StoreService, private afs: AngularFirestore, private dbService: NgxIndexedDBService) {}
+  constructor(private afs: AngularFirestore, private dbService: NgxIndexedDBService) {}
 
   async getItems(): Promise<Project[]> {
     return new Promise(async (resolve, reject) => {
