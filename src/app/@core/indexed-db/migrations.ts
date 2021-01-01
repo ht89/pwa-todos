@@ -7,8 +7,6 @@ export function migrationFactory() {
   return {
     1: (db: IDBDatabase, transaction: IDBTransaction) => {
       const store = transaction.objectStore(StoreName.Projects);
-      store.createIndex('idx_id', 'id', { unique: true });
-      store.createIndex('idx_status', 'status', { unique: false });
     },
   };
 }

@@ -4,68 +4,42 @@ import { Injectable } from '@angular/core';
 import { Project } from '@app/pages/projects/projects.model';
 import { Observable } from 'rxjs';
 import { StoreService } from './store.service';
+import { StoreName } from '@app/@shared';
+import { Logger } from '../logger.service';
 
 // Firebase
 import { AngularFirestore } from '@angular/fire/firestore';
+
+// IndexedDB
+import { NgxIndexedDBService } from 'ngx-indexed-db';
+
+// Const
+const log = new Logger('ProjectsService');
 
 @Injectable({ providedIn: 'root' })
 export class ProjectsService {
   readonly entityName = 'projects';
 
-  constructor(private store: StoreService, private afs: AngularFirestore) {}
+  constructor(private store: StoreService, private afs: AngularFirestore, private dbService: NgxIndexedDBService) {}
 
-  handleStoreOnUpgrade(db: IDBDatabase, transaction: IDBTransaction) {
-    let projectStore: IDBObjectStore;
-
-    if (!db.objectStoreNames.contains(this.entityName)) {
-      projectStore = db.createObjectStore(this.entityName, {
-        keyPath: 'id', // like primary key
-      });
-    } else {
-      projectStore = transaction.objectStore(this.entityName);
-    }
-
-    this.store.createIndex('id', projectStore);
-    this.store.createIndex('status', projectStore, {unique: false});
-  }
-
-  async getItems(indexName: string = '', indexValue: string = ''): Promise<Project[]> {
+  async getItems(): Promise<Project[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const db = await this.store.openDatabase();
-        const objectStore = this.store.openObjectStore(db, this.entityName);
-        let cursor: IDBRequest;
-        const data: Project[] = [];
+        const items = await this.dbService.getAll(StoreName.Projects).toPromise();
 
-        if (indexName && indexValue) {
-          cursor = objectStore.index(indexName).openCursor(indexValue);
+        if (items.length > 0) {
+          resolve(items);
         } else {
-          cursor = objectStore.openCursor();
+          this.getDataFromServer().subscribe((serverData: Project[]) => {
+            serverData.forEach(async (item: Project) => {
+              await this.dbService.add(StoreName.Projects, item).toPromise();
+            });
+
+            resolve(serverData);
+          });
         }
-
-        cursor.onsuccess = (event: any) => {
-          const currentCursor: IDBCursorWithValue = event.target.result;
-
-          if (currentCursor) {
-            data.push(currentCursor.value);
-            currentCursor.continue();
-          } else {
-            if (data.length > 0) {
-              resolve(data);
-            } else {
-              this.getDataFromServer().subscribe((serverData: Project[]) => {
-                const readwriteStore = this.store.openObjectStore(db, this.entityName, 'readwrite');
-
-                serverData.forEach((item: Project) => {
-                  readwriteStore.add(item);
-                });
-
-                resolve(serverData);
-              });
-            }
-          }
-        };
       } catch (err) {
+        log.debug(err);
         this.getDataFromServer().subscribe((data) => resolve(data));
       }
     });
@@ -74,6 +48,4 @@ export class ProjectsService {
   private getDataFromServer(): Observable<Project[]> {
     return this.afs.collection<Project>(this.entityName).valueChanges({ idField: 'id' });
   }
-
-  
 }

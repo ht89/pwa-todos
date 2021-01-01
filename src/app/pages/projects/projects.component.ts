@@ -3,9 +3,8 @@ import { Subscription } from 'rxjs';
 
 // App
 import { Project, ProjectStatus } from './projects.model';
-import { PubSubChannel } from '@app/@shared/enums/publish-subscribe';
 import { StoreService } from '@core/services/indexed-db/store.service';
-import { DBUpgradePayload, detachEventListener } from '@app/@shared';
+import { DBUpgradePayload, detachEventListener, PubSubChannel, StoreName } from '@app/@shared';
 import { ProjectsService } from '@app/@core/services/indexed-db/projects.service';
 import { Logger, PublishSubscribeService } from '@app/@core';
 
@@ -15,6 +14,9 @@ import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/fire
 // Primeng
 import { Table } from 'primeng/table';
 import { MessageService } from 'primeng/api';
+
+// IndexedDB
+import { NgxIndexedDBService } from 'ngx-indexed-db';
 
 // Const
 const log = new Logger('Projects');
@@ -41,9 +43,9 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     private pubSubService: PublishSubscribeService<string | DBUpgradePayload>,
     private messageService: MessageService,
     private store: StoreService,
-    private projectsService: ProjectsService
+    private projectsService: ProjectsService,
+    private dbService: NgxIndexedDBService
   ) {
-    this.subcribeToDBUpgrade();
     navigator.serviceWorker.addEventListener('message', this.onMessageListener);
   }
 
@@ -126,25 +128,8 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     );
   }
 
-  private subcribeToDBUpgrade() {
-    this.subcriptions.push(
-      this.pubSubService.subscribe(
-        PubSubChannel.OnDBUpgrade,
-        (value: { db: IDBDatabase; transaction: IDBTransaction }) => {
-          const { db, transaction } = value;
-
-          if (!db || !transaction) {
-            return;
-          }
-
-          this.projectsService.handleStoreOnUpgrade(db, transaction);
-        }
-      )
-    );
-  }
-
   private async syncData() {
-    const items = await this.projectsService.getItems('idx_status', 'Processing');
+    const items: Project[] = await this.dbService.getByIndex(StoreName.Projects, 'status', 'Processing').toPromise();
     if (!items || items.length === 0) {
       return;
     }
@@ -179,7 +164,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   private async modifyItemInStore(item: Project): Promise<void> {
-    const items = await this.projectsService.getItems('idx_id', item.id);
+    const items = await this.dbService.getByKey(StoreName.Projects, item.id).toPromise();
     if (items?.length === 0) {
       return this.store.addToObjectStore(this.projectsService.entityName, item);
     }
