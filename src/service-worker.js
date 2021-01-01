@@ -96,6 +96,7 @@ const syncProjects = () => {
       return;
     }
 
+    // TODO: probably need to sync projects right here
     projectsClient.postMessage('sync-projects');
   });
 };
