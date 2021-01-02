@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 
 // App
 import { Project, ProjectStatus } from './projects.model';
-import { DBUpgradePayload, detachEventListener, PubSubChannel, StoreName } from '@app/@shared';
+import { DBUpgradePayload, detachEventListener, PubSubChannel, StoreName, unsubscribe } from '@app/@shared';
 import { Logger, PublishSubscribeService } from '@app/@core';
 import { ProjectsService } from './projects.service';
 
@@ -59,9 +59,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
       detachEventListener(navigator.serviceWorker, 'message', this.onMessageListener);
     }
 
-    if (this.subcriptions.length > 0) {
-      this.subcriptions.forEach((sub) => sub.unsubscribe());
-    }
+    unsubscribe(this.subcriptions);
   }
 
   onAddBtnClick(): void {
