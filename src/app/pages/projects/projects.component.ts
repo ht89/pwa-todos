@@ -58,10 +58,11 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
   onAddBtnClick(): void {
     const newId = this.afs.createId();
-    const newItem = new Project({
+    const newItem = {
       id: newId,
       name: '',
-    });
+      status: ProjectStatus.Processing,
+    };
 
     this.items.push(newItem);
 
@@ -77,17 +78,15 @@ export class ProjectsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.items[index].status = ProjectStatus.Processing;
     delete this.clonedData[item.id];
 
     try {
       await this.modifyItemInStore(this.items[index]);
-      this.syncItem(this.items[index]);
+      await this.syncItem(this.items[index]);
 
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
     } catch (err) {
-      log.debug(err);
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Project update failed.' });
+      this.notifyFailedUpdate(err);
     }
   }
 
@@ -103,8 +102,6 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   private subscribeToSearch() {
     this.subcriptions.push(
       this.pubSubService.subscribe(PubSubChannel.Search, (query) => {
-        console.log(query);
-
         if (query === undefined || query === null) {
           return;
         }
@@ -115,16 +112,12 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   private async syncItem(item: Project): Promise<void> {
-    try {
-      await this.itemsCollection.doc(item.id).set(item);
+    item.status = ProjectStatus.Synced;
 
-      item.status = ProjectStatus.Synced;
+    await this.itemsCollection.doc(item.id).set(item);
 
-      await this.dbService.update(StoreName.Projects, item).toPromise();
-      this.updateItem(item);
-    } catch (err) {
-      log.debug(err);
-    }
+    await this.dbService.update(StoreName.Projects, item).toPromise();
+    this.updateItem(item);
   }
 
   private updateItem(item: Project) {
@@ -147,5 +140,10 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     }
 
     return this.dbService.update(StoreName.Projects, item).toPromise();
+  }
+
+  private notifyFailedUpdate(err: any) {
+    log.warn(err);
+    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Project update failed.' });
   }
 }

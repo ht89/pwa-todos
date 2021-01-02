@@ -38,7 +38,7 @@ export class ProjectsService {
           });
         }
       } catch (err) {
-        log.debug(err);
+        log.warn(err);
         this.getDataFromServer().subscribe((data) => resolve(data));
       }
     });

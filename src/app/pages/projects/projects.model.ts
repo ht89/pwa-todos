@@ -1,13 +1,7 @@
-export class Project {
+export interface Project {
   id: string;
-  name = '';
+  name: string;
   status: ProjectStatus;
-
-  constructor(obj: any) {
-    Object.keys(obj).forEach((key) => {
-      this[key] = obj[key];
-    });
-  }
 }
 
 export enum ProjectStatus {
