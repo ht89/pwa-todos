@@ -82,9 +82,10 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
     try {
       await this.modifyItemInStore(this.items[index]);
-      await this.syncItem(this.items[index]);
 
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
+
+      this.syncItem(this.items[index]);
     } catch (err) {
       this.notifyFailedUpdate(err);
     }
@@ -123,12 +124,15 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   private async syncItem(item: Project): Promise<void> {
-    item.status = ProjectStatus.Synced;
+    try {
+      item.status = ProjectStatus.Synced;
 
-    await this.itemsCollection.doc(item.id).set(item);
-
-    await this.dbService.update(StoreName.Projects, item).toPromise();
-    this.updateItem(item);
+      await this.itemsCollection.doc(item.id).set(item);
+      await this.dbService.update(StoreName.Projects, item).toPromise();
+      this.updateItem(item);
+    } catch (err) {
+      this.notifyFailedUpdate(err);
+    }
   }
 
   private updateItem(item: Project) {
