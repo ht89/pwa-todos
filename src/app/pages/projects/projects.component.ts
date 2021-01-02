@@ -43,9 +43,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     private messageService: MessageService,
     private projectsService: ProjectsService,
     private dbService: NgxIndexedDBService,
-  ) {
-    navigator.serviceWorker.addEventListener('message', this.onMessageListener);
-  }
+  ) {}
 
   async ngOnInit() {
     this.subscribeToSearch();
@@ -55,7 +53,6 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    detachEventListener(navigator.serviceWorker, 'message', this.onMessageListener);
     unsubscribe(this.subcriptions);
   }
 
@@ -85,7 +82,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
     try {
       await this.modifyItemInStore(this.items[index]);
-      // this.registerSyncEvent(this.items[index]);
+      this.syncItem(this.items[index]);
 
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
     } catch (err) {
@@ -103,10 +100,6 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     }
   }
 
-  private onMessageListener = () => {
-    this.syncData();
-  };
-
   private subscribeToSearch() {
     this.subcriptions.push(
       this.pubSubService.subscribe(PubSubChannel.Search, (query) => {
@@ -121,29 +114,20 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     );
   }
 
-  private async syncData() {
-    const items: Project[] = await this.dbService.getByIndex(StoreName.Projects, 'status', 'Processing').toPromise();
-    if (!items || items.length === 0) {
-      return;
-    }
-
-    items.forEach(async (item) => this.syncItem(item));
-  }
-
-  private async syncItem(item: Project) {
+  private async syncItem(item: Project): Promise<void> {
     try {
       await this.itemsCollection.doc(item.id).set(item);
 
       item.status = ProjectStatus.Synced;
 
       await this.dbService.update(StoreName.Projects, item).toPromise();
-      this.updateDisplayedItem(item);
+      this.updateItem(item);
     } catch (err) {
       log.debug(err);
     }
   }
 
-  private updateDisplayedItem(item: Project) {
+  private updateItem(item: Project) {
     if (!item) {
       return;
     }
@@ -163,13 +147,5 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     }
 
     return this.dbService.update(StoreName.Projects, item).toPromise();
-  }
-
-  private registerSyncEvent(item: Project) {
-    if ('serviceWorker' in navigator && 'SyncManager' in window) {
-      navigator.serviceWorker.ready.then((registration) => registration.sync.register('sync-projects'));
-    } else {
-      this.syncItem(item);
-    }
   }
 }

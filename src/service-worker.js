@@ -66,12 +66,6 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'sync-projects') {
-    event.waitUntil(syncProjects());
-  }
-});
-
 /* Functions */
 const handlePages = (event) => {
   // Stratery: cache, falling back to network w frequent updates
@@ -87,16 +81,4 @@ const handlePages = (event) => {
       });
     }),
   );
-};
-
-const syncProjects = () => {
-  return self.clients.matchAll().then((clients) => {
-    const projectsClient = clients.find((client) => client.url.includes('/projects'));
-    if (!projectsClient) {
-      return;
-    }
-
-    // TODO: probably need to sync projects right here
-    projectsClient.postMessage('sync-projects');
-  });
 };
