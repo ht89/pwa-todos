@@ -129,23 +129,9 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
       await this.itemsCollection.doc(item.id).set(item);
       await this.dbService.update(StoreName.Projects, item).toPromise();
-      this.updateItem(item);
     } catch (err) {
       this.notifyFailedUpdate(err);
     }
-  }
-
-  private updateItem(item: Project) {
-    if (!item) {
-      return;
-    }
-
-    const idx = this.items.findIndex((currentItem) => currentItem.id === item.id);
-    if (idx === -1) {
-      return;
-    }
-
-    this.items[idx] = item;
   }
 
   private async modifyItemInStore(item: Project): Promise<number | Project[]> {
