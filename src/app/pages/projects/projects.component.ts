@@ -99,6 +99,17 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     }
   }
 
+  async onRowDelete(item: Project, index: number) {
+    try {
+      await this.deleteItemFromStore(item);
+      await this.itemsCollection.doc(item.id).delete();
+
+      this.items = this.items.filter((currentItem, i) => i !== index);
+    } catch (err) {
+      this.notifyFailedUpdate(err);
+    }
+  }
+
   private subscribeToSearch() {
     this.subcriptions.push(
       this.pubSubService.subscribe(PubSubChannel.Search, (query) => {
@@ -140,6 +151,10 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     }
 
     return this.dbService.update(StoreName.Projects, item).toPromise();
+  }
+
+  private async deleteItemFromStore(item: Project): Promise<Project[]> {
+    return this.dbService.delete(StoreName.Projects, item.id).toPromise();
   }
 
   private notifyFailedUpdate(err: any) {
