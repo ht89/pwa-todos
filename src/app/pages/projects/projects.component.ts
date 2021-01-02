@@ -136,7 +136,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
       item.status = ProjectStatus.Synced;
 
-      // this.store.updateInObjectStore(this.projectsService.entityName, item.id, item);
+      await this.dbService.update(StoreName.Projects, item).toPromise();
       this.updateDisplayedItem(item);
     } catch (err) {
       log.debug(err);
