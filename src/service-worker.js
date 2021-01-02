@@ -1,4 +1,5 @@
-importScripts('https://cdnjs.cloudflare.com/ajax/libs/cache.adderall/1.0.0/cache.adderall.js');
+const adderallURL = 'https://cdnjs.cloudflare.com/ajax/libs/cache.adderall/1.0.0/cache.adderall.js';
+importScripts(adderallURL);
 
 const CACHE_NAME = 'pwa-todos-v1';
 
@@ -15,6 +16,9 @@ const STATIC_FILES = [
   '/assets/app/icons/favicon-16x16.png',
   '/assets/app/icons/todo.png',
   '/assets/app/icons/todo-lg.png',
+
+  // JS
+  adderallURL,
 ];
 
 const MUTABLE_FILES = [
