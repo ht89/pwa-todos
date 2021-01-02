@@ -16,9 +16,6 @@ const STATIC_FILES = [
   '/assets/app/icons/favicon-16x16.png',
   '/assets/app/icons/todo.png',
   '/assets/app/icons/todo-lg.png',
-
-  // JS
-  adderallURL,
 ];
 
 const MUTABLE_FILES = [
@@ -30,6 +27,7 @@ const MUTABLE_FILES = [
   '/polyfills.js',
   '/main.js',
   '/firebase-auth.js',
+  adderallURL,
 
   // CSS
   '/styles.css',
