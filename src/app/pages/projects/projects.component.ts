@@ -55,10 +55,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (navigator.serviceWorker) {
-      detachEventListener(navigator.serviceWorker, 'message', this.onMessageListener);
-    }
-
+    detachEventListener(navigator.serviceWorker, 'message', this.onMessageListener);
     unsubscribe(this.subcriptions);
   }
 
