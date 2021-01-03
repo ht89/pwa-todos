@@ -23,32 +23,9 @@ export const initFirebase = () => {
 /**
  * @returns {Promise<void>}
  */
-export const loginWithGoogle = async () => {
-  const provider = new firebase.auth.GoogleAuthProvider();
+export const loginWithGoogle = () => login(new firebase.auth.GoogleAuthProvider());
 
-  return firebase
-    .auth()
-    .signInWithPopup(provider)
-    .then(async (result) => {
-      /** @type {firebase.auth.OAuthCredential} */
-      const credential = result.credential;
-
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      const token = credential.accessToken;
-      // The signed-in user info.
-      const user = result.user;
-
-      await setUserData(user);
-
-      return (window.location.href = '/');
-    })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-
-      window.alert(`${errorCode}: ${errorMessage}`);
-    });
-};
+export const loginWithFacebook = () => {};
 
 /**
  * @returns {Promise<void>}
@@ -74,6 +51,35 @@ export const isAuthenticated = () => {
 };
 
 /************** Private Functions *********************/
+/**
+ *
+ * @param {*} provider
+ * @returns {Promise<void>}
+ */
+export const login = async (provider) => {
+  return firebase
+    .auth()
+    .signInWithPopup(provider)
+    .then(async (result) => {
+      /** @type {firebase.auth.OAuthCredential} */
+      const credential = result.credential;
+
+      // This gives you a Google Access Token. You can use it to access the Google API.
+      const token = credential.accessToken;
+      // The signed-in user info.
+      const user = result.user;
+
+      await setUserData(user);
+
+      return (window.location.href = '/');
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+
+      window.alert(`${errorCode}: ${errorMessage}`);
+    });
+};
 
 /**
  *
