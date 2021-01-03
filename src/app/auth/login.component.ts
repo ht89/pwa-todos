@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 // App
 import { Logger } from '@core';
-import { loginWithGoogle } from './firebase/custom.js';
+import { loginWithGoogle } from './firebase/index.js';
 
 // Const
 const log = new Logger('Login');

@@ -50,6 +50,13 @@ export const isAuthenticated = () => {
   return user && user.emailVerified;
 };
 
+/**
+ *
+ * @param {*} collection
+ * @return {Promise<any>}
+ */
+export const getDocuments = (collection) => firebase.firestore().collection(collection).get();
+
 /************** Private Functions *********************/
 /**
  *

@@ -2,12 +2,14 @@ import { Injectable } from '@angular/core';
 
 // App
 import { Project } from '@app/pages/projects/projects.model';
-import { Observable, of } from 'rxjs';
 import { StoreName } from '@app/@shared';
 import { Logger } from '@core';
 
 // IndexedDB
-import { NgxIndexedDBService } from 'ngx-indexed-db';
+import { openDatabase } from '@core/indexed-db/index.js';
+
+// Firebase
+import { getDocuments } from '@app/auth/firebase/index.js';
 
 // Const
 const log = new Logger('ProjectsService');
@@ -16,33 +18,41 @@ const log = new Logger('ProjectsService');
 export class ProjectsService {
   readonly entityName = 'projects';
 
-  constructor(private dbService: NgxIndexedDBService) {}
+  constructor() {}
 
   async getItems(): Promise<Project[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const items = await this.dbService.getAll(StoreName.Projects).toPromise();
+        const db = await openDatabase();
+        const items = await db.getAllFromIndex(StoreName.Projects, 'name');
 
         if (items.length > 0) {
           resolve(items);
         } else {
-          this.getDataFromServer().subscribe((serverData: Project[]) => {
-            serverData.forEach(async (item: Project) => {
-              await this.dbService.add(StoreName.Projects, item).toPromise();
-            });
+          const data = await this.getDataFromServer();
 
-            resolve(serverData);
+          const trx = db.transaction(StoreName.Projects, 'readwrite');
+
+          data.forEach(async (item: Project) => {
+            await trx.store.add(item);
           });
+
+          resolve(data);
         }
       } catch (err) {
         log.warn(err);
-        this.getDataFromServer().subscribe((data) => resolve(data));
+        const data = await this.getDataFromServer();
+        resolve(data);
       }
     });
   }
 
-  private getDataFromServer(): Observable<Project[]> {
-    return of([]);
-    // return this.afs.collection<Project>(this.entityName).valueChanges({ idField: 'id' });
+  private async getDataFromServer(): Promise<Project[]> {
+    const docs = await getDocuments(this.entityName);
+    const data: Project[] = [];
+
+    docs.forEach((doc: any) => data.push(doc.data()));
+
+    return data;
   }
 }

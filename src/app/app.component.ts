@@ -6,7 +6,7 @@ import { filter, map, switchMap } from 'rxjs/operators';
 // App
 import { environment } from '@env/environment';
 import { Logger, untilDestroyed } from '@core';
-import { initFirebase } from '@app/auth/firebase/custom.js';
+import { initFirebase } from '@app/auth/firebase/index.js';
 
 // Const
 const log = new Logger('App');
