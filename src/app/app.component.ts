@@ -3,9 +3,12 @@ import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { filter, map, switchMap } from 'rxjs/operators';
 
+// App
 import { environment } from '@env/environment';
 import { Logger, untilDestroyed } from '@core';
+import { initFirebase } from '@app/auth/firebase/custom.js';
 
+// Const
 const log = new Logger('App');
 
 @Component({
@@ -25,6 +28,8 @@ export class AppComponent implements OnInit, OnDestroy {
     log.debug('init');
 
     this.onNavigationEnd();
+
+    initFirebase();
   }
 
   ngOnDestroy() {}

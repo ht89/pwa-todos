@@ -27,7 +27,7 @@ const MUTABLE_FILES = [
   '/runtime.js',
   '/polyfills.js',
   '/main.js',
-  '/firebase-auth.js',
+  // '/firebase-auth.js',
   '/pages-home-home-module.js',
   '/pages-projects-projects-module.js',
 

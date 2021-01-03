@@ -2,12 +2,9 @@ import { Injectable } from '@angular/core';
 
 // App
 import { Project } from '@app/pages/projects/projects.model';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { StoreName } from '@app/@shared';
 import { Logger } from '@core';
-
-// Firebase
-import { AngularFirestore } from '@angular/fire/firestore';
 
 // IndexedDB
 import { NgxIndexedDBService } from 'ngx-indexed-db';
@@ -19,7 +16,7 @@ const log = new Logger('ProjectsService');
 export class ProjectsService {
   readonly entityName = 'projects';
 
-  constructor(private afs: AngularFirestore, private dbService: NgxIndexedDBService) {}
+  constructor(private dbService: NgxIndexedDBService) {}
 
   async getItems(): Promise<Project[]> {
     return new Promise(async (resolve, reject) => {
@@ -45,6 +42,7 @@ export class ProjectsService {
   }
 
   private getDataFromServer(): Observable<Project[]> {
-    return this.afs.collection<Project>(this.entityName).valueChanges({ idField: 'id' });
+    return of([]);
+    // return this.afs.collection<Project>(this.entityName).valueChanges({ idField: 'id' });
   }
 }

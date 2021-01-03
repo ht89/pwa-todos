@@ -8,7 +8,7 @@
     <i class="pi pi-search"></i>
   </div>
 
-  <div *ngIf="authService.userState as user" class="layout-topbar-menu-wrapper">
+  <div *ngIf="user" class="layout-topbar-menu-wrapper">
     <ul class="topbar-menu fadeInDown" [ngClass]="{ 'topbar-menu-active': app.topbarMenuActive }">
       <li class="profile-item" #profile [ngClass]="{ 'active-topmenuitem': app.activeTopbarItem === profile }">
         <a href="#" (click)="app.onTopbarItemClick($event, profile)">

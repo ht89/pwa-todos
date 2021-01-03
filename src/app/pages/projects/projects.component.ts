@@ -3,12 +3,9 @@ import { Subscription } from 'rxjs';
 
 // App
 import { Project, ProjectStatus } from './projects.model';
-import { DBUpgradePayload, detachEventListener, PubSubChannel, StoreName, unsubscribe } from '@app/@shared';
+import { DBUpgradePayload, PubSubChannel, StoreName, unsubscribe } from '@app/@shared';
 import { Logger, PublishSubscribeService } from '@app/@core';
 import { ProjectsService } from './projects.service';
-
-// Firebase
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 
 // Primeng
 import { Table } from 'primeng/table';
@@ -34,11 +31,10 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
   @ViewChild('pt') table: Table;
 
-  private itemsCollection: AngularFirestoreCollection<Project>;
+  // private itemsCollection: AngularFirestoreCollection<Project>;
   private subcriptions: Subscription[] = [];
 
   constructor(
-    private afs: AngularFirestore,
     private pubSubService: PublishSubscribeService<string | DBUpgradePayload>,
     private messageService: MessageService,
     private projectsService: ProjectsService,
@@ -48,7 +44,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.subscribeToSearch();
 
-    this.itemsCollection = this.afs.collection<Project>(this.projectsService.entityName);
+    // this.itemsCollection = this.afs.collection<Project>(this.projectsService.entityName);
     this.items = await this.projectsService.getItems();
   }
 
@@ -57,7 +53,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   onAddBtnClick(): void {
-    const newId = this.afs.createId();
+    const newId = '123';
     const newItem = {
       id: newId,
       name: '',
@@ -103,7 +99,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   async onRowDelete(item: Project, index: number) {
     try {
       await this.deleteItemFromStore(item);
-      await this.itemsCollection.doc(item.id).delete();
+      // await this.itemsCollection.doc(item.id).delete();
 
       this.items = this.items.filter((currentItem, i) => i !== index);
     } catch (err) {
@@ -127,7 +123,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     try {
       item.status = ProjectStatus.Synced;
 
-      await this.itemsCollection.doc(item.id).set(item);
+      // await this.itemsCollection.doc(item.id).set(item);
       await this.dbService.update(StoreName.Projects, item).toPromise();
     } catch (err) {
       this.notifyFailedUpdate(err);

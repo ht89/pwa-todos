@@ -1,7 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+// App
 import { Logger } from '@core';
-import { AuthenticationService } from './authentication.service';
+import { loginWithGoogle } from './firebase/custom.js';
 
+// Const
 const log = new Logger('Login');
 
 @Component({
@@ -10,7 +12,9 @@ const log = new Logger('Login');
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit, OnDestroy {
-  constructor(public authService: AuthenticationService) {}
+  loginWithGoogle = loginWithGoogle;
+
+  constructor() {}
 
   ngOnInit() {}
 

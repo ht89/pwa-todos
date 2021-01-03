@@ -23,9 +23,9 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "aot": true,
-            "assets": ["src/robots.txt", "src/assets", "src/manifest.json"],
+            "assets": ["src/robots.txt", "src/assets", "src/manifest.json", "src/service-worker.js"],
             "styles": ["src/main.scss"],
-            "scripts": ["src/service-worker.js"]
+            "scripts": []
           },
           "configurations": {
             "production": {
