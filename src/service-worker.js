@@ -23,11 +23,13 @@ const MUTABLE_FILES = [
   '/index.html',
 
   // JS
+  adderallURL,
   '/runtime.js',
   '/polyfills.js',
   '/main.js',
   '/firebase-auth.js',
-  adderallURL,
+  '/pages-home-home-module.js',
+  '/pages-projects-projects-module.js',
 
   // CSS
   '/styles.css',
@@ -44,7 +46,7 @@ self.addEventListener('install', (event) => {
 self.addEventListener('fetch', (event) => {
   const requestUrl = new URL(event.request.url);
 
-  if (requestUrl.pathname === '/') {
+  if (['/'].includes(requestUrl.pathname)) {
     this.handlePages(event);
   } else if ([...STATIC_FILES, ...MUTABLE_FILES].includes(requestUrl.pathname)) {
     // Strategy: cache, falling back to network
@@ -73,9 +75,9 @@ const handlePages = (event) => {
   // Stratery: cache, falling back to network w frequent updates
   event.respondWith(
     caches.open(CACHE_NAME).then(async (cache) => {
-      return cache.match('/index.html').then((cachedResponse) => {
-        const fetchPromise = fetch('/index.html').then((networkResponse) => {
-          cache.put('/index.html', networkResponse.clone());
+      return cache.match(event.request).then((cachedResponse) => {
+        const fetchPromise = fetch(event.request).then((networkResponse) => {
+          cache.put(event.request, networkResponse.clone());
           return networkResponse;
         });
 
