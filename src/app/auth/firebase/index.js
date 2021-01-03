@@ -53,9 +53,25 @@ export const isAuthenticated = () => {
 /**
  *
  * @param {*} collection
- * @return {Promise<any>}
+ * @return {Promise<any[]>}
  */
 export const getDocuments = (collection) => firebase.firestore().collection(collection).get();
+
+/**
+ *
+ * @param {*} collection
+ * @param {object} item
+ * @returns {Promise<void>}
+ */
+export const setDocument = (collection, item) => firebase.firestore().collection(collection).doc(item.id).set(item);
+
+/**
+ *
+ * @param {*} collection
+ * @param {string} id
+ * @returns {Promise<void>}
+ */
+export const deleteDocument = (collection, id) => firebase.firestore().collection(collection).doc(id).delete();
 
 /************** Private Functions *********************/
 /**

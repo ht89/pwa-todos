@@ -12,7 +12,10 @@ import { Table } from 'primeng/table';
 import { MessageService } from 'primeng/api';
 
 // IndexedDB
-import { NgxIndexedDBService } from 'ngx-indexed-db';
+import { openDatabase } from '@core/indexed-db/index.js';
+
+// Firebase
+import { deleteDocument, setDocument } from '@app/auth/firebase/index.js';
 
 // Const
 const log = new Logger('Projects');
@@ -31,20 +34,17 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
   @ViewChild('pt') table: Table;
 
-  // private itemsCollection: AngularFirestoreCollection<Project>;
   private subcriptions: Subscription[] = [];
 
   constructor(
     private pubSubService: PublishSubscribeService<string | DBUpgradePayload>,
     private messageService: MessageService,
     private projectsService: ProjectsService,
-    private dbService: NgxIndexedDBService,
   ) {}
 
   async ngOnInit() {
     this.subscribeToSearch();
 
-    // this.itemsCollection = this.afs.collection<Project>(this.projectsService.entityName);
     this.items = await this.projectsService.getItems();
   }
 
@@ -99,7 +99,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   async onRowDelete(item: Project, index: number) {
     try {
       await this.deleteItemFromStore(item);
-      // await this.itemsCollection.doc(item.id).delete();
+      await deleteDocument(this.projectsService.entityName, item.id);
 
       this.items = this.items.filter((currentItem, i) => i !== index);
     } catch (err) {
@@ -123,24 +123,29 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     try {
       item.status = ProjectStatus.Synced;
 
-      // await this.itemsCollection.doc(item.id).set(item);
-      await this.dbService.update(StoreName.Projects, item).toPromise();
+      await setDocument(this.projectsService.entityName, item);
+
+      const db = await openDatabase();
+      await db.put(this.projectsService.entityName, item, item.id);
     } catch (err) {
       this.notifyFailedUpdate(err);
     }
   }
 
   private async modifyItemInStore(item: Project): Promise<number | Project[]> {
-    const items = await this.dbService.getByKey(StoreName.Projects, item.id).toPromise();
-    if (items?.length === 0) {
-      return this.dbService.add(StoreName.Projects, item).toPromise();
+    const db = await openDatabase();
+    const foundItem = await db.get(StoreName.Projects, item.id).toPromise();
+
+    if (foundItem) {
+      return db.add(StoreName.Projects, item).toPromise();
     }
 
-    return this.dbService.update(StoreName.Projects, item).toPromise();
+    return db.put(StoreName.Projects, item).toPromise();
   }
 
   private async deleteItemFromStore(item: Project): Promise<Project[]> {
-    return this.dbService.delete(StoreName.Projects, item.id).toPromise();
+    const db = await openDatabase();
+    return db.put(this.projectsService.entityName, item, item.id);
   }
 
   private notifyFailedUpdate(err: any) {
