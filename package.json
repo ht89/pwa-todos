@@ -29,7 +29,6 @@
     "@angular/service-worker": "^11.0.4",
     "firebase": "^7.0 || ^8.0",
     "idb": "^5.0.8",
-    "ngx-indexed-db": "^6.1.2",
     "primeflex": "2.0.0",
     "primeicons": "4.0.0",
     "primeng": "10.0.3",

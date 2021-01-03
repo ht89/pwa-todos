@@ -11,9 +11,6 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { environment } from '@env/environment';
 
-// IndexedDB
-import { NgxIndexedDBModule } from 'ngx-indexed-db';
-
 // SW
 import { ServiceWorkerModule } from '@angular/service-worker';
 
@@ -29,8 +26,6 @@ import { MessageService } from 'primeng/api';
     CoreModule,
     ShellModule,
     AuthModule,
-    // IndexedDB
-    NgxIndexedDBModule.forRoot(dbConfig),
     // SW
     ServiceWorkerModule.register('../service-worker.js', { enabled: environment.production }),
     // App Routes
