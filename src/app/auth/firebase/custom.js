@@ -12,8 +12,6 @@ export const initFirebase = () => {
   firebase.initializeApp(environment.firebase);
 
   firebase.auth().onAuthStateChanged((user) => {
-    console.log('onAuthStateChanged', user);
-
     if (user) {
       localStorage.setItem('User', JSON.stringify(user));
     } else {
@@ -31,7 +29,7 @@ export const loginWithGoogle = async () => {
   return firebase
     .auth()
     .signInWithPopup(provider)
-    .then((result) => {
+    .then(async (result) => {
       /** @type {firebase.auth.OAuthCredential} */
       const credential = result.credential;
 
@@ -40,7 +38,9 @@ export const loginWithGoogle = async () => {
       // The signed-in user info.
       const user = result.user;
 
-      return setUserData(user);
+      await setUserData(user);
+
+      return (window.location.href = '/');
     })
     .catch((error) => {
       const errorCode = error.code;
