@@ -4,7 +4,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 
 // App
-import { CoreModule, dbConfig } from '@core';
+import { CoreModule } from '@core';
 import { AuthModule } from '@app/auth';
 import { ShellModule } from './shell/shell.module';
 import { AppComponent } from './app.component';

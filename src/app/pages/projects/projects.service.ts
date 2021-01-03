@@ -24,7 +24,7 @@ export class ProjectsService {
     return new Promise(async (resolve, reject) => {
       try {
         const db = await openDatabase();
-        const items = await db.getAllFromIndex(StoreName.Projects, 'name');
+        const items = await db.getAll(StoreName.Projects);
 
         if (items.length > 0) {
           resolve(items);
