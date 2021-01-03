@@ -15,7 +15,7 @@ import { MessageService } from 'primeng/api';
 import { openDatabase } from '@core/indexed-db/index.js';
 
 // Firebase
-import { deleteDocument, setDocument } from '@app/auth/firebase/index.js';
+import { deleteDocument, setDocument, getDocumentRef } from '@app/auth/firebase/index.js';
 
 // Const
 const log = new Logger('Projects');
@@ -52,17 +52,18 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     unsubscribe(this.subcriptions);
   }
 
-  onAddBtnClick(): void {
-    const newId = '123';
+  async onAddBtnClick() {
+    const docRef = getDocumentRef(this.projectsService.collectionName);
+
     const newItem = {
-      id: newId,
+      id: docRef.id,
       name: '',
       status: ProjectStatus.Processing,
     };
 
     this.items.push(newItem);
 
-    setTimeout(() => (this.editingRowKeys[newId] = true), 100);
+    setTimeout(() => (this.editingRowKeys[docRef.id] = true), 100);
   }
 
   onRowEditInit(item: Project) {
@@ -77,7 +78,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     delete this.clonedData[item.id];
 
     try {
-      await this.modifyItemInStore(this.items[index]);
+      await this.updateItemInStore(this.items[index]);
 
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
 
@@ -99,7 +100,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   async onRowDelete(item: Project, index: number) {
     try {
       await this.deleteItemFromStore(item);
-      await deleteDocument(this.projectsService.entityName, item.id);
+      await deleteDocument(this.projectsService.collectionName, item.id);
 
       this.items = this.items.filter((currentItem, i) => i !== index);
     } catch (err) {
@@ -123,29 +124,23 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     try {
       item.status = ProjectStatus.Synced;
 
-      await setDocument(this.projectsService.entityName, item);
+      await setDocument(this.projectsService.collectionName, item);
 
       const db = await openDatabase();
-      await db.put(this.projectsService.entityName, item, item.id);
+      await db.put(StoreName.Projects, item);
     } catch (err) {
       this.notifyFailedUpdate(err);
     }
   }
 
-  private async modifyItemInStore(item: Project): Promise<number | Project[]> {
+  private async updateItemInStore(item: Project): Promise<void> {
     const db = await openDatabase();
-    const foundItem = await db.get(StoreName.Projects, item.id).toPromise();
-
-    if (foundItem) {
-      return db.add(StoreName.Projects, item).toPromise();
-    }
-
-    return db.put(StoreName.Projects, item).toPromise();
+    return db.put(StoreName.Projects, item);
   }
 
-  private async deleteItemFromStore(item: Project): Promise<Project[]> {
+  private async deleteItemFromStore(item: Project): Promise<void> {
     const db = await openDatabase();
-    return db.put(this.projectsService.entityName, item, item.id);
+    return db.delete(StoreName.Projects, item.id);
   }
 
   private notifyFailedUpdate(err: any) {

@@ -60,6 +60,21 @@ export const getDocuments = (collection) => firebase.firestore().collection(coll
 /**
  *
  * @param {*} collection
+ * @returns {DocumentReference}
+ */
+export const getDocumentRef = (collection) => firebase.firestore().collection(collection).doc();
+
+/**
+ *
+ * @param {*} collection
+ * @param {object} item
+ * @returns {Promise<DocumentReference>} return id
+ */
+export const addDocument = (collection, item) => db.collection(collection).add(item);
+
+/**
+ *
+ * @param {*} collection
  * @param {object} item
  * @returns {Promise<void>}
  */

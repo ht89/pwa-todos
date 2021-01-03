@@ -16,7 +16,7 @@ const log = new Logger('ProjectsService');
 
 @Injectable({ providedIn: 'root' })
 export class ProjectsService {
-  readonly entityName = 'projects';
+  readonly collectionName = 'projects';
 
   constructor() {}
 
@@ -48,7 +48,7 @@ export class ProjectsService {
   }
 
   private async getDataFromServer(): Promise<Project[]> {
-    const docs = await getDocuments(this.entityName);
+    const docs = await getDocuments(this.collectionName);
     const data: Project[] = [];
 
     docs.forEach((doc: any) => data.push(doc.data()));
