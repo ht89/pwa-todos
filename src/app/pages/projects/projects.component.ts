@@ -15,7 +15,7 @@ import { MessageService } from 'primeng/api';
 import { openDatabase } from '@core/indexed-db/index.js';
 
 // Firebase
-import { deleteDocument, setDocument, getDocumentRef } from '@app/auth/firebase/index.js';
+import { deleteDocument, setDocument, createDocumentRef } from '@app/auth/firebase/index.js';
 
 // Const
 const log = new Logger('Projects');
@@ -53,7 +53,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   async onAddBtnClick() {
-    const docRef = getDocumentRef(this.projectsService.collectionName);
+    const docRef = createDocumentRef(this.projectsService.collectionName);
 
     const newItem = {
       id: docRef.id,
@@ -121,6 +121,11 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   private async syncItem(item: Project): Promise<void> {
+    if ('serviceWorker' in navigator && 'SyncManager' in window) {
+      navigator.serviceWorker.ready.then((registration) => registration.sync.register('sync-projects'));
+      return;
+    }
+
     try {
       item.status = ProjectStatus.Synced;
 

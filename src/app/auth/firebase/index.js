@@ -62,15 +62,15 @@ export const getDocuments = (collection) => firebase.firestore().collection(coll
  * @param {*} collection
  * @returns {DocumentReference}
  */
-export const getDocumentRef = (collection) => firebase.firestore().collection(collection).doc();
+export const createDocumentRef = (collection) => firebase.firestore().collection(collection).doc();
 
 /**
  *
  * @param {*} collection
- * @param {object} item
- * @returns {Promise<DocumentReference>} return id
+ * @param {string} id
+ * @returns {DocumentReference}
  */
-export const addDocument = (collection, item) => db.collection(collection).add(item);
+export const getDocumentRef = (collection, id) => firebase.firestore().collection(collection).doc(id);
 
 /**
  *
@@ -99,16 +99,8 @@ export const login = async (provider) => {
     .auth()
     .signInWithPopup(provider)
     .then(async (result) => {
-      /** @type {firebase.auth.OAuthCredential} */
-      const credential = result.credential;
-
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      const token = credential.accessToken;
-      // The signed-in user info.
       const user = result.user;
-
       await setUserData(user);
-
       return (window.location.href = '/');
     })
     .catch((error) => {

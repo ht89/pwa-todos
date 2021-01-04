@@ -1,6 +1,10 @@
 const adderallURL = 'https://cdnjs.cloudflare.com/ajax/libs/cache.adderall/1.0.0/cache.adderall.js';
-importScripts(adderallURL);
 
+importScripts(adderallURL);
+importScripts('/app/@core/indexed-db/index.js');
+importScripts('/app/auth/firebase/index.js');
+
+/************ Const ******************/
 const CACHE_NAME = 'pwa-todos-v1';
 
 const STATIC_FILES = [
@@ -38,7 +42,7 @@ const MUTABLE_FILES = [
   '/manifest.json',
 ];
 
-/* Lifecycle Handlers */
+/************ Lifecycle Handlers ******************/
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => adderall.addAll(cache, STATIC_FILES, MUTABLE_FILES)));
 });
@@ -47,7 +51,7 @@ self.addEventListener('fetch', (event) => {
   const requestUrl = new URL(event.request.url);
 
   if (['/'].includes(requestUrl.pathname)) {
-    this.handlePages(event);
+    handlePages(event);
   } else if ([...STATIC_FILES, ...MUTABLE_FILES].includes(requestUrl.pathname)) {
     // Strategy: cache, falling back to network
     event.respondWith(caches.match(event.request).then((response) => response || fetch(event.request)));
@@ -56,8 +60,8 @@ self.addEventListener('fetch', (event) => {
 
 // when installed/waiting SW is ready to become active
 self.addEventListener('activate', (event) => {
-  // delete old cache
   event.waitUntil(
+    // delete old cache
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
@@ -70,7 +74,13 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-/* Functions */
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'sync-projects') {
+    event.waitUntil(syncProjects());
+  }
+});
+
+/***************** Functions ***************/
 const handlePages = (event) => {
   // Stratery: cache, falling back to network w frequent updates
   event.respondWith(
@@ -84,5 +94,30 @@ const handlePages = (event) => {
         return cachedResponse || fetchPromise;
       });
     }),
+  );
+};
+
+const syncProjects = async () => {
+  const db = await openDatabase();
+
+  console.log('Syncing projects');
+
+  return db.getAllFromIndex('projects', 'idx_status', 'Processing').then((projects) =>
+    Promise.all(
+      projects.map(async (project) => {
+        const docRef = getDocumentRef('projects', project.id);
+
+        return docRef
+          .get()
+          .then((doc) => {
+            if (doc.exists) {
+              return db.put('projects', doc.data());
+            }
+
+            return console.log(`Project ${project.name} not found.`);
+          })
+          .catch((err) => console.error(`Error getting document: ${err}`));
+      }),
+    ),
   );
 };
