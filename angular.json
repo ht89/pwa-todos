@@ -23,7 +23,14 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "aot": true,
-            "assets": ["src/robots.txt", "src/assets", "src/manifest.json", "src/service-worker.js"],
+            "assets": [
+              "src/robots.txt",
+              "src/assets",
+              "src/manifest.json",
+              "src/service-worker.js",
+              "src/app/@core/indexed-db/index.js",
+              "src/app/auth/firebase/index.js"
+            ],
             "styles": ["src/main.scss"],
             "scripts": []
           },
