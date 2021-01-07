@@ -21,7 +21,7 @@ export class ProjectsService {
   constructor() {}
 
   async getItems(): Promise<Project[]> {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve) => {
       try {
         const db = await openDatabase();
         const items = await db.getAll(StoreName.Projects);
@@ -51,6 +51,7 @@ export class ProjectsService {
     const docs = await getDocuments(this.collectionName);
     const data: Project[] = [];
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     docs.forEach((doc: any) => data.push(doc.data()));
 
     return data;

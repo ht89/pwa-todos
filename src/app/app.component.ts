@@ -18,7 +18,7 @@ const log = new Logger('App');
 export class AppComponent implements OnInit, OnDestroy {
   constructor(private router: Router, private activatedRoute: ActivatedRoute, private titleService: Title) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     // Setup logger
     if (environment.production) {
       Logger.enableProductionMode();
@@ -29,7 +29,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.onNavigationEnd();
   }
 
-  ngOnDestroy() {}
+  ngOnDestroy(): void {}
 
   private onNavigationEnd() {
     const onNavigationEnd = this.router.events.pipe(filter((event) => event instanceof NavigationEnd));

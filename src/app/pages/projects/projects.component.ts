@@ -42,17 +42,17 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     private projectsService: ProjectsService,
   ) {}
 
-  async ngOnInit() {
+  async ngOnInit(): Promise<void> {
     this.subscribeToSearch();
 
     this.items = await this.projectsService.getItems();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     unsubscribe(this.subcriptions);
   }
 
-  async onAddBtnClick() {
+  async onAddBtnClick(): Promise<void> {
     const docRef = createDocumentRef(this.projectsService.collectionName);
 
     const newItem = {
@@ -66,11 +66,11 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     setTimeout(() => (this.editingRowKeys[docRef.id] = true), 100);
   }
 
-  onRowEditInit(item: Project) {
+  onRowEditInit(item: Project): void {
     this.clonedData[item.id] = { ...item };
   }
 
-  async onRowEditSave(item: Project, index: number) {
+  async onRowEditSave(item: Project, index: number): Promise<void> {
     if (!item.name) {
       return;
     }
@@ -88,7 +88,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     }
   }
 
-  onRowEditCancel(item: Project, index: number) {
+  onRowEditCancel(item: Project, index: number): void {
     this.items[index] = { ...this.clonedData[item.id] };
     delete this.clonedData[item.id];
 
@@ -97,7 +97,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     }
   }
 
-  async onRowDelete(item: Project, index: number) {
+  async onRowDelete(item: Project, index: number): Promise<void> {
     try {
       await this.deleteItemFromStore(item);
       await deleteDocument(this.projectsService.collectionName, item.id);
@@ -148,6 +148,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     return db.delete(StoreName.Projects, item.id);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private notifyFailedUpdate(err: any) {
     log.warn(err);
     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Project update failed.' });

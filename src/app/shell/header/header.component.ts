@@ -22,11 +22,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   constructor(public app: ShellComponent, private pubSubService: PublishSubscribeService<string>) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.subscribeToQueryField();
   }
 
-  ngOnDestroy() {}
+  ngOnDestroy(): void {}
 
   private subscribeToQueryField() {
     this.queryField.valueChanges

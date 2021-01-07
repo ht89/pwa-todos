@@ -4,7 +4,7 @@ var DB_NAME = 'pwa-todos';
 
 const openDatabase = () => {
   return openDB(DB_NAME, DB_VERSION, {
-    upgrade(db, oldVersion, newVersion, transaction) {
+    upgrade(db) {
       var projectStore;
 
       if (!db.objectStoreNames.contains('projects')) {

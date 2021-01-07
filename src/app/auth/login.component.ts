@@ -1,10 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 // App
-import { Logger } from '@core';
 import { loginWithGoogle } from './firebase/common.js';
-
-// Const
-const log = new Logger('Login');
 
 @Component({
   selector: 'app-login',
@@ -16,7 +12,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 
-  ngOnDestroy() {}
+  ngOnDestroy(): void {}
 }
