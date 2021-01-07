@@ -12,10 +12,10 @@ import { Table } from 'primeng/table';
 import { MessageService } from 'primeng/api';
 
 // IndexedDB
-import { openDatabase } from '@core/indexed-db/index.js';
+import { openDatabase } from '@core/indexed-db/common.js';
 
 // Firebase
-import { deleteDocument, setDocument, createDocumentRef } from '@app/auth/firebase/index.js';
+import { deleteDocument, setDocument, createDocumentRef } from '@app/auth/firebase/common.js';
 
 // Const
 const log = new Logger('Projects');

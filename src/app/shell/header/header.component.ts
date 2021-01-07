@@ -6,7 +6,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ShellComponent } from '../shell.component';
 import { PubSubChannel } from '@shared/enums/publish-subscribe';
 import { PublishSubscribeService, untilDestroyed } from '@app/@core';
-import { logout } from '@app/auth/firebase/index.js';
+import { logout } from '@app/auth/firebase/common.js';
 import { getUser } from '@shared/functions/user';
 
 @Component({

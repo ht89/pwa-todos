@@ -1,10 +1,8 @@
-import { openDB, deleteDB } from 'idb';
-
 // Const
 var DB_VERSION = 1;
 var DB_NAME = 'pwa-todos';
 
-export const openDatabase = () => {
+const openDatabase = () => {
   return openDB(DB_NAME, DB_VERSION, {
     upgrade(db, oldVersion, newVersion, transaction) {
       var projectStore;
@@ -34,4 +32,8 @@ export const openDatabase = () => {
       // …
     },
   });
+};
+
+module.exports = {
+  openDatabase,
 };

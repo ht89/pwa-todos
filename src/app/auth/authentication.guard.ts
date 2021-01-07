@@ -3,7 +3,7 @@ import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from
 
 // App
 import { Logger } from '@core';
-import { isAuthenticated } from './firebase/index.js';
+import { isAuthenticated } from './firebase/common.js';
 
 // Const
 const log = new Logger('AuthenticationGuard');

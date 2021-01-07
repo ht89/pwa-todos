@@ -1,8 +1,8 @@
 const adderallURL = 'https://cdnjs.cloudflare.com/ajax/libs/cache.adderall/1.0.0/cache.adderall.js';
 
 importScripts(adderallURL);
-importScripts('/app/@core/indexed-db/index.js');
-importScripts('/app/auth/firebase/index.js');
+importScripts('/app/@core/indexed-db/common.js');
+importScripts('/app/auth/firebase/common.js');
 
 /************ Const ******************/
 const CACHE_NAME = 'pwa-todos-v1';

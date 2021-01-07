@@ -6,10 +6,10 @@ import { StoreName } from '@app/@shared';
 import { Logger } from '@core';
 
 // IndexedDB
-import { openDatabase } from '@core/indexed-db/index.js';
+import { openDatabase } from '@core/indexed-db/common.js';
 
 // Firebase
-import { getDocuments } from '@app/auth/firebase/index.js';
+import { getDocuments } from '@app/auth/firebase/common.js';
 
 // Const
 const log = new Logger('ProjectsService');
