@@ -34,6 +34,8 @@ const openDatabase = () => {
   });
 };
 
-module.exports = {
-  openDatabase,
-};
+if (typeof module !== 'undefined') {
+  module.exports = {
+    openDatabase,
+  };
+}

@@ -108,13 +108,15 @@ const setUserData = (user) => {
   return userRef.set(userState, { merge: true });
 };
 
-module.exports = {
-  loginWithGoogle,
-  logout,
-  isAuthenticated,
-  getDocuments,
-  createDocumentRef,
-  getDocumentRef,
-  setDocument,
-  deleteDocument,
-};
+if (typeof module !== 'undefined') {
+  module.exports = {
+    loginWithGoogle,
+    logout,
+    isAuthenticated,
+    getDocuments,
+    createDocumentRef,
+    getDocumentRef,
+    setDocument,
+    deleteDocument,
+  };
+}
