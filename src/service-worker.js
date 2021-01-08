@@ -1,7 +1,19 @@
 const adderallURL = 'https://cdnjs.cloudflare.com/ajax/libs/cache.adderall/1.0.0/cache.adderall.js';
+const idbURL = 'https://unpkg.com/idb@6.0.0/build/iife/index-min.js';
+const firebaseAppURL = 'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-app.js';
+const firebaseStoreURL = 'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-firestore.js';
+const firebaseAuthURL = 'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-auth.js';
 
+// Imports
 importScripts(adderallURL);
+
+// idb
+importScripts(idbURL);
 importScripts('/app/@core/indexed-db/common.js');
+
+// Firebase
+importScripts(firebaseAppURL);
+importScripts(firebaseStoreURL);
 importScripts('/app/auth/firebase/common.js');
 
 /************ Const ******************/
@@ -29,12 +41,15 @@ const MUTABLE_FILES = [
   /********** JS ****************/
   // 3rd party
   adderallURL,
-  'https://unpkg.com/idb/build/iife/index-min.js',
+  idbURL,
   // App essentials
   '/runtime.js',
   '/polyfills.js',
   '/main.js',
   // Firebase
+  firebaseAppURL,
+  firebaseAuthURL,
+  firebaseStoreURL,
   '/app/auth/firebase/firebase-init.js',
   // App modules
   '/pages-home-home-module.js',
@@ -80,6 +95,7 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('sync', (event) => {
+  console.log(event.tag);
   if (event.tag === 'sync-projects') {
     event.waitUntil(syncProjects());
   }
@@ -102,26 +118,29 @@ const handlePages = (event) => {
 };
 
 const syncProjects = async () => {
-  const db = await openDatabase();
-
   console.log('Syncing projects');
 
-  return db.getAllFromIndex('projects', 'idx_status', 'Processing').then((projects) =>
-    Promise.all(
-      projects.map(async (project) => {
-        const docRef = getDocumentRef('projects', project.id);
+  const db = await openDatabase();
 
-        return docRef
-          .get()
-          .then((doc) => {
-            if (doc.exists) {
-              return db.put('projects', doc.data());
-            }
+  return db
+    .getAllFromIndex('projects', 'idx_status', 'Processing')
+    .then((projects) =>
+      Promise.all(
+        projects.map(async (project) => {
+          const docRef = getDocumentRef('projects', project.id);
 
-            return console.log(`Project ${project.name} not found.`);
-          })
-          .catch((err) => console.error(`Error getting document: ${err}`));
-      }),
-    ),
-  );
+          return docRef
+            .get()
+            .then((doc) => {
+              if (doc.exists) {
+                return db.put('projects', doc.data());
+              }
+
+              return console.log(`Project ${project.name} not found.`);
+            })
+            .catch((err) => console.error(`Error getting document: ${err}`));
+        }),
+      ),
+    )
+    .catch((err) => console.error(err));
 };
