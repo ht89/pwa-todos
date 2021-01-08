@@ -55,7 +55,7 @@ self.addEventListener('install', (event) => {
 self.addEventListener('fetch', (event) => {
   const requestUrl = new URL(event.request.url);
 
-  if (['/'].includes(requestUrl.pathname)) {
+  if (['/', '/home', 'projects'].includes(requestUrl.pathname)) {
     handlePages(event);
   } else if ([...STATIC_FILES, ...MUTABLE_FILES].includes(requestUrl.pathname)) {
     // Strategy: cache, falling back to network
@@ -89,13 +89,12 @@ self.addEventListener('sync', (event) => {
 const handlePages = (event) => {
   // Stratery: cache, falling back to network w frequent updates
   event.respondWith(
-    caches.open(CACHE_NAME).then(async (cache) => {
-      return cache.match(event.request).then((cachedResponse) => {
-        const fetchPromise = fetch(event.request).then((networkResponse) => {
-          cache.put(event.request, networkResponse.clone());
+    caches.open(CACHE_NAME).then(function (cache) {
+      return cache.match('/index.html').then(function (cachedResponse) {
+        var fetchPromise = fetch('/index.html').then(function (networkResponse) {
+          cache.put('/index.html', networkResponse.clone());
           return networkResponse;
         });
-
         return cachedResponse || fetchPromise;
       });
     }),
