@@ -23,22 +23,27 @@ const STATIC_FILES = [
 ];
 
 const MUTABLE_FILES = [
-  // HTML
+  /********** HTML ****************/
   '/index.html',
 
-  // JS
+  /********** JS ****************/
+  // 3rd party
   adderallURL,
+  'https://unpkg.com/idb/build/iife/index-min.js',
+  // App essentials
   '/runtime.js',
   '/polyfills.js',
   '/main.js',
-  // '/firebase-auth.js',
+  // Firebase
+  '/app/auth/firebase/firebase-init.js',
+  // App modules
   '/pages-home-home-module.js',
   '/pages-projects-projects-module.js',
 
-  // CSS
+  /********** CSS ****************/
   '/styles.css',
 
-  // JSON
+  /********** JSON ****************/
   '/manifest.json',
 ];
 
