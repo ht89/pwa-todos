@@ -3,7 +3,7 @@ var DB_VERSION = 1;
 var DB_NAME = 'pwa-todos';
 
 const openDatabase = () => {
-  return openDB(DB_NAME, DB_VERSION, {
+  return idb.openDB(DB_NAME, DB_VERSION, {
     upgrade(db) {
       var projectStore;
 
