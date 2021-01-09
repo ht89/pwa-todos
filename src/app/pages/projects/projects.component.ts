@@ -143,40 +143,34 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     }
   }
 
-  private async syncItems(): Promise<void> {
+  private async syncItems(): Promise<any> {
     try {
       const db = await openDatabase();
 
-      return (
-        db
-          .getAllFromIndex(this.projectsService.collectionName, 'idx_status', ProjectStatus.Processing)
-          .then((projects: Project[]) =>
-            Promise.all(
-              projects.map(async (project) => {
-                const docRef = getDocumentRef(this.projectsService.collectionName, project.id);
+      const projects: Project[] = await db.getAllFromIndex(
+        this.projectsService.collectionName,
+        'idx_status',
+        ProjectStatus.Processing,
+      );
 
-                return (
-                  docRef
-                    .get()
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    .then(async (doc: any) => {
-                      if (doc.exists) {
-                        doc.data().status = ProjectStatus.Synced;
-                        return db.put(this.projectsService.collectionName, doc.data());
-                      }
+      if (projects?.length === 0) {
+        return;
+      }
 
-                      project.status = ProjectStatus.Synced;
-                      await setDocument(this.projectsService.collectionName, project);
-                      return db.put(this.projectsService.collectionName, project);
-                    })
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    .catch(async (err: any) => log.error(`Error getting document: ${err}`))
-                );
-              }),
-            ),
-          )
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .catch((err: any) => log.error(err))
+      return Promise.all(
+        projects.map(async (project) => {
+          const docRef = getDocumentRef(this.projectsService.collectionName, project.id);
+          const doc = await docRef.get();
+
+          if (doc.exists) {
+            doc.data().status = ProjectStatus.Synced;
+            return db.put(this.projectsService.collectionName, doc.data());
+          }
+
+          project.status = ProjectStatus.Synced;
+          await setDocument(this.projectsService.collectionName, project);
+          return db.put(this.projectsService.collectionName, project);
+        }),
       );
     } catch (err) {
       log.error(err);
