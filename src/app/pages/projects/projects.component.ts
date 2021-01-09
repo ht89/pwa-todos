@@ -91,13 +91,8 @@ export class ProjectsComponent implements OnInit, OnDestroy {
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
 
       const syncedItem = await this.projectsService.syncItem(item);
-      if (!syncedItem) {
-        return;
-      }
-
-      const idx = this.items.findIndex((item) => item.id === syncedItem.id);
-      if (idx > -1) {
-        this.items[idx] = syncedItem;
+      if (syncedItem) {
+        this.items[index] = syncedItem;
       }
     } catch (err) {
       this.projectsService.notifyFailedUpdate(err);
