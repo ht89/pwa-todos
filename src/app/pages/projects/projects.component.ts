@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 
 // App
 import { Project, ProjectStatus } from './projects.model';
-import { DBUpgradePayload, PubSubChannel, StoreName, unsubscribe } from '@app/@shared';
+import { DBUpgradePayload, PubSubChannel, unsubscribe } from '@app/@shared';
 import { Logger, PublishSubscribeService } from '@app/@core';
 import { ProjectsService } from './projects.service';
 
@@ -11,11 +11,8 @@ import { ProjectsService } from './projects.service';
 import { Table } from 'primeng/table';
 import { MessageService } from 'primeng/api';
 
-// IndexedDB
-import { openDatabase } from '@core/indexed-db/common.js';
-
 // Firebase
-import { deleteDocument, setDocument, createDocumentRef, getDocumentRef } from '@app/auth/firebase/common.js';
+import { deleteDocument, createDocumentRef } from '@app/auth/firebase/common.js';
 
 // Const
 const log = new Logger('Projects');
