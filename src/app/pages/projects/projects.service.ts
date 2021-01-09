@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 // App
-import { Project } from '@app/pages/projects/projects.model';
+import { Project, ProjectStatus } from '@app/pages/projects/projects.model';
 import { StoreName } from '@app/@shared';
 import { Logger } from '@core';
 
@@ -9,7 +9,10 @@ import { Logger } from '@core';
 import { openDatabase } from '@core/indexed-db/common.js';
 
 // Firebase
-import { getDocuments } from '@app/auth/firebase/common.js';
+import { getDocuments, setDocument } from '@app/auth/firebase/common.js';
+
+// Primeng
+import { MessageService } from 'primeng/api';
 
 // Const
 const log = new Logger('ProjectsService');
@@ -18,7 +21,7 @@ const log = new Logger('ProjectsService');
 export class ProjectsService {
   readonly collectionName = 'projects';
 
-  constructor() {}
+  constructor(private messageService: MessageService) {}
 
   async getItems(): Promise<Project[]> {
     return new Promise(async (resolve) => {
@@ -47,6 +50,32 @@ export class ProjectsService {
     });
   }
 
+  async syncItem({ ...item }: Project): Promise<Project> {
+    item.status = ProjectStatus.Synced;
+
+    await setDocument(this.collectionName, item);
+
+    this.updateItemInStore(item);
+
+    return item;
+  }
+
+  async updateItemInStore(item: Project): Promise<void> {
+    const db = await openDatabase();
+    return db.put(StoreName.Projects, item);
+  }
+
+  async deleteItemFromStore(item: Project): Promise<void> {
+    const db = await openDatabase();
+    return db.delete(StoreName.Projects, item.id);
+  }
+
+  notifyFailedUpdate(err: string): void {
+    log.error(err);
+    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Project update failed.' });
+  }
+
+  /* Private */
   private async getDataFromServer(): Promise<Project[]> {
     const docs = await getDocuments(this.collectionName);
     const data: Project[] = [];

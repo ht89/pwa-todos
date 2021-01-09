@@ -86,13 +86,21 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     delete this.clonedData[item.id];
 
     try {
-      await this.updateItemInStore(this.items[index]);
+      await this.projectsService.updateItemInStore(this.items[index]);
 
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
 
-      this.syncItem(index);
+      const syncedItem = await this.projectsService.syncItem(item);
+      if (!syncedItem) {
+        return;
+      }
+
+      const idx = this.items.findIndex((item) => item.id === syncedItem.id);
+      if (idx > -1) {
+        this.items[idx] = syncedItem;
+      }
     } catch (err) {
-      this.notifyFailedUpdate(err);
+      this.projectsService.notifyFailedUpdate(err);
     }
   }
 
@@ -107,14 +115,14 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
   async onRowDelete(item: Project, index: number): Promise<void> {
     try {
-      await this.deleteItemFromStore(item);
+      await this.projectsService.deleteItemFromStore(item);
       this.items = this.items.filter((currentItem, i) => i !== index);
 
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project deleted.' });
 
       deleteDocument(this.projectsService.collectionName, item.id);
     } catch (err) {
-      this.notifyFailedUpdate(err);
+      this.projectsService.notifyFailedUpdate(err);
     }
   }
 
@@ -128,20 +136,6 @@ export class ProjectsComponent implements OnInit, OnDestroy {
         this.table.filterGlobal(query, 'contains');
       }),
     );
-  }
-
-  private async syncItem(index: number): Promise<void> {
-    try {
-      const item = { ...this.items[index] };
-      item.status = ProjectStatus.Synced;
-
-      await setDocument(this.projectsService.collectionName, item);
-
-      this.updateItemInStore(item);
-      this.items[index] = item;
-    } catch (err) {
-      this.notifyFailedUpdate(err);
-    }
   }
 
   private async syncItems(): Promise<any> {
@@ -176,21 +170,5 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     } catch (err) {
       log.error(err);
     }
-  }
-
-  private async updateItemInStore(item: Project): Promise<void> {
-    const db = await openDatabase();
-    return db.put(StoreName.Projects, item);
-  }
-
-  private async deleteItemFromStore(item: Project): Promise<void> {
-    const db = await openDatabase();
-    return db.delete(StoreName.Projects, item.id);
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private notifyFailedUpdate(err: any) {
-    log.error(err);
-    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Project update failed.' });
   }
 }
