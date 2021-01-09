@@ -46,13 +46,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     this.subscribeToSearch();
 
     this.items = await this.projectsService.getItems();
-
-    try {
-      await this.syncItems();
-      this.items = await this.projectsService.getItems();
-    } catch (err) {
-      log.error(err);
-    }
+    this.syncItems();
   }
 
   ngOnDestroy(): void {
@@ -133,35 +127,10 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     );
   }
 
-  private async syncItems(): Promise<any> {
+  private async syncItems() {
     try {
-      const db = await openDatabase();
-
-      const projects: Project[] = await db.getAllFromIndex(
-        this.projectsService.collectionName,
-        'idx_status',
-        ProjectStatus.Processing,
-      );
-
-      if (projects?.length === 0) {
-        return;
-      }
-
-      return Promise.all(
-        projects.map(async (project) => {
-          const docRef = getDocumentRef(this.projectsService.collectionName, project.id);
-          const doc = await docRef.get();
-
-          if (doc.exists) {
-            doc.data().status = ProjectStatus.Synced;
-            return db.put(this.projectsService.collectionName, doc.data());
-          }
-
-          project.status = ProjectStatus.Synced;
-          await setDocument(this.projectsService.collectionName, project);
-          return db.put(this.projectsService.collectionName, project);
-        }),
-      );
+      await this.projectsService.syncItems();
+      this.items = await this.projectsService.getItems();
     } catch (err) {
       log.error(err);
     }

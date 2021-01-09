@@ -9,7 +9,7 @@ import { Logger } from '@core';
 import { openDatabase } from '@core/indexed-db/common.js';
 
 // Firebase
-import { getDocuments, setDocument } from '@app/auth/firebase/common.js';
+import { getDocuments, setDocument, getDocumentRef } from '@app/auth/firebase/common.js';
 
 // Primeng
 import { MessageService } from 'primeng/api';
@@ -58,6 +58,32 @@ export class ProjectsService {
     this.updateItemInStore(item);
 
     return item;
+  }
+
+  async syncItems(): Promise<Project[]> {
+    const db = await openDatabase();
+
+    const projects: Project[] = await db.getAllFromIndex(this.collectionName, 'idx_status', ProjectStatus.Processing);
+
+    if (projects?.length === 0) {
+      throw 'No pending projects.';
+    }
+
+    return Promise.all(
+      projects.map(async (project) => {
+        const docRef = getDocumentRef(this.collectionName, project.id);
+        const doc = await docRef.get();
+
+        if (doc.exists) {
+          doc.data().status = ProjectStatus.Synced;
+          return db.put(this.collectionName, doc.data());
+        }
+
+        project.status = ProjectStatus.Synced;
+        await setDocument(this.collectionName, project);
+        return db.put(this.collectionName, project);
+      }),
+    );
   }
 
   async updateItemInStore(item: Project): Promise<void> {
