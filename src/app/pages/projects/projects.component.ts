@@ -65,7 +65,6 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     const newItem = {
       id: docRef.id,
       name: '',
-      status: ProjectStatus.Processing,
     };
 
     this.items.push(newItem);
@@ -74,6 +73,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   onRowEditInit(item: Project): void {
+    item.status = ProjectStatus.Processing;
     this.clonedData[item.id] = { ...item };
   }
 
@@ -89,7 +89,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
 
-      this.syncItem(this.items[index]);
+      this.syncItem(index);
     } catch (err) {
       this.notifyFailedUpdate(err);
     }
@@ -127,14 +127,15 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     );
   }
 
-  private async syncItem(item: Project): Promise<void> {
+  private async syncItem(index: number): Promise<void> {
     try {
-      await setDocument(this.projectsService.collectionName, {
-        ...item,
-        status: ProjectStatus.Synced,
-      });
-
+      const item = { ...this.items[index] };
       item.status = ProjectStatus.Synced;
+
+      await setDocument(this.projectsService.collectionName, item);
+
+      this.updateItemInStore(item);
+      this.items[index] = item;
     } catch (err) {
       this.notifyFailedUpdate(err);
     }
