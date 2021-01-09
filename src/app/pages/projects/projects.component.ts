@@ -15,7 +15,7 @@ import { MessageService } from 'primeng/api';
 import { openDatabase } from '@core/indexed-db/common.js';
 
 // Firebase
-import { deleteDocument, setDocument, createDocumentRef } from '@app/auth/firebase/common.js';
+import { deleteDocument, setDocument, createDocumentRef, getDocumentRef } from '@app/auth/firebase/common.js';
 
 // Const
 const log = new Logger('Projects');
@@ -46,6 +46,13 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     this.subscribeToSearch();
 
     this.items = await this.projectsService.getItems();
+
+    try {
+      await this.syncItems();
+      this.items = await this.projectsService.getItems();
+    } catch (err) {
+      log.error(err);
+    }
   }
 
   ngOnDestroy(): void {
@@ -121,20 +128,55 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   private async syncItem(item: Project): Promise<void> {
-    if ('serviceWorker' in navigator && 'SyncManager' in window) {
-      navigator.serviceWorker.ready.then((registration) => registration.sync.register('sync-projects'));
-      return;
-    }
-
     try {
+      await setDocument(this.projectsService.collectionName, {
+        ...item,
+        status: ProjectStatus.Synced,
+      });
+
       item.status = ProjectStatus.Synced;
-
-      await setDocument(this.projectsService.collectionName, item);
-
-      const db = await openDatabase();
-      await db.put(StoreName.Projects, item);
     } catch (err) {
       this.notifyFailedUpdate(err);
+    }
+  }
+
+  private async syncItems(): Promise<void> {
+    try {
+      const db = await openDatabase();
+
+      return (
+        db
+          .getAllFromIndex(this.projectsService.collectionName, 'idx_status', ProjectStatus.Processing)
+          .then((projects: Project[]) =>
+            Promise.all(
+              projects.map(async (project) => {
+                const docRef = getDocumentRef(this.projectsService.collectionName, project.id);
+
+                return (
+                  docRef
+                    .get()
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    .then(async (doc: any) => {
+                      if (doc.exists) {
+                        doc.data().status = ProjectStatus.Synced;
+                        return db.put(this.projectsService.collectionName, doc.data());
+                      }
+
+                      project.status = ProjectStatus.Synced;
+                      await setDocument(this.projectsService.collectionName, project);
+                      return db.put(this.projectsService.collectionName, project);
+                    })
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    .catch(async (err: any) => log.error(`Error getting document: ${err}`))
+                );
+              }),
+            ),
+          )
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .catch((err: any) => log.error(err))
+      );
+    } catch (err) {
+      log.error(err);
     }
   }
 
@@ -150,7 +192,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private notifyFailedUpdate(err: any) {
-    log.warn(err);
+    log.error(err);
     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Project update failed.' });
   }
 }

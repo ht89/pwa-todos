@@ -40,7 +40,7 @@ export class ProjectsService {
           resolve(data);
         }
       } catch (err) {
-        log.warn(err);
+        log.error(err);
         const data = await this.getDataFromServer();
         resolve(data);
       }

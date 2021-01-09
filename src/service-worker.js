@@ -1,20 +1,6 @@
 const adderallURL = 'https://cdnjs.cloudflare.com/ajax/libs/cache.adderall/1.0.0/cache.adderall.js';
-const idbURL = 'https://unpkg.com/idb@6.0.0/build/iife/index-min.js';
-const firebaseAppURL = 'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-app.js';
-const firebaseStoreURL = 'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-firestore.js';
-const firebaseAuthURL = 'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-auth.js';
 
-// Imports
 importScripts(adderallURL);
-
-// idb
-importScripts(idbURL);
-importScripts('/app/@core/indexed-db/common.js');
-
-// Firebase
-importScripts(firebaseAppURL);
-importScripts(firebaseStoreURL);
-importScripts('/app/auth/firebase/common.js');
 
 /************ Const ******************/
 const CACHE_NAME = 'pwa-todos-v1';
@@ -41,15 +27,16 @@ const MUTABLE_FILES = [
   /********** JS ****************/
   // 3rd party
   adderallURL,
-  idbURL,
   // App essentials
   '/runtime.js',
   '/polyfills.js',
   '/main.js',
+  // idb
+  'https://unpkg.com/idb@6.0.0/build/iife/index-min.js',
   // Firebase
-  firebaseAppURL,
-  firebaseAuthURL,
-  firebaseStoreURL,
+  'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-app.js',
+  'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-auth.js',
+  'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-firestore.js',
   '/app/auth/firebase/firebase-init.js',
   // App modules
   '/pages-home-home-module.js',
@@ -94,13 +81,6 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-self.addEventListener('sync', (event) => {
-  console.log(event.tag);
-  if (event.tag === 'sync-projects') {
-    event.waitUntil(syncProjects());
-  }
-});
-
 /***************** Functions ***************/
 const handlePages = (event) => {
   // Stratery: cache, falling back to network w frequent updates
@@ -115,32 +95,4 @@ const handlePages = (event) => {
       });
     }),
   );
-};
-
-const syncProjects = async () => {
-  console.log('Syncing projects');
-
-  const db = await openDatabase();
-
-  return db
-    .getAllFromIndex('projects', 'idx_status', 'Processing')
-    .then((projects) =>
-      Promise.all(
-        projects.map(async (project) => {
-          const docRef = getDocumentRef('projects', project.id);
-
-          return docRef
-            .get()
-            .then((doc) => {
-              if (doc.exists) {
-                return db.put('projects', doc.data());
-              }
-
-              return console.log(`Project ${project.name} not found.`);
-            })
-            .catch((err) => console.error(`Error getting document: ${err}`));
-        }),
-      ),
-    )
-    .catch((err) => console.error(err));
 };
