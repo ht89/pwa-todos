@@ -54,7 +54,6 @@ export class ProjectsService {
     item.status = ProjectStatus.Synced;
 
     await setDocument(this.collectionName, item);
-
     this.updateItemInStore(item);
 
     return item;
