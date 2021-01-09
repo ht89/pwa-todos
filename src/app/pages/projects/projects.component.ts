@@ -107,9 +107,11 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   async onRowDelete(item: Project, index: number): Promise<void> {
     try {
       await this.deleteItemFromStore(item);
-      await deleteDocument(this.projectsService.collectionName, item.id);
-
       this.items = this.items.filter((currentItem, i) => i !== index);
+
+      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project deleted.' });
+
+      deleteDocument(this.projectsService.collectionName, item.id);
     } catch (err) {
       this.notifyFailedUpdate(err);
     }
