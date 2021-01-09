@@ -1,7 +1,7 @@
 export interface Project {
   id: string;
   name: string;
-  status?: ProjectStatus;
+  status: ProjectStatus;
 }
 
 export enum ProjectStatus {

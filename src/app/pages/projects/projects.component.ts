@@ -65,6 +65,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     const newItem = {
       id: docRef.id,
       name: '',
+      status: ProjectStatus.Processing,
     };
 
     this.items.push(newItem);
