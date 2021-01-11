@@ -4,10 +4,10 @@ import { Shell } from '@app/shell/shell.service';
 
 const routes: Routes = [
   Shell.childRoutes([
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
+    { path: '', redirectTo: 'tasks', pathMatch: 'full' },
     {
-      path: 'home',
-      loadChildren: () => import('./pages/home/home.module').then((m) => m.HomeModule),
+      path: 'tasks',
+      loadChildren: () => import('./pages/tasks/tasks.module').then((m) => m.TasksModule),
     },
     {
       path: 'projects',

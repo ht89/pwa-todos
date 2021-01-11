@@ -1,0 +1,12 @@
+<p-table #pt [value]="items" dataKey="id" editMode="row" [globalFilterFields]="['name']">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Name</th>
+
+      <th>Status</th>
+
+      <th style="width: 8rem"></th>
+    </tr> </ng-template
+></p-table>
+
+<app-add-btn (clickBtn)="onAddBtnClick()"></app-add-btn>
