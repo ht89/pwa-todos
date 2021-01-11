@@ -59,6 +59,7 @@ export class TasksComponent implements OnInit {
         } else {
           const previousRowData = this.items[i - 1];
           const previousRowGroup = previousRowData.projectId;
+
           if (projectId === previousRowGroup) this.rowGroupMetadata[projectId].size++;
           else this.rowGroupMetadata[projectId] = { index: i, size: 1 };
         }
