@@ -1,5 +1,6 @@
 export interface Task {
-  taskNumber: number;
+  id: string;
+  taskNumber: string;
   name: string;
   status: TaskStatus;
   projectId: string;

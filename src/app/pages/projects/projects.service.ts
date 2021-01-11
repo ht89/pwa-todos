@@ -19,8 +19,6 @@ const log = new Logger('ProjectsService');
 
 @Injectable({ providedIn: 'root' })
 export class ProjectsService {
-  readonly collectionName = 'projects';
-
   constructor(private messageService: MessageService) {}
 
   async getItems(): Promise<Project[]> {
@@ -53,7 +51,7 @@ export class ProjectsService {
   async syncItem({ ...item }: Project): Promise<Project> {
     item.status = ProjectStatus.Synced;
 
-    await setDocument(this.collectionName, item);
+    await setDocument(StoreName.Projects, item);
     this.updateItemInStore(item);
 
     return item;
@@ -62,7 +60,7 @@ export class ProjectsService {
   async syncItems(): Promise<Project[]> {
     const db = await openDatabase();
 
-    const projects: Project[] = await db.getAllFromIndex(this.collectionName, 'idx_status', ProjectStatus.Processing);
+    const projects: Project[] = await db.getAllFromIndex(StoreName.Projects, 'idx_status', ProjectStatus.Processing);
 
     if (projects?.length === 0) {
       throw 'No pending projects.';
@@ -70,17 +68,17 @@ export class ProjectsService {
 
     return Promise.all(
       projects.map(async (project) => {
-        const docRef = getDocumentRef(this.collectionName, project.id);
+        const docRef = getDocumentRef(StoreName.Projects, project.id);
         const doc = await docRef.get();
 
         if (doc.exists) {
           doc.data().status = ProjectStatus.Synced;
-          return db.put(this.collectionName, doc.data());
+          return db.put(StoreName.Projects, doc.data());
         }
 
         project.status = ProjectStatus.Synced;
-        await setDocument(this.collectionName, project);
-        return db.put(this.collectionName, project);
+        await setDocument(StoreName.Projects, project);
+        return db.put(StoreName.Projects, project);
       }),
     );
   }
@@ -102,7 +100,7 @@ export class ProjectsService {
 
   /* Private */
   private async getDataFromServer(): Promise<Project[]> {
-    const docs = await getDocuments(this.collectionName);
+    const docs = await getDocuments(StoreName.Projects);
     const data: Project[] = [];
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

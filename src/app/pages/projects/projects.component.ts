@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 
 // App
 import { Project, ProjectStatus } from './projects.model';
-import { DBUpgradePayload, PubSubChannel, unsubscribe } from '@app/@shared';
+import { DBUpgradePayload, PubSubChannel, StoreName, unsubscribe } from '@app/@shared';
 import { Logger, PublishSubscribeService } from '@app/@core';
 import { ProjectsService } from './projects.service';
 
@@ -31,7 +31,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
   @ViewChild('pt') table: Table;
 
-  private subcriptions: Subscription[] = [];
+  private subscriptions: Subscription[] = [];
 
   constructor(
     private pubSubService: PublishSubscribeService<string | DBUpgradePayload>,
@@ -47,11 +47,11 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    unsubscribe(this.subcriptions);
+    unsubscribe(this.subscriptions);
   }
 
   async onAddBtnClick(): Promise<void> {
-    const docRef = createDocumentRef(this.projectsService.collectionName);
+    const docRef = createDocumentRef(StoreName.Projects);
 
     const newItem = {
       id: docRef.id,
@@ -106,14 +106,14 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project deleted.' });
 
-      deleteDocument(this.projectsService.collectionName, item.id);
+      deleteDocument(StoreName.Projects, item.id);
     } catch (err) {
       this.projectsService.notifyFailedUpdate(err);
     }
   }
 
   private subscribeToSearch() {
-    this.subcriptions.push(
+    this.subscriptions.push(
       this.pubSubService.subscribe(PubSubChannel.Search, (query) => {
         if (query === undefined || query === null) {
           return;
