@@ -28,6 +28,7 @@ export class TasksComponent implements OnInit {
     this.subscribeToSearch();
 
     this.items = await this.tasksService.getItems();
+    this.updateRowGroupMetaData();
     // this.syncItems();
   }
 
@@ -43,5 +44,25 @@ export class TasksComponent implements OnInit {
         this.table.filterGlobal(query, 'contains');
       }),
     );
+  }
+
+  private updateRowGroupMetaData() {
+    this.rowGroupMetadata = {};
+
+    if (this.items) {
+      for (let i = 0; i < this.items.length; i++) {
+        const rowData = this.items[i];
+        const projectId = rowData.projectId;
+
+        if (i == 0) {
+          this.rowGroupMetadata[projectId] = { index: 0, size: 1 };
+        } else {
+          const previousRowData = this.items[i - 1];
+          const previousRowGroup = previousRowData.projectId;
+          if (projectId === previousRowGroup) this.rowGroupMetadata[projectId].size++;
+          else this.rowGroupMetadata[projectId] = { index: i, size: 1 };
+        }
+      }
+    }
   }
 }

@@ -6,19 +6,9 @@
   [globalFilterFields]="['name', 'taskNumber']"
   dataKey="projectId"
 >
-  <ng-template pTemplate="header">
-    <tr>
-      <th>Name</th>
-
-      <th>Status</th>
-
-      <th style="width: 8rem"></th>
-    </tr>
-  </ng-template>
-
   <ng-template pTemplate="body" let-item let-rowIndex="rowIndex" let-expanded="expanded">
     <tr *ngIf="rowGroupMetadata[item.projectId].index === rowIndex">
-      <td colspan="5">
+      <td>
         <button
           type="button"
           pButton
