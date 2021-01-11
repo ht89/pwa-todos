@@ -10,6 +10,7 @@ import { Task } from './tasks.model';
 })
 export class TasksComponent implements OnInit {
   items: Task[] = [];
+  rowGroupMetadata: { [projectId: string]: { index: number; size: number } } = {};
 
   constructor() {}
 

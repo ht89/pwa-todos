@@ -8,9 +8,10 @@ import { TasksComponent } from './tasks.component';
 
 // Primeng
 import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
 
 @NgModule({
-  imports: [CommonModule, SharedModule, TasksRoutingModule, TableModule],
+  imports: [CommonModule, SharedModule, TasksRoutingModule, TableModule, ButtonModule],
   declarations: [TasksComponent],
 })
 export class TasksModule {}
