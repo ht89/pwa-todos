@@ -36,7 +36,13 @@
       </td>
 
       <td class="task__cell">
-        <span class="task__status" [class]="'item-badge status-' + item.status">{{ item.status }}</span>
+        <i
+          class="task__status pi"
+          [ngClass]="{
+            'pi-clock': item.status === TaskStatus.InProgress,
+            'pi-check': item.status === TaskStatus.Done
+          }"
+        ></i>
       </td>
     </tr>
   </ng-template>

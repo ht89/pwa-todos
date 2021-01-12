@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 // App
-import { Task } from './tasks.model';
+import { Task, TaskStatus } from './tasks.model';
 import { Logger, PublishSubscribeService } from '@app/@core';
 import { PubSubChannel } from '@app/@shared';
 import { TasksService } from './tasks.service';
@@ -25,6 +25,8 @@ export class TasksComponent implements OnInit {
   @ViewChild('pt') table: Table;
 
   subscriptions: Subscription[] = [];
+
+  TaskStatus = TaskStatus;
 
   constructor(
     private tasksService: TasksService,
