@@ -4,3 +4,13 @@
     display: inline-block;
   }
 }
+
+.task {
+  &__number {
+    color: var(--text-color-secondary);
+  }
+
+  &__name {
+    text-transform: capitalize;
+  }
+}

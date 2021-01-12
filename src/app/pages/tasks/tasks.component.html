@@ -26,17 +26,17 @@
   </ng-template>
 
   <ng-template pTemplate="rowexpansion" let-item>
-    <tr>
-      <td>
-        <span>#{{ item.taskNumber }}</span>
+    <tr class="task">
+      <td class="task__cell">
+        <span class="task__number">#{{ item.taskNumber }}</span>
       </td>
 
-      <td>
-        <span>{{ item.name }}</span>
+      <td class="task__cell">
+        <span class="task__name">{{ item.name }}</span>
       </td>
 
-      <td>
-        <span [class]="'item-badge status-' + item.status">{{ item.status }}</span>
+      <td class="task__cell">
+        <span class="task__status" [class]="'item-badge status-' + item.status">{{ item.status }}</span>
       </td>
     </tr>
   </ng-template>
