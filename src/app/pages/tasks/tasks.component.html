@@ -9,7 +9,7 @@
 >
   <ng-template pTemplate="body" let-item let-rowIndex="rowIndex" let-expanded="expanded">
     <tr class="task-project" *ngIf="rowGroupMetadata[item.projectId].index === rowIndex">
-      <td class="task-project__cell">
+      <td class="task-project__cell" colspan="5">
         <button
           class="task-project__btn"
           type="button"
@@ -20,7 +20,7 @@
           [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
         ></button>
 
-        <span class="task-project__name p-text-bold p-ml-2">{{ item.projectId }}</span>
+        <h4 class="task-project__name p-ml-2 p-my-0">{{ item.projectId }}</h4>
       </td>
     </tr>
   </ng-template>
@@ -29,6 +29,9 @@
     <tr>
       <td>
         <span>#{{ item.taskNumber }}</span>
+      </td>
+
+      <td>
         <span>{{ item.name }}</span>
       </td>
 
