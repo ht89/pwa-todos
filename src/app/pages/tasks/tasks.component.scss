@@ -1,16 +1,5 @@
-.container {
-  text-align: center;
-  padding: 1em;
-  border-radius: 0.5em;
-}
-
-.logo {
-  width: 100px;
-  vertical-align: middle;
-}
-
-q {
-  font-style: italic;
-  font-size: 1.2rem;
-  quotes: "« " " »";
+.task-project {
+  &__name {
+    line-height: 2.357rem;
+  }
 }

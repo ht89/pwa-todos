@@ -1,5 +1,6 @@
 <p-table
   #pt
+  tableStyleClass="tasks-table"
   [value]="items"
   dataKey="id"
   editMode="row"
@@ -7,9 +8,10 @@
   dataKey="projectId"
 >
   <ng-template pTemplate="body" let-item let-rowIndex="rowIndex" let-expanded="expanded">
-    <tr *ngIf="rowGroupMetadata[item.projectId].index === rowIndex">
-      <td>
+    <tr class="task-project" *ngIf="rowGroupMetadata[item.projectId].index === rowIndex">
+      <td class="task-project__cell">
         <button
+          class="task-project__btn"
           type="button"
           pButton
           pRipple
@@ -18,7 +20,7 @@
           [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
         ></button>
 
-        <span class="p-text-bold p-ml-2">{{ item.projectId }}</span>
+        <span class="task-project__name p-text-bold p-ml-2">{{ item.projectId }}</span>
       </td>
     </tr>
   </ng-template>
