@@ -3,12 +3,16 @@ import { Subscription } from 'rxjs';
 
 // App
 import { Task } from './tasks.model';
-import { PublishSubscribeService } from '@app/@core';
+import { Logger, PublishSubscribeService } from '@app/@core';
 import { PubSubChannel } from '@app/@shared';
 import { TasksService } from './tasks.service';
+import { ProjectsService } from '../projects/projects.service';
 
 // Primeng
 import { Table } from 'primeng/table';
+
+// const
+const log = new Logger('Tasks');
 
 @Component({
   selector: 'app-tasks',
@@ -22,13 +26,18 @@ export class TasksComponent implements OnInit {
 
   subscriptions: Subscription[] = [];
 
-  constructor(private tasksService: TasksService, private pubSubService: PublishSubscribeService<string>) {}
+  constructor(
+    private tasksService: TasksService,
+    private projectsService: ProjectsService,
+    private pubSubService: PublishSubscribeService<string>,
+  ) {}
 
   async ngOnInit(): Promise<void> {
     this.subscribeToSearch();
 
     this.items = await this.tasksService.getItems();
     this.updateRowGroupMetaData();
+    this.setProjectNames();
     // this.syncItems();
   }
 
@@ -44,6 +53,29 @@ export class TasksComponent implements OnInit {
         this.table.filterGlobal(query, 'contains');
       }),
     );
+  }
+
+  private async setProjectNames() {
+    try {
+      const projects = await this.projectsService.getItems();
+      if (projects?.length === 0) {
+        return;
+      }
+
+      this.items = this.items.map((item) => {
+        const foundProject = projects.find((project) => project.id === item.projectId);
+        if (!foundProject) {
+          return item;
+        }
+
+        return {
+          ...item,
+          projectName: foundProject.name,
+        };
+      });
+    } catch (err) {
+      log.warn(err);
+    }
   }
 
   private updateRowGroupMetaData() {

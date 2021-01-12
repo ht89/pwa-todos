@@ -39,7 +39,7 @@ export class TasksService {
           resolve(data);
         }
       } catch (err) {
-        log.error(err);
+        log.warn(err);
         const data = await this.getDataFromServer();
         resolve(data);
       }

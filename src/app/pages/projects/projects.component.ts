@@ -129,7 +129,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
       await this.projectsService.syncItems();
       this.items = await this.projectsService.getItems();
     } catch (err) {
-      log.error(err);
+      log.warn(err);
     }
   }
 }

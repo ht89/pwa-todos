@@ -41,7 +41,7 @@ export class ProjectsService {
           resolve(data);
         }
       } catch (err) {
-        log.error(err);
+        log.warn(err);
         const data = await this.getDataFromServer();
         resolve(data);
       }
@@ -94,7 +94,7 @@ export class ProjectsService {
   }
 
   notifyFailedUpdate(err: string): void {
-    log.error(err);
+    log.warn(err);
     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Project update failed.' });
   }
 
