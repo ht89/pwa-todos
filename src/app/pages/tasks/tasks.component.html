@@ -14,13 +14,14 @@
       </td>
 
       <td class="task__cell">
-        <i
-          class="task__status pi"
+        <span
+          class="task__status p-tag p-tag-info"
           [ngClass]="{
-            'pi-clock': item.status === TaskStatus.InProgress,
-            'pi-check': item.status === TaskStatus.Done
+            'p-tag-warning': item.status === TaskStatus.InProgress,
+            'p-tag-success': item.status === TaskStatus.Done
           }"
-        ></i>
+          >{{ item.status }}</span
+        >
       </td>
     </tr>
   </ng-template>
