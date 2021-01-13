@@ -2,7 +2,7 @@
   <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
     <tr class="task-project" *ngIf="rowGroupMetadata[item.projectId].index === rowIndex">
       <td class="task-project__cell" colspan="5">
-        <h4 class="task-project__name p-ml-2 p-my-0">{{ item.projectName }}</h4>
+        <h4 class="task-project__name p-my-0">{{ item.projectName }}</h4>
       </td>
     </tr>
 
