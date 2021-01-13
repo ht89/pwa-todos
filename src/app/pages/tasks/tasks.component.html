@@ -1,23 +1,11 @@
 <p-table #pt tableStyleClass="tasks-table" [value]="items" [globalFilterFields]="['name', 'taskNumber']" dataKey="id">
-  <ng-template pTemplate="body" let-item let-rowIndex="rowIndex" let-expanded="expanded">
+  <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
     <tr class="task-project" *ngIf="rowGroupMetadata[item.projectId].index === rowIndex">
       <td class="task-project__cell" colspan="5">
-        <button
-          class="task-project__btn"
-          type="button"
-          pButton
-          pRipple
-          [pRowToggler]="item"
-          class="p-button-text p-button-rounded p-button-plain p-mr-2"
-          [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
-        ></button>
-
         <h4 class="task-project__name p-ml-2 p-my-0">{{ item.projectName }}</h4>
       </td>
     </tr>
-  </ng-template>
 
-  <ng-template pTemplate="rowexpansion" let-item>
     <tr class="task">
       <td class="task__cell" colspan="2">
         <span class="task__number">#{{ item.taskNumber }}</span>
