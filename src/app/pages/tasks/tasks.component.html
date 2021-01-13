@@ -1,12 +1,4 @@
-<p-table
-  #pt
-  tableStyleClass="tasks-table"
-  [value]="items"
-  dataKey="id"
-  editMode="row"
-  [globalFilterFields]="['name', 'taskNumber']"
-  dataKey="projectId"
->
+<p-table #pt tableStyleClass="tasks-table" [value]="items" [globalFilterFields]="['name', 'taskNumber']" dataKey="id">
   <ng-template pTemplate="body" let-item let-rowIndex="rowIndex" let-expanded="expanded">
     <tr class="task-project" *ngIf="rowGroupMetadata[item.projectId].index === rowIndex">
       <td class="task-project__cell" colspan="5">
@@ -27,12 +19,10 @@
 
   <ng-template pTemplate="rowexpansion" let-item>
     <tr class="task">
-      <td class="task__cell">
+      <td class="task__cell" colspan="2">
         <span class="task__number">#{{ item.taskNumber }}</span>
-      </td>
 
-      <td class="task__cell">
-        <span class="task__name">{{ item.name }}</span>
+        <span class="task__name p-ml-2">{{ item.name }}</span>
       </td>
 
       <td class="task__cell">
