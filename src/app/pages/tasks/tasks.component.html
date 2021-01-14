@@ -1,13 +1,15 @@
 <p-table #pt tableStyleClass="tasks-table" [value]="items" [globalFilterFields]="['name', 'taskNumber']" dataKey="id">
   <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
     <tr class="task-project" *ngIf="rowGroupMetadata[item.projectId].index === rowIndex">
-      <td class="task-project__cell" colspan="5">
+      <td class="task-project__cell">
         <h4 class="task-project__name p-my-0">{{ item.projectName }}</h4>
       </td>
+
+      <td></td>
     </tr>
 
     <tr class="task">
-      <td class="task__cell" colspan="2">
+      <td class="task__cell">
         <span class="task__number">#{{ item.taskNumber }}</span>
 
         <span class="task__name p-ml-2">{{ item.name }}</span>
@@ -23,6 +25,30 @@
           >{{ item.status }}</span
         >
       </td>
+
+      <!-- <td style="text-align: center">
+        <ng-container>
+          <button
+            pButton
+            pRipple
+            type="button"
+            pInitEditableRow
+            icon="pi pi-pencil"
+            (click)="onRowEditInit(item)"
+            class="p-button-rounded p-button-text"
+          ></button>
+
+          <button
+            pButton
+            pRipple
+            type="button"
+            pInitEditableRow
+            icon="pi pi-trash"
+            (click)="onRowDelete(item, ri)"
+            class="p-button-rounded p-button-text"
+          ></button>
+        </ng-container>
+      </td> -->
     </tr>
   </ng-template>
 </p-table>

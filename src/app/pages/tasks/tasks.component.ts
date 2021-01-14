@@ -20,9 +20,11 @@ const log = new Logger('Tasks');
   styleUrls: ['./tasks.component.scss'],
 })
 export class TasksComponent implements OnInit {
+  @ViewChild('pt') table: Table;
+
   items: Task[] = [];
   rowGroupMetadata: { [projectId: string]: { index: number; size: number } } = {};
-  @ViewChild('pt') table: Table;
+  clonedData: { [s: string]: Task } = {};
 
   subscriptions: Subscription[] = [];
 
