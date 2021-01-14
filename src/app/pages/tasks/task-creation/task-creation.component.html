@@ -1,0 +1,11 @@
+<form [formGroup]="form" novalidate (ngSubmit)="submit(form.value, form.valid)">
+  <div class="p-field">
+    <label for="name">Name</label>
+    <input id="name" type="username" aria-describedby="name-help" pInputText formControlName="name" />
+    <small [hidden]="form.controls.name.valid || (form.controls.name.pristine && !isSubmitted)" id="name-help"
+      >Name is required.</small
+    >
+  </div>
+
+  <button type="submit">Submit</button>
+</form>

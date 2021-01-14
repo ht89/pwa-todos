@@ -54,3 +54,7 @@
 </p-table>
 
 <app-add-btn (clickBtn)="onAddBtnClick()"></app-add-btn>
+
+<p-dialog header="Create Task" [(visible)]="isDialogVisible">
+  <app-task-creation></app-task-creation>
+</p-dialog>

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 
 // App
 import { SharedModule } from '@shared';
@@ -9,9 +10,23 @@ import { TasksComponent } from './tasks.component';
 // Primeng
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
+import { TaskCreationComponent } from './task-creation/task-creation.component';
+import { InputTextModule } from 'primeng/inputtext';
 
 @NgModule({
-  imports: [CommonModule, SharedModule, TasksRoutingModule, TableModule, ButtonModule],
-  declarations: [TasksComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    // App
+    SharedModule,
+    TasksRoutingModule,
+    // Primeng
+    TableModule,
+    ButtonModule,
+    DialogModule,
+    InputTextModule,
+  ],
+  declarations: [TasksComponent, TaskCreationComponent],
 })
 export class TasksModule {}

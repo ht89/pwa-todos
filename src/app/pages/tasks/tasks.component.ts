@@ -29,6 +29,7 @@ export class TasksComponent implements OnInit {
   subscriptions: Subscription[] = [];
 
   TaskStatus = TaskStatus;
+  isDialogVisible = false;
 
   constructor(
     private tasksService: TasksService,
@@ -45,7 +46,9 @@ export class TasksComponent implements OnInit {
     // this.syncItems();
   }
 
-  onAddBtnClick(): void {}
+  onAddBtnClick(): void {
+    this.isDialogVisible = true;
+  }
 
   private subscribeToSearch() {
     this.subscriptions.push(
