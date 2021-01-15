@@ -5,6 +5,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CreationContext } from './task-creation.model';
 import { TaskStatus } from '../tasks.model';
 import { Project } from '@app/pages/projects/projects.model';
+import { StoreName } from '@app/@shared';
+
+// Firebase
+import { createDocumentRef } from '@app/auth/firebase/common.js';
 
 @Component({
   selector: 'app-task-creation',
@@ -29,6 +33,8 @@ export class TaskCreationComponent implements OnInit {
     this.isSubmitted = true;
 
     console.log(model, isValid);
+    if (isValid) {
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
@@ -48,8 +54,10 @@ export class TaskCreationComponent implements OnInit {
   }
 
   private initForm(): void {
+    const docRef = createDocumentRef(StoreName.Projects);
+
     this.form = this.fb.group({
-      id: ['', [Validators.required]],
+      id: [docRef?.id, [Validators.required]],
       taskNumber: [''],
       name: ['', [Validators.required]],
       status: [TaskStatus.Processing, [Validators.required]],

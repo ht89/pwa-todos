@@ -8,7 +8,10 @@
     <label for="name">Name</label>
     <input id="name" type="text" pInputText formControlName="name" />
 
-    <small [hidden]="form.controls.name.valid || (form.controls.name.pristine && !isSubmitted)" id="name-help"
+    <small
+      class="p-invalid"
+      [hidden]="form.controls.name.valid || (form.controls.name.pristine && !isSubmitted)"
+      id="name-help"
       >Name is required.</small
     >
   </div>
@@ -24,7 +27,10 @@
       (completeMethod)="search($event)"
     ></p-autoComplete>
 
-    <small [hidden]="form.controls.project.valid || (form.controls.project.pristine && !isSubmitted)" id="project-help"
+    <small
+      class="p-invalid"
+      [hidden]="form.controls.project.valid || (form.controls.project.pristine && !isSubmitted)"
+      id="project-help"
       >Project is required.</small
     >
   </div>
