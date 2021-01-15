@@ -7,6 +7,7 @@ import { Logger, PublishSubscribeService } from '@app/@core';
 import { PubSubChannel } from '@app/@shared';
 import { TasksService } from './tasks.service';
 import { ProjectsService } from '../projects/projects.service';
+import { Project } from '../projects/projects.model';
 
 // Primeng
 import { Table } from 'primeng/table';
@@ -26,6 +27,8 @@ export class TasksComponent implements OnInit {
   rowGroupMetadata: { [projectId: string]: { index: number; size: number } } = {};
   clonedData: { [s: string]: Task } = {};
 
+  projects: Project[] = [];
+
   subscriptions: Subscription[] = [];
 
   TaskStatus = TaskStatus;
@@ -42,6 +45,8 @@ export class TasksComponent implements OnInit {
 
     this.items = await this.tasksService.getItems();
     this.updateRowGroupMetaData();
+
+    this.projects = await this.projectsService.getItems();
     this.setProjectNames();
     // this.syncItems();
   }
@@ -63,26 +68,21 @@ export class TasksComponent implements OnInit {
   }
 
   private async setProjectNames() {
-    try {
-      const projects = await this.projectsService.getItems();
-      if (projects?.length === 0) {
-        return;
+    if (this.projects?.length === 0) {
+      return;
+    }
+
+    this.items = this.items.map((item) => {
+      const foundProject = this.projects.find((project) => project.id === item.projectId);
+      if (!foundProject) {
+        return item;
       }
 
-      this.items = this.items.map((item) => {
-        const foundProject = projects.find((project) => project.id === item.projectId);
-        if (!foundProject) {
-          return item;
-        }
-
-        return {
-          ...item,
-          projectName: foundProject.name,
-        };
-      });
-    } catch (err) {
-      log.warn(err);
-    }
+      return {
+        ...item,
+        projectName: foundProject.name,
+      };
+    });
   }
 
   private updateRowGroupMetaData() {

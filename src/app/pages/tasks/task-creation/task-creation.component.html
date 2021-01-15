@@ -1,11 +1,33 @@
-<form [formGroup]="form" novalidate (ngSubmit)="submit(form.value, form.valid)">
+<form class="p-fluid" [formGroup]="form" novalidate (ngSubmit)="submit(form.value, form.valid)">
+  <div class="p-field">
+    <label for="task-number">Task Number</label>
+    <input id="task-number" type="text" pInputText formControlName="taskNumber" />
+  </div>
+
   <div class="p-field">
     <label for="name">Name</label>
-    <input id="name" type="username" aria-describedby="name-help" pInputText formControlName="name" />
+    <input id="name" type="text" pInputText formControlName="name" />
+
     <small [hidden]="form.controls.name.valid || (form.controls.name.pristine && !isSubmitted)" id="name-help"
       >Name is required.</small
     >
   </div>
 
-  <button type="submit">Submit</button>
+  <div class="p-field">
+    <label for="project">Project</label>
+    <p-autoComplete
+      formControlName="project"
+      [suggestions]="displayedProjects"
+      [dropdown]="true"
+      field="name"
+      appendTo="body"
+      (completeMethod)="search($event)"
+    ></p-autoComplete>
+
+    <small [hidden]="form.controls.project.valid || (form.controls.project.pristine && !isSubmitted)" id="project-help"
+      >Project is required.</small
+    >
+  </div>
+
+  <button type="submit" pButton>Submit</button>
 </form>

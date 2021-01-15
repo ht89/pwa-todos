@@ -13,6 +13,7 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { TaskCreationComponent } from './task-creation/task-creation.component';
 import { InputTextModule } from 'primeng/inputtext';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 
 @NgModule({
   imports: [
@@ -26,6 +27,7 @@ import { InputTextModule } from 'primeng/inputtext';
     ButtonModule,
     DialogModule,
     InputTextModule,
+    AutoCompleteModule,
   ],
   declarations: [TasksComponent, TaskCreationComponent],
 })

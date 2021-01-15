@@ -55,6 +55,6 @@
 
 <app-add-btn (clickBtn)="onAddBtnClick()"></app-add-btn>
 
-<p-dialog header="Create Task" [(visible)]="isDialogVisible">
-  <app-task-creation></app-task-creation>
+<p-dialog header="Create Task" [(visible)]="isDialogVisible" [style]="{ width: '50vw' }">
+  <app-task-creation [projects]="projects"></app-task-creation>
 </p-dialog>
