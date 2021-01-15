@@ -5,7 +5,6 @@ import { Subscription } from 'rxjs';
 import { Task, TaskStatus } from './tasks.model';
 import { Logger, PublishSubscribeService } from '@app/@core';
 import { PubSubChannel, StoreName } from '@app/@shared';
-import { TasksService } from './tasks.service';
 import { Project } from '../projects/projects.model';
 import { AppService } from '@app/app.service';
 
@@ -34,25 +33,34 @@ export class TasksComponent implements OnInit {
   TaskStatus = TaskStatus;
   isDialogVisible = false;
 
-  constructor(
-    public tasksService: TasksService,
-    private appService: AppService,
-    private pubSubService: PublishSubscribeService<string>,
-  ) {}
+  constructor(public appService: AppService, private pubSubService: PublishSubscribeService<string>) {}
 
   async ngOnInit(): Promise<void> {
     this.subscribeToSearch();
 
-    this.items = await this.tasksService.getItems();
+    this.items = await this.appService.getItems(StoreName.Tasks);
     this.updateRowGroupMetaData();
 
-    this.projects = await this.appService.getItems<Project>(StoreName.Projects);
+    this.projects = await this.appService.getItems(StoreName.Projects);
     this.setProjectNames();
     // this.syncItems();
   }
 
   onAddBtnClick(): void {
     this.isDialogVisible = true;
+  }
+
+  onTaskCreation(task: Task): void {
+    if (!task) {
+      return;
+    }
+
+    const idx = this.items.findIndex((item) => item.id === task.id);
+    if (idx > -1) {
+      this.items[idx] = task;
+    } else {
+      this.items.push(task);
+    }
   }
 
   private subscribeToSearch() {

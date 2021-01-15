@@ -56,5 +56,9 @@
 <app-add-btn (clickBtn)="onAddBtnClick()"></app-add-btn>
 
 <p-dialog header="Create Task" [(visible)]="isDialogVisible" [style]="{ width: '50vw' }">
-  <app-task-creation [projects]="projects" [tasksService]="tasksService"></app-task-creation>
+  <app-task-creation
+    [projects]="projects"
+    [appService]="appService"
+    (createTask)="onTaskCreation($event)"
+  ></app-task-creation>
 </p-dialog>

@@ -42,7 +42,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   async ngOnInit(): Promise<void> {
     this.subscribeToSearch();
 
-    this.items = await this.appService.getItems<Project>(StoreName.Projects);
+    this.items = await this.appService.getItems(StoreName.Projects);
     this.syncItems();
   }
 
@@ -77,11 +77,11 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     delete this.clonedData[item.id];
 
     try {
-      await this.appService.updateItemInStore<Project>(this.items[index], StoreName.Projects);
+      await this.appService.updateItemInStore(this.items[index], StoreName.Projects);
 
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
 
-      const syncedItem = await this.appService.syncItem<Project>(item, StoreName.Projects);
+      const syncedItem = await this.appService.syncItem(item, StoreName.Projects);
       if (syncedItem) {
         this.items[index] = syncedItem;
       }
@@ -101,7 +101,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
   async onRowDelete(item: Project, index: number): Promise<void> {
     try {
-      await this.appService.deleteItemFromStore<Project>(item, StoreName.Projects);
+      await this.appService.deleteItemFromStore(item, StoreName.Projects);
       this.items = this.items.filter((currentItem, i) => i !== index);
 
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project deleted.' });
@@ -126,8 +126,8 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
   private async syncItems() {
     try {
-      await this.appService.syncItems<Project>(StoreName.Projects);
-      this.items = await this.appService.getItems<Project>(StoreName.Projects);
+      await this.appService.syncItems(StoreName.Projects);
+      this.items = await this.appService.getItems(StoreName.Projects);
     } catch (err) {
       log.warn(err);
     }

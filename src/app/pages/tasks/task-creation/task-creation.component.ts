@@ -1,12 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 // App
 import { CreationContext } from './task-creation.model';
-import { TaskStatus } from '../tasks.model';
+import { Task, TaskStatus } from '../tasks.model';
 import { Project } from '@app/pages/projects/projects.model';
 import { StoreName } from '@app/@shared';
-import { TasksService } from '../tasks.service';
+import { AppService } from '@app/app.service';
 
 // Firebase
 import { createDocumentRef } from '@app/auth/firebase/common.js';
@@ -19,7 +19,9 @@ import { MessageService } from 'primeng/api';
 })
 export class TaskCreationComponent implements OnInit {
   @Input() projects: Project[] = [];
-  @Input() tasksService: TasksService;
+  @Input() appService: AppService;
+
+  @Output() createTask = new EventEmitter<Task>();
 
   displayedProjects: Project[] = [];
 
@@ -44,18 +46,20 @@ export class TaskCreationComponent implements OnInit {
       const task = {
         ...model,
         projectId: model.project.id,
+        projectName: model.project.name,
       };
 
-      // await this.tasksService.updateItemInStore(task);
+      await this.appService.updateItemInStore(task, StoreName.Tasks);
+      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Task updated.' });
 
-      // this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
+      this.createTask.emit(task);
 
-      // const syncedItem = await this.projectsService.syncItem(item);
-      // if (syncedItem) {
-      //   this.items[index] = syncedItem;
-      // }
+      const syncedItem = await this.appService.syncItem(task, StoreName.Tasks);
+      if (syncedItem) {
+        this.createTask.emit(syncedItem);
+      }
     } catch (err) {
-      // this.projectsService.notifyFailedUpdate(err);
+      this.appService.notifyFailedUpdate(err);
     }
   }
 
