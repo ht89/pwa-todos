@@ -2,10 +2,10 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 // App
-import { Project, ProjectStatus } from './projects.model';
+import { Project } from './projects.model';
 import { DBUpgradePayload, PubSubChannel, StoreName, unsubscribe } from '@app/@shared';
 import { Logger, PublishSubscribeService } from '@app/@core';
-import { ProjectsService } from './projects.service';
+import { AppService, ItemStatus } from '@app/app.service';
 
 // Primeng
 import { Table } from 'primeng/table';
@@ -27,7 +27,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   clonedData: { [s: string]: Project } = {};
   editingRowKeys: { [s: string]: boolean } = {};
 
-  ProjectStatus = ProjectStatus;
+  ItemStatus = ItemStatus;
 
   @ViewChild('pt') table: Table;
 
@@ -36,13 +36,13 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   constructor(
     private pubSubService: PublishSubscribeService<string | DBUpgradePayload>,
     private messageService: MessageService,
-    private projectsService: ProjectsService,
+    private appService: AppService,
   ) {}
 
   async ngOnInit(): Promise<void> {
     this.subscribeToSearch();
 
-    this.items = await this.projectsService.getItems();
+    this.items = await this.appService.getItems<Project>(StoreName.Projects);
     this.syncItems();
   }
 
@@ -56,7 +56,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     const newItem = {
       id: docRef.id,
       name: '',
-      status: ProjectStatus.Processing,
+      status: ItemStatus.Processing,
     };
 
     this.items.push(newItem);
@@ -65,7 +65,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   onRowEditInit(item: Project): void {
-    item.status = ProjectStatus.Processing;
+    item.status = ItemStatus.Processing;
     this.clonedData[item.id] = { ...item };
   }
 
@@ -77,16 +77,16 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     delete this.clonedData[item.id];
 
     try {
-      await this.projectsService.updateItemInStore(this.items[index]);
+      await this.appService.updateItemInStore<Project>(this.items[index], StoreName.Projects);
 
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
 
-      const syncedItem = await this.projectsService.syncItem(item);
+      const syncedItem = await this.appService.syncItem<Project>(item, StoreName.Projects);
       if (syncedItem) {
         this.items[index] = syncedItem;
       }
     } catch (err) {
-      this.projectsService.notifyFailedUpdate(err);
+      this.appService.notifyFailedUpdate(err);
     }
   }
 
@@ -101,14 +101,14 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
   async onRowDelete(item: Project, index: number): Promise<void> {
     try {
-      await this.projectsService.deleteItemFromStore(item);
+      await this.appService.deleteItemFromStore<Project>(item, StoreName.Projects);
       this.items = this.items.filter((currentItem, i) => i !== index);
 
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project deleted.' });
 
       deleteDocument(StoreName.Projects, item.id);
     } catch (err) {
-      this.projectsService.notifyFailedUpdate(err);
+      this.appService.notifyFailedUpdate(err);
     }
   }
 
@@ -126,8 +126,8 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
   private async syncItems() {
     try {
-      await this.projectsService.syncItems();
-      this.items = await this.projectsService.getItems();
+      await this.appService.syncItems<Project>(StoreName.Projects);
+      this.items = await this.appService.getItems<Project>(StoreName.Projects);
     } catch (err) {
       log.warn(err);
     }

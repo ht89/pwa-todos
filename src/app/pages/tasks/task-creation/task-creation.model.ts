@@ -1,3 +1,4 @@
+import { Project } from '@app/pages/projects/projects.model';
 import { TaskStatus } from '../tasks.model';
 
 export interface CreationContext {
@@ -5,5 +6,5 @@ export interface CreationContext {
   taskNumber: string;
   name: string;
   status: TaskStatus;
-  projectId: string;
+  project: Project;
 }

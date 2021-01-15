@@ -32,8 +32,8 @@
         <span
           class="p-tag p-tag-info"
           [ngClass]="{
-            'p-tag-warning': item.status === ProjectStatus.Processing,
-            'p-tag-success': item.status === ProjectStatus.Synced
+            'p-tag-warning': item.status === ItemStatus.Processing,
+            'p-tag-success': item.status === ItemStatus.Synced
           }"
           >{{ item.status }}</span
         >

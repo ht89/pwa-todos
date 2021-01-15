@@ -4,10 +4,10 @@ import { Subscription } from 'rxjs';
 // App
 import { Task, TaskStatus } from './tasks.model';
 import { Logger, PublishSubscribeService } from '@app/@core';
-import { PubSubChannel } from '@app/@shared';
+import { PubSubChannel, StoreName } from '@app/@shared';
 import { TasksService } from './tasks.service';
-import { ProjectsService } from '../projects/projects.service';
 import { Project } from '../projects/projects.model';
+import { AppService } from '@app/app.service';
 
 // Primeng
 import { Table } from 'primeng/table';
@@ -35,8 +35,8 @@ export class TasksComponent implements OnInit {
   isDialogVisible = false;
 
   constructor(
-    private tasksService: TasksService,
-    private projectsService: ProjectsService,
+    public tasksService: TasksService,
+    private appService: AppService,
     private pubSubService: PublishSubscribeService<string>,
   ) {}
 
@@ -46,7 +46,7 @@ export class TasksComponent implements OnInit {
     this.items = await this.tasksService.getItems();
     this.updateRowGroupMetaData();
 
-    this.projects = await this.projectsService.getItems();
+    this.projects = await this.appService.getItems<Project>(StoreName.Projects);
     this.setProjectNames();
     // this.syncItems();
   }
