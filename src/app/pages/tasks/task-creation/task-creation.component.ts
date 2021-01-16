@@ -38,6 +38,7 @@ export class TaskCreationComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.item && this.item) {
+      this.form.patchValue(this.item);
     }
   }
 

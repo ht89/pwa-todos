@@ -20,9 +20,9 @@ export class TasksComponent implements OnInit {
   @ViewChild('pt') table: Table;
 
   items: TaskProject[] = [];
-  clonedData: { [s: string]: Task } = {};
   projects: Project[] = [];
   expandedRows = {};
+  editedTask: Task;
 
   subscriptions: Subscription[] = [];
 
@@ -74,6 +74,11 @@ export class TasksComponent implements OnInit {
     }
 
     this.items[idx].tasks[taskIdx] = task;
+  }
+
+  onRowEditInit(task: Task): void {
+    this.editedTask = task;
+    this.isDialogVisible = true;
   }
 
   private subscribeToSearch() {
