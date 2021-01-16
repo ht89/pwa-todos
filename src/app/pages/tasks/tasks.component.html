@@ -7,7 +7,7 @@
   [expandedRowKeys]="expandedRows"
 >
   <ng-template pTemplate="body" let-project let-expanded="expanded">
-    <tr class="task-project">
+    <tr *ngIf="project.tasks?.length > 0" class="task-project">
       <td class="task-project__cell">
         <button
           type="button"

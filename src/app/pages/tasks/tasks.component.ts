@@ -100,14 +100,11 @@ export class TasksComponent implements OnInit {
 
     return projects.reduce((acc, project) => {
       const projectTasks = tasks.filter((task) => task.projectId === project.id);
-      if (projectTasks?.length === 0) {
-        return acc;
-      }
 
       const taskProject: TaskProject = {
         projectId: project.id,
         projectName: project.name,
-        tasks: projectTasks,
+        tasks: projectTasks || [],
       };
 
       acc.push(taskProject);
