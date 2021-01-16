@@ -4,6 +4,7 @@
   [value]="items"
   [globalFilterFields]="['name', 'taskNumber']"
   dataKey="projectId"
+  [expandedRowKeys]="expandedRows"
 >
   <ng-template pTemplate="body" let-project let-expanded="expanded">
     <tr class="task-project">

@@ -22,6 +22,7 @@ export class TasksComponent implements OnInit {
   items: TaskProject[] = [];
   clonedData: { [s: string]: Task } = {};
   projects: Project[] = [];
+  expandedRows = {};
 
   subscriptions: Subscription[] = [];
 
@@ -35,6 +36,7 @@ export class TasksComponent implements OnInit {
 
     this.projects = await this.appService.getItems(StoreName.Projects);
     this.items = await this.getItems(this.projects);
+    this.expandedRows = this.getExpandedRows();
 
     // this.syncItems();
   }
@@ -97,5 +99,12 @@ export class TasksComponent implements OnInit {
 
       return acc;
     }, []);
+  }
+
+  private getExpandedRows() {
+    return this.items.reduce((acc, item) => {
+      acc[item.projectId] = true;
+      return acc;
+    }, {});
   }
 }
