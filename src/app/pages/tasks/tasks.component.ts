@@ -3,16 +3,13 @@ import { Subscription } from 'rxjs';
 
 // App
 import { Task, TaskProject, TaskStatus } from './tasks.model';
-import { Logger, PublishSubscribeService } from '@app/@core';
+import { PublishSubscribeService } from '@app/@core';
 import { PubSubChannel, StoreName } from '@app/@shared';
 import { Project } from '../projects/projects.model';
 import { AppService } from '@app/app.service';
 
 // Primeng
 import { Table } from 'primeng/table';
-
-// const
-const log = new Logger('Tasks');
 
 @Component({
   selector: 'app-tasks',
@@ -24,6 +21,7 @@ export class TasksComponent implements OnInit {
 
   items: TaskProject[] = [];
   clonedData: { [s: string]: Task } = {};
+  projects: Project[] = [];
 
   subscriptions: Subscription[] = [];
 
@@ -35,8 +33,8 @@ export class TasksComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.subscribeToSearch();
 
-    const projects = await this.appService.getItems(StoreName.Projects);
-    this.items = await this.getItems(projects);
+    this.projects = await this.appService.getItems(StoreName.Projects);
+    this.items = await this.getItems(this.projects);
 
     // this.syncItems();
   }
@@ -55,11 +53,6 @@ export class TasksComponent implements OnInit {
 
   onTaskUpdate(task: Task): void {
     if (!task) {
-      return;
-    }
-
-    const idx = this.items.findIndex((item) => item.id === task.id);
-    if (idx === -1) {
       return;
     }
 
