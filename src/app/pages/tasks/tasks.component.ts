@@ -50,7 +50,12 @@ export class TasksComponent implements OnInit {
       return;
     }
 
-    // TODO:
+    const idx = this.items.findIndex((item) => item.projectId === task.projectId);
+    if (idx === -1) {
+      return;
+    }
+
+    this.items[idx].tasks.push(task);
   }
 
   onTaskUpdate(task: Task): void {
@@ -58,7 +63,17 @@ export class TasksComponent implements OnInit {
       return;
     }
 
-    // TODO:
+    const idx = this.items.findIndex((item) => item.projectId === task.projectId);
+    if (idx === -1) {
+      return;
+    }
+
+    const taskIdx = this.items[idx].tasks.findIndex((item) => item.id === task.id);
+    if (taskIdx === -1) {
+      return;
+    }
+
+    this.items[idx].tasks[taskIdx] = task;
   }
 
   private subscribeToSearch() {
