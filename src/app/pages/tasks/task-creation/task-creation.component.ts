@@ -51,19 +51,12 @@ export class TaskCreationComponent implements OnInit {
     }
 
     try {
-      const task = {
-        ...model,
-        projectId: model.project.id,
-      };
-
-      delete task.project;
-
-      await this.appService.updateItemInStore(task, StoreName.Tasks);
+      await this.appService.updateItemInStore(model, StoreName.Tasks);
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Task updated.' });
 
-      this.createTask.emit(task);
+      this.createTask.emit(model);
 
-      const syncedItem = await this.appService.syncItem(task, StoreName.Tasks);
+      const syncedItem = await this.appService.syncItem(model, StoreName.Tasks);
       if (syncedItem) {
         this.updateTask.emit(syncedItem);
       }
@@ -86,6 +79,14 @@ export class TaskCreationComponent implements OnInit {
     );
   }
 
+  onProjectSelect(project: Project): void {
+    if (!project) {
+      return;
+    }
+
+    this.form.controls.projectId.setValue(project.id);
+  }
+
   private initForm(): void {
     const docRef = createDocumentRef(StoreName.Projects);
 
@@ -94,7 +95,7 @@ export class TaskCreationComponent implements OnInit {
       taskNumber: [''],
       name: ['', [Validators.required]],
       status: [TaskStatus.Processing, [Validators.required]],
-      project: [null, [Validators.required]],
+      projectId: ['', [Validators.required]],
     });
   }
 }
