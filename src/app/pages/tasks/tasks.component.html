@@ -63,11 +63,13 @@
 <app-add-btn (clickBtn)="onAddBtnClick()"></app-add-btn>
 
 <p-dialog header="Create Task" [(visible)]="isDialogVisible" [style]="{ width: '50vw' }">
-  <app-task-creation
-    [item]="editedTask"
-    [projects]="projects"
-    [appService]="appService"
-    (createTask)="onTaskCreation($event)"
-    (updateTask)="onTaskUpdate($event)"
-  ></app-task-creation>
+  <ng-template [ngIf]="isDialogVisible">
+    <app-task-creation
+      [item]="editedTask"
+      [projects]="projects"
+      [appService]="appService"
+      (createTask)="onTaskCreation($event)"
+      (updateTask)="onTaskUpdate($event)"
+    ></app-task-creation>
+  </ng-template>
 </p-dialog>

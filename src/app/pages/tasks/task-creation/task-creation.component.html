@@ -19,18 +19,17 @@
   <div class="p-field">
     <label for="project">Project</label>
     <p-autoComplete
+      formControlName="project"
       [suggestions]="displayedProjects"
       [dropdown]="true"
-      [forceSelection]="true"
       field="name"
       appendTo="body"
       (completeMethod)="search($event)"
-      (onSelect)="onProjectSelect($event)"
     ></p-autoComplete>
 
     <small
       class="p-invalid"
-      [hidden]="form.controls.projectId.valid || (form.controls.projectId.pristine && !isSubmitted)"
+      [hidden]="form.controls.project.valid || (form.controls.project.pristine && !isSubmitted)"
       id="project-help"
       >Project is required.</small
     >

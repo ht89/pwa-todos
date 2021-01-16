@@ -1,9 +1,11 @@
+import { Project } from '../projects/projects.model';
+
 export interface Task {
   id: string;
   taskNumber: string;
   name: string;
   status: TaskStatus;
-  projectId: string;
+  project: Project;
 }
 
 export enum TaskStatus {

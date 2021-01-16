@@ -2,7 +2,6 @@ import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 // App
-import { CreationContext } from './task-creation.model';
 import { Task, TaskStatus } from '../tasks.model';
 import { Project } from '@app/pages/projects/projects.model';
 import { StoreName } from '@app/@shared';
@@ -42,10 +41,9 @@ export class TaskCreationComponent implements OnInit {
     }
   }
 
-  async submit(model: CreationContext, isValid: boolean): Promise<void> {
+  async submit(model: Task, isValid: boolean): Promise<void> {
     this.isSubmitted = true;
 
-    console.log(model, isValid);
     if (!isValid) {
       return;
     }
@@ -54,7 +52,11 @@ export class TaskCreationComponent implements OnInit {
       await this.appService.updateItemInStore(model, StoreName.Tasks);
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Task updated.' });
 
-      this.createTask.emit(model);
+      if (this.item) {
+        this.updateTask.emit(model);
+      } else {
+        this.createTask.emit(model);
+      }
 
       const syncedItem = await this.appService.syncItem(model, StoreName.Tasks);
       if (syncedItem) {
@@ -95,7 +97,7 @@ export class TaskCreationComponent implements OnInit {
       taskNumber: [''],
       name: ['', [Validators.required]],
       status: [TaskStatus.Processing, [Validators.required]],
-      projectId: ['', [Validators.required]],
+      project: [null, [Validators.required]],
     });
   }
 }

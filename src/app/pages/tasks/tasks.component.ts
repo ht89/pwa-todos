@@ -21,7 +21,7 @@ export class TasksComponent implements OnInit {
 
   items: TaskProject[] = [];
   projects: Project[] = [];
-  expandedRows = {};
+  expandedRows: { [key: string]: boolean } = {};
   editedTask: Task;
 
   subscriptions: Subscription[] = [];
@@ -50,7 +50,7 @@ export class TasksComponent implements OnInit {
       return;
     }
 
-    const idx = this.items.findIndex((item) => item.projectId === task.projectId);
+    const idx = this.items.findIndex((item) => item.projectId === task.project.id);
     if (idx === -1) {
       return;
     }
@@ -63,7 +63,7 @@ export class TasksComponent implements OnInit {
       return;
     }
 
-    const idx = this.items.findIndex((item) => item.projectId === task.projectId);
+    const idx = this.items.findIndex((item) => item.projectId === task.project.id);
     if (idx === -1) {
       return;
     }
@@ -99,12 +99,9 @@ export class TasksComponent implements OnInit {
     }
 
     const tasks: Task[] = await this.appService.getItems(StoreName.Tasks);
-    if (tasks?.length === 0) {
-      return;
-    }
 
     return projects.reduce((acc, project) => {
-      const projectTasks = tasks.filter((task) => task.projectId === project.id);
+      const projectTasks = tasks.filter((task) => task.project.id === project.id);
 
       const taskProject: TaskProject = {
         projectId: project.id,
@@ -118,7 +115,11 @@ export class TasksComponent implements OnInit {
     }, []);
   }
 
-  private getExpandedRows() {
+  private getExpandedRows(): { [key: string]: boolean } {
+    if (!this.items || this.items.length === 0) {
+      return {};
+    }
+
     return this.items.reduce((acc, item) => {
       acc[item.projectId] = true;
       return acc;
