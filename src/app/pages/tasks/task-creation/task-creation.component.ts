@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 // App
@@ -18,6 +18,7 @@ import { MessageService } from 'primeng/api';
   styleUrls: ['./task-creation.component.scss'],
 })
 export class TaskCreationComponent implements OnInit {
+  @Input() item: Task;
   @Input() projects: Project[] = [];
   @Input() appService: AppService;
 
@@ -29,10 +30,15 @@ export class TaskCreationComponent implements OnInit {
   form: FormGroup;
   isSubmitted = false;
 
-  constructor(private fb: FormBuilder, private messageService: MessageService) {}
-
-  ngOnInit(): void {
+  constructor(private fb: FormBuilder, private messageService: MessageService) {
     this.initForm();
+  }
+
+  ngOnInit(): void {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.item && this.item) {
+    }
   }
 
   async submit(model: CreationContext, isValid: boolean): Promise<void> {
@@ -47,8 +53,9 @@ export class TaskCreationComponent implements OnInit {
       const task = {
         ...model,
         projectId: model.project.id,
-        projectName: model.project.name,
       };
+
+      delete task.project;
 
       await this.appService.updateItemInStore(task, StoreName.Tasks);
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Task updated.' });

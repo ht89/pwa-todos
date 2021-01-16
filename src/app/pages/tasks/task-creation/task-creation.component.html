@@ -22,6 +22,7 @@
       formControlName="project"
       [suggestions]="displayedProjects"
       [dropdown]="true"
+      [forceSelection]="true"
       field="name"
       appendTo="body"
       (completeMethod)="search($event)"
