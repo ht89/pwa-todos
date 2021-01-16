@@ -22,6 +22,7 @@ export class TaskCreationComponent implements OnInit {
   @Input() appService: AppService;
 
   @Output() createTask = new EventEmitter<Task>();
+  @Output() updateTask = new EventEmitter<Task>();
 
   displayedProjects: Project[] = [];
 
@@ -56,7 +57,7 @@ export class TaskCreationComponent implements OnInit {
 
       const syncedItem = await this.appService.syncItem(task, StoreName.Tasks);
       if (syncedItem) {
-        this.createTask.emit(syncedItem);
+        this.updateTask.emit(syncedItem);
       }
     } catch (err) {
       this.appService.notifyFailedUpdate(err);

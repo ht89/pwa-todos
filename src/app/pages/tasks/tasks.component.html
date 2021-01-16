@@ -1,55 +1,74 @@
-<p-table #pt tableStyleClass="tasks-table" [value]="items" [globalFilterFields]="['name', 'taskNumber']" dataKey="id">
-  <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
-    <tr class="task-project" *ngIf="rowGroupMetadata[item.projectId].index === rowIndex">
+<p-table
+  #pt
+  tableStyleClass="tasks-table"
+  [value]="items"
+  [globalFilterFields]="['name', 'taskNumber']"
+  dataKey="projectId"
+>
+  <ng-template pTemplate="body" let-project let-expanded="expanded">
+    <tr class="task-project">
       <td class="task-project__cell">
-        <h4 class="task-project__name p-my-0">{{ item.projectName }}</h4>
-      </td>
+        <button
+          type="button"
+          pButton
+          pRipple
+          [pRowToggler]="project"
+          class="p-button-text p-button-rounded p-button-plain"
+          [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+        ></button>
 
-      <td></td>
+        <h4 class="task-project__name p-my-0">{{ project.projectName }}</h4>
+      </td>
     </tr>
+  </ng-template>
 
-    <tr class="task">
-      <td class="task__cell">
-        <span class="task__number">#{{ item.taskNumber }}</span>
+  <ng-template pTemplate="rowexpansion" let-item>
+    <p-table [value]="item.tasks" dataKey="id">
+      <ng-template pTemplate="body" let-task>
+        <tr class="task">
+          <td class="task__cell">
+            <span class="task__number">#{{ task.taskNumber }}</span>
 
-        <span class="task__name p-ml-2">{{ item.name }}</span>
-      </td>
+            <span class="task__name p-ml-2">{{ task.name }}</span>
+          </td>
 
-      <td class="task__cell">
-        <span
-          class="task__status p-tag p-tag-info"
-          [ngClass]="{
-            'p-tag-warning': item.status === TaskStatus.InProgress,
-            'p-tag-success': item.status === TaskStatus.Done
-          }"
-          >{{ item.status }}</span
-        >
-      </td>
+          <td class="task__cell">
+            <span
+              class="task__status p-tag p-tag-info"
+              [ngClass]="{
+                'p-tag-warning': task.status === TaskStatus.InProgress,
+                'p-tag-success': task.status === TaskStatus.Done
+              }"
+              >{{ task.status }}</span
+            >
+          </td>
 
-      <!-- <td style="text-align: center">
-        <ng-container>
-          <button
-            pButton
-            pRipple
-            type="button"
-            pInitEditableRow
-            icon="pi pi-pencil"
-            (click)="onRowEditInit(item)"
-            class="p-button-rounded p-button-text"
-          ></button>
-
-          <button
-            pButton
-            pRipple
-            type="button"
-            pInitEditableRow
-            icon="pi pi-trash"
-            (click)="onRowDelete(item, ri)"
-            class="p-button-rounded p-button-text"
-          ></button>
-        </ng-container>
-      </td> -->
-    </tr>
+          <!-- <td style="text-align: center">
+            <ng-container>
+              <button
+                pButton
+                pRipple
+                type="button"
+                pInitEditableRow
+                icon="pi pi-pencil"
+                (click)="onRowEditInit(task)"
+                class="p-button-rounded p-button-text"
+              ></button>
+    
+              <button
+                pButton
+                pRipple
+                type="button"
+                pInitEditableRow
+                icon="pi pi-trash"
+                (click)="onRowDelete(task, ri)"
+                class="p-button-rounded p-button-text"
+              ></button>
+            </ng-container>
+          </td> -->
+        </tr>
+      </ng-template>
+    </p-table>
   </ng-template>
 </p-table>
 
@@ -60,5 +79,6 @@
     [projects]="projects"
     [appService]="appService"
     (createTask)="onTaskCreation($event)"
+    (updateTask)="onTaskUpdate($event)"
   ></app-task-creation>
 </p-dialog>

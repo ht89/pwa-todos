@@ -4,7 +4,6 @@ export interface Task {
   name: string;
   status: TaskStatus;
   projectId: string;
-  projectName: string;
 }
 
 export enum TaskStatus {
@@ -12,4 +11,10 @@ export enum TaskStatus {
   Created = 'Created',
   InProgress = 'InProgress',
   Done = 'Done',
+}
+
+export interface TaskProject {
+  projectId: string;
+  projectName: string;
+  tasks: Task[];
 }

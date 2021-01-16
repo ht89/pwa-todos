@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 // App
-import { Task, TaskStatus } from './tasks.model';
+import { Task, TaskProject, TaskStatus } from './tasks.model';
 import { Logger, PublishSubscribeService } from '@app/@core';
 import { PubSubChannel, StoreName } from '@app/@shared';
 import { Project } from '../projects/projects.model';
@@ -22,11 +22,8 @@ const log = new Logger('Tasks');
 export class TasksComponent implements OnInit {
   @ViewChild('pt') table: Table;
 
-  items: Task[] = [];
-  rowGroupMetadata: { [projectId: string]: { index: number; size: number } } = {};
+  items: TaskProject[] = [];
   clonedData: { [s: string]: Task } = {};
-
-  projects: Project[] = [];
 
   subscriptions: Subscription[] = [];
 
@@ -38,11 +35,9 @@ export class TasksComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.subscribeToSearch();
 
-    this.items = await this.appService.getItems(StoreName.Tasks);
-    this.updateRowGroupMetaData();
+    const projects = await this.appService.getItems(StoreName.Projects);
+    this.items = await this.getItems(projects);
 
-    this.projects = await this.appService.getItems(StoreName.Projects);
-    this.setProjectNames();
     // this.syncItems();
   }
 
@@ -55,12 +50,20 @@ export class TasksComponent implements OnInit {
       return;
     }
 
-    const idx = this.items.findIndex((item) => item.id === task.id);
-    if (idx > -1) {
-      this.items[idx] = task;
-    } else {
-      this.items.push(task);
+    // TODO:
+  }
+
+  onTaskUpdate(task: Task): void {
+    if (!task) {
+      return;
     }
+
+    const idx = this.items.findIndex((item) => item.id === task.id);
+    if (idx === -1) {
+      return;
+    }
+
+    // TODO:
   }
 
   private subscribeToSearch() {
@@ -75,42 +78,31 @@ export class TasksComponent implements OnInit {
     );
   }
 
-  private async setProjectNames() {
-    if (this.projects?.length === 0) {
+  private async getItems(projects: Project[]) {
+    if (projects?.length === 0) {
       return;
     }
 
-    this.items = this.items.map((item) => {
-      const foundProject = this.projects.find((project) => project.id === item.projectId);
-      if (!foundProject) {
-        return item;
-      }
-
-      return {
-        ...item,
-        projectName: foundProject.name,
-      };
-    });
-  }
-
-  private updateRowGroupMetaData() {
-    this.rowGroupMetadata = {};
-
-    if (this.items) {
-      for (let i = 0; i < this.items.length; i++) {
-        const rowData = this.items[i];
-        const projectId = rowData.projectId;
-
-        if (i == 0) {
-          this.rowGroupMetadata[projectId] = { index: 0, size: 1 };
-        } else {
-          const previousRowData = this.items[i - 1];
-          const previousRowGroup = previousRowData.projectId;
-
-          if (projectId === previousRowGroup) this.rowGroupMetadata[projectId].size++;
-          else this.rowGroupMetadata[projectId] = { index: i, size: 1 };
-        }
-      }
+    const tasks: Task[] = await this.appService.getItems(StoreName.Tasks);
+    if (tasks?.length === 0) {
+      return;
     }
+
+    return projects.reduce((acc, project) => {
+      const projectTasks = tasks.filter((task) => task.projectId === project.id);
+      if (projectTasks?.length === 0) {
+        return acc;
+      }
+
+      const taskProject: TaskProject = {
+        projectId: project.id,
+        projectName: project.name,
+        tasks: projectTasks,
+      };
+
+      acc.push(taskProject);
+
+      return acc;
+    }, []);
   }
 }
