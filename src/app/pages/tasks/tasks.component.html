@@ -64,13 +64,13 @@
 
 <p-dialog header="Create Task" [(visible)]="isDialogVisible" [style]="{ width: '50vw' }" (onHide)="editedTask = null">
   <ng-template [ngIf]="isDialogVisible">
-    <app-task-creation
+    <app-tasks-form
       [item]="editedTask"
       [projects]="projects"
       [appService]="appService"
       (createTask)="onTaskCreation($event)"
       (updateTask)="onTaskUpdate($event)"
       (hideDialog)="isDialogVisible = false"
-    ></app-task-creation>
+    ></app-tasks-form>
   </ng-template>
 </p-dialog>

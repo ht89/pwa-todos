@@ -11,7 +11,7 @@ import { TasksComponent } from './tasks.component';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
-import { TaskCreationComponent } from './task-creation/task-creation.component';
+import { TasksFormComponent } from './tasks-form/tasks-form.component';
 import { InputTextModule } from 'primeng/inputtext';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 
@@ -29,6 +29,6 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
     InputTextModule,
     AutoCompleteModule,
   ],
-  declarations: [TasksComponent, TaskCreationComponent],
+  declarations: [TasksComponent, TasksFormComponent],
 })
 export class TasksModule {}

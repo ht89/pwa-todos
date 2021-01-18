@@ -12,11 +12,11 @@ import { createDocumentRef } from '@app/auth/firebase/common.js';
 import { MessageService } from 'primeng/api';
 
 @Component({
-  selector: 'app-task-creation',
-  templateUrl: './task-creation.component.html',
-  styleUrls: ['./task-creation.component.scss'],
+  selector: 'app-tasks-form',
+  templateUrl: './tasks-form.component.html',
+  styleUrls: ['./tasks-form.component.scss'],
 })
-export class TaskCreationComponent implements OnInit {
+export class TasksFormComponent implements OnInit {
   @Input() item: Task;
   @Input() projects: Project[] = [];
   @Input() appService: AppService;
