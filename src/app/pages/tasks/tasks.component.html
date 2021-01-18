@@ -1,4 +1,4 @@
-<p-table #pt tableStyleClass="tasks-table" [value]="items" dataKey="projectId" [expandedRowKeys]="expandedRows">
+<p-table #pt tableStyleClass="tasks-table" [value]="taskProjects" dataKey="projectId" [expandedRowKeys]="expandedRows">
   <ng-template pTemplate="body" let-project let-expanded="expanded">
     <tr *ngIf="project.tasks?.length > 0" class="task-project">
       <td class="task-project__cell">

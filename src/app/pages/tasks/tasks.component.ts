@@ -23,8 +23,7 @@ import { MessageService } from 'primeng/api';
 export class TasksComponent implements OnInit {
   @ViewChild('pt') table: Table;
 
-  originalItems: TaskProject[] = [];
-  items: TaskProject[] = [];
+  taskProjects: TaskProject[] = [];
   projects: Project[] = [];
   expandedRows: { [key: string]: boolean } = {};
   editedTask: Task;
@@ -44,7 +43,7 @@ export class TasksComponent implements OnInit {
     this.subscribeToSearch();
 
     this.projects = await this.appService.getItems(StoreName.Projects);
-    this.items = await this.getItems(this.projects);
+    this.taskProjects = await this.getItems(this.projects);
     this.expandedRows = this.getExpandedRows();
 
     // this.syncItems();
@@ -59,12 +58,12 @@ export class TasksComponent implements OnInit {
       return;
     }
 
-    const idx = this.items.findIndex((item) => item.projectId === task.project.id);
+    const idx = this.taskProjects.findIndex((item) => item.projectId === task.project.id);
     if (idx === -1) {
       return;
     }
 
-    this.items[idx].tasks.push(task);
+    this.taskProjects[idx].tasks.push(task);
   }
 
   async onTaskUpdate(task: Task): Promise<void> {
@@ -72,16 +71,16 @@ export class TasksComponent implements OnInit {
       return;
     }
 
-    const idx = this.items.findIndex((item) => item.projectId === task.project.id);
+    const idx = this.taskProjects.findIndex((item) => item.projectId === task.project.id);
     if (idx === -1) {
       return;
     }
 
-    const taskIdx = this.items[idx].tasks.findIndex((item) => item.id === task.id);
+    const taskIdx = this.taskProjects[idx].tasks.findIndex((item) => item.id === task.id);
     if (taskIdx === -1) {
-      this.items = await this.getItems(this.projects);
+      this.taskProjects = await this.getItems(this.projects);
     } else {
-      this.items[idx].tasks[taskIdx] = task;
+      this.taskProjects[idx].tasks[taskIdx] = task;
     }
   }
 
@@ -94,7 +93,7 @@ export class TasksComponent implements OnInit {
     try {
       await this.appService.deleteItemFromStore(task, StoreName.Tasks);
 
-      const project = this.items.find((item) => item.projectId === task.project.id);
+      const project = this.taskProjects.find((item) => item.projectId === task.project.id);
       if (!project) {
         return;
       }
@@ -144,11 +143,11 @@ export class TasksComponent implements OnInit {
   }
 
   private getExpandedRows(): { [key: string]: boolean } {
-    if (!this.items || this.items.length === 0) {
+    if (!this.taskProjects || this.taskProjects.length === 0) {
       return {};
     }
 
-    return this.items.reduce((acc, item) => {
+    return this.taskProjects.reduce((acc, item) => {
       acc[item.projectId] = true;
       return acc;
     }, {});
@@ -156,10 +155,10 @@ export class TasksComponent implements OnInit {
 
   private async searchForTasks(query: string): Promise<void> {
     const items = await this.getItems(this.projects);
-    this.items = items.filter((item) => item.projectName.toLocaleLowerCase().includes(query));
+    this.taskProjects = items.filter((item) => item.projectName.toLocaleLowerCase().includes(query));
 
-    if (this.items.length === 0) {
-      this.items = items.filter((item) => {
+    if (this.taskProjects.length === 0) {
+      this.taskProjects = items.filter((item) => {
         const tasks = item.tasks.filter((task: Task) => task.name.toLocaleLowerCase().includes(query));
 
         return tasks?.length > 0;
