@@ -31,6 +31,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private subscribeToQueryField() {
     this.queryField.valueChanges
       .pipe(untilDestroyed(this), distinctUntilChanged(), debounceTime(500))
-      .subscribe((query) => this.pubSubService.publish(PubSubChannel.Search, query));
+      .subscribe((query: string) => this.pubSubService.publish(PubSubChannel.Search, query.toLocaleLowerCase()));
   }
 }

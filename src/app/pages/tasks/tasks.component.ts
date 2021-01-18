@@ -23,6 +23,7 @@ import { MessageService } from 'primeng/api';
 export class TasksComponent implements OnInit {
   @ViewChild('pt') table: Table;
 
+  originalItems: TaskProject[] = [];
   items: TaskProject[] = [];
   projects: Project[] = [];
   expandedRows: { [key: string]: boolean } = {};
@@ -115,7 +116,7 @@ export class TasksComponent implements OnInit {
           return;
         }
 
-        this.table.filterGlobal(query, 'contains');
+        this.searchForTasks(query);
       }),
     );
   }
@@ -151,5 +152,18 @@ export class TasksComponent implements OnInit {
       acc[item.projectId] = true;
       return acc;
     }, {});
+  }
+
+  private async searchForTasks(query: string): Promise<void> {
+    const items = await this.getItems(this.projects);
+    this.items = items.filter((item) => item.projectName.toLocaleLowerCase().includes(query));
+
+    if (this.items.length === 0) {
+      this.items = items.filter((item) => {
+        const tasks = item.tasks.filter((task: Task) => task.name.toLocaleLowerCase().includes(query));
+
+        return tasks?.length > 0;
+      });
+    }
   }
 }
