@@ -62,7 +62,7 @@
 
 <app-add-btn (clickBtn)="onAddBtnClick()"></app-add-btn>
 
-<p-dialog header="Create Task" [(visible)]="isDialogVisible" [style]="{ width: '50vw' }">
+<p-dialog header="Create Task" [(visible)]="isDialogVisible" [style]="{ width: '50vw' }" (onHide)="editedTask = null">
   <ng-template [ngIf]="isDialogVisible">
     <app-task-creation
       [item]="editedTask"

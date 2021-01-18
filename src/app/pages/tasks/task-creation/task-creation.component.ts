@@ -30,13 +30,13 @@ export class TaskCreationComponent implements OnInit {
   form: FormGroup;
   isSubmitted = false;
 
-  constructor(private fb: FormBuilder, private messageService: MessageService) {
-    this.initForm();
-  }
+  constructor(private fb: FormBuilder, private messageService: MessageService) {}
 
   ngOnInit(): void {}
 
   ngOnChanges(changes: SimpleChanges): void {
+    this.initForm();
+
     if (changes.item && this.item) {
       this.form.patchValue(this.item);
     }
