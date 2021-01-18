@@ -29,14 +29,13 @@
       </td>
 
       <td>
-        <span
-          class="p-tag p-tag-info"
+        <i
+          class="pi"
           [ngClass]="{
-            'p-tag-warning': item.status === ItemStatus.Processing,
-            'p-tag-success': item.status === ItemStatus.Synced
+            'pi-cloud-upload': item.status === ItemStatus.Processing,
+            'pi-check': item.status === ItemStatus.Synced
           }"
-          >{{ item.status }}</span
-        >
+        ></i>
       </td>
 
       <td style="text-align: center">
