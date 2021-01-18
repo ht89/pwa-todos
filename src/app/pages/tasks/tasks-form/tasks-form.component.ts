@@ -9,6 +9,8 @@ import { AppService } from '@app/app.service';
 
 // Firebase
 import { createDocumentRef } from '@app/auth/firebase/common.js';
+
+// Primeng
 import { MessageService } from 'primeng/api';
 
 @Component({
@@ -20,6 +22,7 @@ export class TasksFormComponent implements OnInit {
   @Input() item: Task;
   @Input() projects: Project[] = [];
   @Input() appService: AppService;
+  @Input() messageService: MessageService;
 
   @Output() createTask = new EventEmitter<Task>();
   @Output() updateTask = new EventEmitter<Task>();
@@ -30,7 +33,7 @@ export class TasksFormComponent implements OnInit {
   form: FormGroup;
   isSubmitted = false;
 
-  constructor(private fb: FormBuilder, private messageService: MessageService) {}
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {}
 

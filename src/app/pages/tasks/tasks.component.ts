@@ -8,8 +8,12 @@ import { PubSubChannel, StoreName } from '@app/@shared';
 import { Project } from '../projects/projects.model';
 import { AppService } from '@app/app.service';
 
+// firebase
+import { deleteDocument } from '@app/auth/firebase/common.js';
+
 // Primeng
 import { Table } from 'primeng/table';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-tasks',
@@ -29,7 +33,11 @@ export class TasksComponent implements OnInit {
   TaskStatus = TaskStatus;
   isDialogVisible = false;
 
-  constructor(public appService: AppService, private pubSubService: PublishSubscribeService<string>) {}
+  constructor(
+    private pubSubService: PublishSubscribeService<string>,
+    public appService: AppService,
+    public messageService: MessageService,
+  ) {}
 
   async ngOnInit(): Promise<void> {
     this.subscribeToSearch();
@@ -79,6 +87,25 @@ export class TasksComponent implements OnInit {
   onRowEditInit(task: Task): void {
     this.editedTask = task;
     this.isDialogVisible = true;
+  }
+
+  async onRowDelete(task: Task, index: number): Promise<void> {
+    try {
+      await this.appService.deleteItemFromStore(task, StoreName.Tasks);
+
+      const project = this.items.find((item) => item.projectId === task.project.id);
+      if (!project) {
+        return;
+      }
+
+      project.tasks = project.tasks.filter((currentItem, i) => i !== index);
+
+      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Task deleted.' });
+
+      deleteDocument(StoreName.Tasks, task.id);
+    } catch (err) {
+      this.appService.notifyFailedUpdate(err);
+    }
   }
 
   private subscribeToSearch() {

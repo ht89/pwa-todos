@@ -25,7 +25,7 @@
 
   <ng-template pTemplate="rowexpansion" let-item>
     <p-table [value]="item.tasks" dataKey="id">
-      <ng-template pTemplate="body" let-task>
+      <ng-template pTemplate="body" let-task let-ri="rowIndex">
         <tr class="task">
           <td class="task__cell">
             <span class="task__number">#{{ task.taskNumber }}</span>
@@ -53,6 +53,15 @@
               (click)="onRowEditInit(task)"
               class="p-button-rounded p-button-text"
             ></button>
+
+            <button
+              pButton
+              pRipple
+              type="button"
+              icon="pi pi-trash"
+              (click)="onRowDelete(task, ri)"
+              class="p-button-rounded p-button-text"
+            ></button>
           </td>
         </tr>
       </ng-template>
@@ -68,6 +77,7 @@
       [item]="editedTask"
       [projects]="projects"
       [appService]="appService"
+      [messageService]="messageService"
       (createTask)="onTaskCreation($event)"
       (updateTask)="onTaskUpdate($event)"
       (hideDialog)="isDialogVisible = false"
