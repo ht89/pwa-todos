@@ -28,7 +28,7 @@
       <ng-template pTemplate="body" let-task let-ri="rowIndex">
         <tr class="task">
           <td class="task__cell">
-            <span class="task__number">#{{ task.taskNumber }}</span>
+            <span *ngIf="task.taskNumber" class="task__number">#{{ task.taskNumber }}</span>
 
             <span class="task__name p-ml-2">{{ task.name }}</span>
           </td>
