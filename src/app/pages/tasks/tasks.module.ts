@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { A11yModule } from '@angular/cdk/a11y';
 
 // App
 import { SharedModule } from '@shared';
@@ -20,7 +19,6 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    A11yModule,
     // App
     SharedModule,
     TasksRoutingModule,

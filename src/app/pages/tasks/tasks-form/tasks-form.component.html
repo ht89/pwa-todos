@@ -1,7 +1,7 @@
 <form *ngIf="form" class="p-fluid" [formGroup]="form" novalidate (ngSubmit)="submit(form.value, form.valid)">
   <div class="p-field">
     <label for="task-number">Task Number</label>
-    <input id="task-number" type="text" pInputText formControlName="taskNumber" cdkTrapFocus cdkTrapFocusAutoCapture />
+    <input id="task-number" type="text" pInputText formControlName="taskNumber" autofocus />
   </div>
 
   <div class="p-field">
