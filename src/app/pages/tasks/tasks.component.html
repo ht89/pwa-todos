@@ -26,6 +26,16 @@
             <span class="task__name p-ml-2">{{ task.name }}</span>
           </td>
 
+          <td class="task__cell" style="width: 4rem">
+            <i
+              class="pi"
+              [ngClass]="{
+                'pi-cloud-upload': task.syncStatus === ItemStatus.Cached,
+                'pi-check': task.syncStatus === ItemStatus.Synced
+              }"
+            ></i>
+          </td>
+
           <td class="task__cell">
             <span
               class="task__status p-tag p-tag-info"

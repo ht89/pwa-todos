@@ -1,3 +1,4 @@
+import { SyncStatus } from '@app/app.service';
 import { Project } from '../projects/projects.model';
 
 export interface Task {
@@ -5,11 +6,11 @@ export interface Task {
   taskNumber: string;
   name: string;
   status: TaskStatus;
+  syncStatus: SyncStatus;
   project: Project;
 }
 
 export enum TaskStatus {
-  Processing = 'Processing',
   Created = 'Created',
   InProgress = 'InProgress',
   Done = 'Done',

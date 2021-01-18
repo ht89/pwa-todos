@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { Project } from './projects.model';
 import { DBUpgradePayload, PubSubChannel, StoreName, unsubscribe } from '@app/@shared';
 import { Logger, PublishSubscribeService } from '@app/@core';
-import { AppService, ItemStatus } from '@app/app.service';
+import { AppService, SyncStatus } from '@app/app.service';
 
 // Primeng
 import { Table } from 'primeng/table';
@@ -27,7 +27,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   clonedData: { [s: string]: Project } = {};
   editingRowKeys: { [s: string]: boolean } = {};
 
-  ItemStatus = ItemStatus;
+  ItemStatus = SyncStatus;
 
   @ViewChild('pt') table: Table;
 
@@ -56,7 +56,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     const newItem = {
       id: docRef.id,
       name: '',
-      status: ItemStatus.Processing,
+      syncStatus: SyncStatus.Cached,
     };
 
     this.items.push(newItem);
@@ -65,7 +65,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   onRowEditInit(item: Project): void {
-    item.status = ItemStatus.Processing;
+    item.syncStatus = SyncStatus.Cached;
     this.clonedData[item.id] = { ...item };
   }
 

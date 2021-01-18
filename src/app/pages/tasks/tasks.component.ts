@@ -6,7 +6,7 @@ import { Task, TaskProject, TaskStatus } from './tasks.model';
 import { PublishSubscribeService } from '@app/@core';
 import { PubSubChannel, StoreName } from '@app/@shared';
 import { Project } from '../projects/projects.model';
-import { AppService } from '@app/app.service';
+import { AppService, SyncStatus } from '@app/app.service';
 
 // firebase
 import { deleteDocument } from '@app/auth/firebase/common.js';
@@ -30,6 +30,7 @@ export class TasksComponent implements OnInit {
 
   subscriptions: Subscription[] = [];
 
+  ItemStatus = SyncStatus;
   TaskStatus = TaskStatus;
   isDialogVisible = false;
 

@@ -14,8 +14,8 @@ import { getDocuments, setDocument, getDocumentRef } from '@app/auth/firebase/co
 const log = new Logger('AppService');
 
 // enums
-export enum ItemStatus {
-  Processing = 'Processing',
+export enum SyncStatus {
+  Cached = 'Cached',
   Synced = 'Synced',
 }
 
@@ -51,7 +51,7 @@ export class AppService {
   }
 
   async syncItem<T>({ ...item }: T, storeName: string): Promise<T> {
-    item['status'] = ItemStatus.Synced;
+    item['syncStatus'] = SyncStatus.Synced;
 
     await setDocument(storeName, item);
     this.updateItemInStore<T>(item, storeName);
@@ -62,7 +62,7 @@ export class AppService {
   async syncItems<T>(storeName: string): Promise<T[]> {
     const db = await openDatabase();
 
-    const items: T[] = await db.getAllFromIndex(storeName, 'idx_status', ItemStatus.Processing);
+    const items: T[] = await db.getAllFromIndex(storeName, 'idx_status', SyncStatus.Cached);
 
     if (items?.length === 0) {
       throw `No pending ${storeName}.`;
@@ -74,11 +74,11 @@ export class AppService {
         const doc = await docRef.get();
 
         if (doc.exists) {
-          doc.data().status = ItemStatus.Synced;
+          doc.data().status = SyncStatus.Synced;
           return db.put(storeName, doc.data());
         }
 
-        item['status'] = ItemStatus.Synced;
+        item['status'] = SyncStatus.Synced;
         await setDocument(storeName, item);
         return db.put(storeName, item);
       }),

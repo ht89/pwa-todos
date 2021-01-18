@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Task, TaskStatus } from '../tasks.model';
 import { Project } from '@app/pages/projects/projects.model';
 import { StoreName } from '@app/@shared';
-import { AppService } from '@app/app.service';
+import { AppService, SyncStatus } from '@app/app.service';
 
 // Firebase
 import { createDocumentRef } from '@app/auth/firebase/common.js';
@@ -53,7 +53,7 @@ export class TasksFormComponent implements OnInit {
     }
 
     try {
-      model.status = TaskStatus.Processing;
+      model.syncStatus = SyncStatus.Cached;
 
       await this.appService.updateItemInStore(model, StoreName.Tasks);
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Task updated.' });
@@ -104,7 +104,7 @@ export class TasksFormComponent implements OnInit {
       id: [docRef?.id, [Validators.required]],
       taskNumber: [''],
       name: ['', [Validators.required]],
-      status: [TaskStatus.Processing, [Validators.required]],
+      status: [TaskStatus.Created, [Validators.required]],
       project: [null, [Validators.required]],
     });
   }

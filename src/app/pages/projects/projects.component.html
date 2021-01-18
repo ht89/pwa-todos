@@ -32,8 +32,8 @@
         <i
           class="pi"
           [ngClass]="{
-            'pi-cloud-upload': item.status === ItemStatus.Processing,
-            'pi-check': item.status === ItemStatus.Synced
+            'pi-cloud-upload': item.syncStatus === ItemStatus.Cached,
+            'pi-check': item.syncStatus === ItemStatus.Synced
           }"
         ></i>
       </td>
