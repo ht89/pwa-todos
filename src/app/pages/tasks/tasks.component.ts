@@ -58,7 +58,7 @@ export class TasksComponent implements OnInit {
     this.items[idx].tasks.push(task);
   }
 
-  onTaskUpdate(task: Task): void {
+  async onTaskUpdate(task: Task): Promise<void> {
     if (!task) {
       return;
     }
@@ -70,10 +70,10 @@ export class TasksComponent implements OnInit {
 
     const taskIdx = this.items[idx].tasks.findIndex((item) => item.id === task.id);
     if (taskIdx === -1) {
-      return;
+      this.items = await this.getItems(this.projects);
+    } else {
+      this.items[idx].tasks[taskIdx] = task;
     }
-
-    this.items[idx].tasks[taskIdx] = task;
   }
 
   onRowEditInit(task: Task): void {

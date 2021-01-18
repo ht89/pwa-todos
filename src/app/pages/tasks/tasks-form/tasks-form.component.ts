@@ -50,6 +50,8 @@ export class TasksFormComponent implements OnInit {
     }
 
     try {
+      model.status = TaskStatus.Processing;
+
       await this.appService.updateItemInStore(model, StoreName.Tasks);
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Task updated.' });
 
@@ -59,12 +61,12 @@ export class TasksFormComponent implements OnInit {
         this.createTask.emit(model);
       }
 
-      this.hideDialog.emit();
-
       const syncedItem = await this.appService.syncItem(model, StoreName.Tasks);
       if (syncedItem) {
         this.updateTask.emit(syncedItem);
       }
+
+      this.hideDialog.emit();
     } catch (err) {
       this.appService.notifyFailedUpdate(err);
     }
