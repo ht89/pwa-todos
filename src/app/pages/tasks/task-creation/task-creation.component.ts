@@ -23,6 +23,7 @@ export class TaskCreationComponent implements OnInit {
 
   @Output() createTask = new EventEmitter<Task>();
   @Output() updateTask = new EventEmitter<Task>();
+  @Output() hideDialog = new EventEmitter<void>();
 
   displayedProjects: Project[] = [];
 
@@ -57,6 +58,8 @@ export class TaskCreationComponent implements OnInit {
       } else {
         this.createTask.emit(model);
       }
+
+      this.hideDialog.emit();
 
       const syncedItem = await this.appService.syncItem(model, StoreName.Tasks);
       if (syncedItem) {

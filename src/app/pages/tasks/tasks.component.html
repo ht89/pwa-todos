@@ -70,6 +70,7 @@
       [appService]="appService"
       (createTask)="onTaskCreation($event)"
       (updateTask)="onTaskUpdate($event)"
+      (hideDialog)="isDialogVisible = false"
     ></app-task-creation>
   </ng-template>
 </p-dialog>
