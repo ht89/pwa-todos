@@ -51,10 +51,10 @@ export class TasksComponent implements OnInit {
 
     this.statuses = this.getStatuses();
     this.projects = await this.appService.getItems(StoreName.Projects);
-    this.taskProjects = await this.getItems(this.projects);
+    this.taskProjects = await this.getTaskProjects(this.projects);
     this.expandedRows = this.getExpandedRows();
 
-    this.syncItems();
+    this.syncTaskProjects();
   }
 
   onAddBtnClick(): void {
@@ -86,7 +86,7 @@ export class TasksComponent implements OnInit {
 
     const taskIdx = this.taskProjects[idx].tasks.findIndex((item) => item.id === task.id);
     if (taskIdx === -1) {
-      this.taskProjects = await this.getItems(this.projects);
+      this.taskProjects = await this.getTaskProjects(this.projects);
     } else {
       this.taskProjects[idx].tasks[taskIdx] = task;
     }
@@ -120,7 +120,7 @@ export class TasksComponent implements OnInit {
   async onStatusChange(event: any): Promise<void> {
     const { value } = event;
 
-    const items = await this.getItems(this.projects);
+    const items = await this.getTaskProjects(this.projects);
 
     if (!value) {
       this.taskProjects = items;
@@ -146,7 +146,7 @@ export class TasksComponent implements OnInit {
     );
   }
 
-  private async getItems(projects: Project[]) {
+  private async getTaskProjects(projects: Project[]) {
     if (projects?.length === 0) {
       return;
     }
@@ -180,7 +180,7 @@ export class TasksComponent implements OnInit {
   }
 
   private async searchForTasks(query: string): Promise<void> {
-    const items = await this.getItems(this.projects);
+    const items = await this.getTaskProjects(this.projects);
     this.taskProjects = items.filter((item) => item.projectName.toLocaleLowerCase().includes(query));
 
     if (this.taskProjects.length === 0) {
@@ -201,10 +201,10 @@ export class TasksComponent implements OnInit {
       }));
   }
 
-  private async syncItems() {
+  private async syncTaskProjects() {
     try {
       await this.appService.syncItems(StoreName.Tasks);
-      this.taskProjects = await this.getItems(this.projects);
+      this.taskProjects = await this.getTaskProjects(this.projects);
     } catch (err) {
       log.warn(err);
     }
