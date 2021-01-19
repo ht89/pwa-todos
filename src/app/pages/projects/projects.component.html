@@ -1,6 +1,6 @@
 <p-table
   #pt
-  [value]="items"
+  [value]="projects"
   dataKey="id"
   editMode="row"
   [editingRowKeys]="editingRowKeys"
@@ -16,15 +16,15 @@
     </tr>
   </ng-template>
 
-  <ng-template pTemplate="body" let-item let-editing="editing" let-ri="rowIndex">
-    <tr [pEditableRow]="item">
+  <ng-template pTemplate="body" let-project let-editing="editing" let-ri="rowIndex">
+    <tr [pEditableRow]="project">
       <td pEditableColumn>
         <p-cellEditor>
           <ng-template pTemplate="input">
-            <input pInputText type="text" [(ngModel)]="item.name" required cdkTrapFocus cdkTrapFocusAutoCapture />
+            <input pInputText type="text" [(ngModel)]="project.name" required cdkTrapFocus cdkTrapFocusAutoCapture />
           </ng-template>
 
-          <ng-template pTemplate="output">{{ item.name }}</ng-template>
+          <ng-template pTemplate="output">{{ project.name }}</ng-template>
         </p-cellEditor>
       </td>
 
@@ -32,8 +32,8 @@
         <i
           class="pi"
           [ngClass]="{
-            'pi-cloud-upload': item.syncStatus === ItemStatus.Cached,
-            'pi-check': item.syncStatus === ItemStatus.Synced
+            'pi-cloud-upload': project.syncStatus === SyncStatus.Cached,
+            'pi-check': project.syncStatus === SyncStatus.Synced
           }"
         ></i>
       </td>
@@ -46,7 +46,7 @@
             type="button"
             pInitEditableRow
             icon="pi pi-pencil"
-            (click)="onRowEditInit(item)"
+            (click)="onRowEditInit(project)"
             class="p-button-rounded p-button-text"
           ></button>
 
@@ -56,7 +56,7 @@
             type="button"
             pInitEditableRow
             icon="pi pi-trash"
-            (click)="onRowDelete(item, ri)"
+            (click)="onRowDelete(project, ri)"
             class="p-button-rounded p-button-text"
           ></button>
         </ng-container>
@@ -68,9 +68,9 @@
             type="button"
             pSaveEditableRow
             icon="pi pi-check"
-            (click)="onRowEditSave(item, ri)"
+            (click)="onRowEditSave(project, ri)"
             class="p-button-rounded p-button-text p-button-success p-mr-2"
-            [disabled]="!item.name"
+            [disabled]="!project.name"
           ></button>
 
           <button
@@ -79,7 +79,7 @@
             type="button"
             pCancelEditableRow
             icon="pi pi-times"
-            (click)="onRowEditCancel(item, ri)"
+            (click)="onRowEditCancel(project, ri)"
             class="p-button-rounded p-button-text p-button-danger"
           ></button>
         </ng-template>
