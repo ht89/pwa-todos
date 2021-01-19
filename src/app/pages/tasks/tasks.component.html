@@ -1,3 +1,13 @@
+<div class="p-d-flex p-jc-end">
+  <p-dropdown
+    [options]="statuses"
+    [(ngModel)]="selectedStatus"
+    placeholder="Status"
+    [showClear]="true"
+    (onChange)="onStatusChange($event)"
+  ></p-dropdown>
+</div>
+
 <p-table #pt tableStyleClass="tasks-table" [value]="taskProjects" dataKey="projectId" [expandedRowKeys]="expandedRows">
   <ng-template pTemplate="body" let-project let-expanded="expanded">
     <tr *ngIf="project.tasks?.length > 0" class="task-project">

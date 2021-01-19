@@ -13,7 +13,7 @@ import { deleteDocument } from '@app/auth/firebase/common.js';
 
 // Primeng
 import { Table } from 'primeng/table';
-import { MessageService } from 'primeng/api';
+import { MessageService, SelectItem } from 'primeng/api';
 
 @Component({
   selector: 'app-tasks',
@@ -26,12 +26,15 @@ export class TasksComponent implements OnInit {
   taskProjects: TaskProject[] = [];
   projects: Project[] = [];
   expandedRows: { [key: string]: boolean } = {};
-  editedTask: Task;
 
   subscriptions: Subscription[] = [];
 
+  editedTask: Task;
   ItemStatus = SyncStatus;
   TaskStatus = TaskStatus;
+  statuses: SelectItem[] = [];
+  selectedStatus: SelectItem;
+
   isDialogVisible = false;
 
   constructor(
@@ -46,6 +49,7 @@ export class TasksComponent implements OnInit {
     this.projects = await this.appService.getItems(StoreName.Projects);
     this.taskProjects = await this.getItems(this.projects);
     this.expandedRows = this.getExpandedRows();
+    this.statuses = this.getStatuses();
 
     // this.syncItems();
   }
@@ -109,6 +113,24 @@ export class TasksComponent implements OnInit {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
+  async onStatusChange(event: any): Promise<void> {
+    const { value } = event;
+
+    const items = await this.getItems(this.projects);
+
+    if (!value) {
+      this.taskProjects = items;
+      return;
+    }
+
+    this.taskProjects = items.filter((item) => {
+      const tasks = item.tasks.filter((task: Task) => task.status === value);
+
+      return tasks?.length > 0;
+    });
+  }
+
   private subscribeToSearch() {
     this.subscriptions.push(
       this.pubSubService.subscribe(PubSubChannel.Search, (query) => {
@@ -165,5 +187,14 @@ export class TasksComponent implements OnInit {
         return tasks?.length > 0;
       });
     }
+  }
+
+  private getStatuses() {
+    return Object.keys(TaskStatus)
+      .filter((key) => isNaN(Number(TaskStatus[key])))
+      .map((key) => ({
+        label: key,
+        value: key,
+      }));
   }
 }
