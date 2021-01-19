@@ -43,7 +43,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     this.subscribeToSearch();
 
     this.projects = await this.appService.getItems(StoreName.Projects);
-    this.syncItems();
+    this.syncProjects();
   }
 
   ngOnDestroy(): void {
@@ -124,7 +124,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     );
   }
 
-  private async syncItems() {
+  private async syncProjects() {
     try {
       await this.appService.syncItems(StoreName.Projects);
       this.projects = await this.appService.getItems(StoreName.Projects);
