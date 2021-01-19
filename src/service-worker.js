@@ -39,8 +39,9 @@ const MUTABLE_FILES = [
   'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-firestore.js',
   '/app/auth/firebase/firebase-init.js',
   // App modules
-  '/pages-home-home-module.js',
+  '/pages-tasks-tasks-module.js',
   '/pages-projects-projects-module.js',
+  '/default~pages-projects-projects-module~pages-tasks-tasks-module.js',
 
   /********** CSS ****************/
   '/styles.css',
