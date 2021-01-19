@@ -32,9 +32,9 @@ const onProjectsUpgrade = (db, transaction) => {
     store = transaction.objectStore('projects');
   }
 
-  // create index on status field
+  // create index on syncStatus field
   if (!store.indexNames.contains('idx_status')) {
-    store.createIndex('idx_status', 'status', {
+    store.createIndex('idx_status', 'syncStatus', {
       unique: false,
     });
   }
@@ -51,9 +51,9 @@ const onTasksUpgrade = (db, transaction) => {
     store = transaction.objectStore('tasks');
   }
 
-  // create index on status field
+  // create index on syncStatus field
   if (!store.indexNames.contains('idx_status')) {
-    store.createIndex('idx_status', 'status', {
+    store.createIndex('idx_status', 'syncStatus', {
       unique: false,
     });
   }

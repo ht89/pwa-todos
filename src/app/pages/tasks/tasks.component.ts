@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 
 // App
 import { Task, TaskProject, TaskStatus } from './tasks.model';
-import { PublishSubscribeService } from '@app/@core';
+import { Logger, PublishSubscribeService } from '@app/@core';
 import { PubSubChannel, StoreName } from '@app/@shared';
 import { Project } from '../projects/projects.model';
 import { AppService, SyncStatus } from '@app/app.service';
@@ -14,6 +14,9 @@ import { deleteDocument } from '@app/auth/firebase/common.js';
 // Primeng
 import { Table } from 'primeng/table';
 import { MessageService, SelectItem } from 'primeng/api';
+
+// const
+const log = new Logger('TasksComponent');
 
 @Component({
   selector: 'app-tasks',
@@ -46,12 +49,12 @@ export class TasksComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.subscribeToSearch();
 
+    this.statuses = this.getStatuses();
     this.projects = await this.appService.getItems(StoreName.Projects);
     this.taskProjects = await this.getItems(this.projects);
     this.expandedRows = this.getExpandedRows();
-    this.statuses = this.getStatuses();
 
-    // this.syncItems();
+    this.syncItems();
   }
 
   onAddBtnClick(): void {
@@ -196,5 +199,14 @@ export class TasksComponent implements OnInit {
         label: key,
         value: key,
       }));
+  }
+
+  private async syncItems() {
+    try {
+      await this.appService.syncItems(StoreName.Tasks);
+      this.taskProjects = await this.getItems(this.projects);
+    } catch (err) {
+      log.warn(err);
+    }
   }
 }

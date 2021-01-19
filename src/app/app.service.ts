@@ -59,7 +59,7 @@ export class AppService {
     return item;
   }
 
-  async syncItems<T>(storeName: string): Promise<T[]> {
+  async syncItems<T>(storeName: string): Promise<void[]> {
     const db = await openDatabase();
 
     const items: T[] = await db.getAllFromIndex(storeName, 'idx_status', SyncStatus.Cached);
@@ -78,7 +78,7 @@ export class AppService {
           return db.put(storeName, doc.data());
         }
 
-        item['status'] = SyncStatus.Synced;
+        item['syncStatus'] = SyncStatus.Synced;
         await setDocument(storeName, item);
         return db.put(storeName, item);
       }),
