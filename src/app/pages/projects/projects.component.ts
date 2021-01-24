@@ -12,7 +12,7 @@ import { Table } from 'primeng/table';
 import { MessageService } from 'primeng/api';
 
 // Firebase
-import { deleteDocument, createDocumentRef } from '@app/auth/firebase/common.js';
+import { deleteDocument, createDocumentRef, getUser } from '@app/auth/firebase/common.js';
 
 // Const
 const log = new Logger('Projects');
@@ -43,7 +43,6 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     this.subscribeToSearch();
 
     this.projects = await this.appService.getItems(StoreName.Projects);
-    this.syncProjects();
   }
 
   ngOnDestroy(): void {
@@ -81,9 +80,13 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
 
-      const syncedItem = await this.appService.syncItem(item, StoreName.Projects);
-      if (syncedItem) {
-        this.projects[index] = syncedItem;
+      if ('serviceWorker' in navigator && 'SyncManager' in window) {
+        navigator.serviceWorker.controller.postMessage({
+          type: 'get-current-user',
+          user: getUser(),
+        });
+
+        navigator.serviceWorker.ready.then((registration) => registration.sync.register('sync-projects'));
       }
     } catch (err) {
       this.appService.notifyFailedUpdate(err);
@@ -122,14 +125,5 @@ export class ProjectsComponent implements OnInit, OnDestroy {
         this.table.filterGlobal(query, 'contains');
       }),
     );
-  }
-
-  private async syncProjects() {
-    try {
-      await this.appService.syncItems(StoreName.Projects);
-      this.projects = await this.appService.getItems(StoreName.Projects);
-    } catch (err) {
-      log.warn(err);
-    }
   }
 }

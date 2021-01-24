@@ -29,6 +29,12 @@ const isAuthenticated = () => {
 };
 
 /**
+ * Get user info
+ * @return {object}
+ */
+const getUser = () => JSON.parse(localStorage.getItem('User'));
+
+/**
  *
  * @param {*} collection
  * @return {Promise<any[]>}
@@ -113,6 +119,7 @@ if (typeof module !== 'undefined') {
     loginWithGoogle,
     logout,
     isAuthenticated,
+    getUser,
     getDocuments,
     createDocumentRef,
     getDocumentRef,

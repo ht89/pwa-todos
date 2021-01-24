@@ -1,6 +1,12 @@
 const adderallURL = 'https://cdnjs.cloudflare.com/ajax/libs/cache.adderall/1.0.0/cache.adderall.js';
+const idbURL = 'https://unpkg.com/idb@6.0.0/build/iife/index-min.js';
+const firebaseAppURL = 'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-app.js';
+const firebaseAuthURL = 'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-auth.js';
+const firebaseStoreURL = 'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-firestore.js';
 
 importScripts(adderallURL);
+importScripts(idbURL);
+importScripts('./app/@core/indexed-db/common.js');
 
 /************ Const ******************/
 const CACHE_NAME = 'pwa-todos-v1';
@@ -25,18 +31,18 @@ const MUTABLE_FILES = [
   '/index.html',
 
   /********** JS ****************/
-  // 3rd party
-  adderallURL,
   // App essentials
   '/runtime.js',
   '/polyfills.js',
   '/main.js',
+  // 3rd party
+  adderallURL,
   // idb
-  'https://unpkg.com/idb@6.0.0/build/iife/index-min.js',
+  idbURL,
   // Firebase
-  'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-app.js',
-  'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-auth.js',
-  'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-firestore.js',
+  firebaseAppURL,
+  firebaseAuthURL,
+  firebaseStoreURL,
   '/app/auth/firebase/firebase-init.js',
   // App modules
   '/pages-tasks-tasks-module.js',
@@ -49,6 +55,8 @@ const MUTABLE_FILES = [
   /********** JSON ****************/
   '/manifest.json',
 ];
+
+let currentUser = null;
 
 /************ Lifecycle Handlers ******************/
 self.addEventListener('install', (event) => {
@@ -82,6 +90,20 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'sync-projects') {
+    event.waitUntil(syncProjects());
+  }
+});
+
+self.addEventListener('message', (event) => {
+  const { data } = event;
+
+  if (data.type === 'get-current-user') {
+    currentUser = data.user;
+  }
+});
+
 /***************** Functions ***************/
 const handlePages = (event) => {
   // Stratery: cache, falling back to network w frequent updates
@@ -95,5 +117,50 @@ const handlePages = (event) => {
         return cachedResponse || fetchPromise;
       });
     }),
+  );
+};
+
+const syncProjects = async () => {
+  const storeName = 'projects';
+  const db = await openDatabase();
+
+  console.log('Syncing projects...');
+
+  return db.getAllFromIndex(storeName, 'idx_status', 'Cached').then((items) =>
+    Promise.all(
+      items.map(async (item) => {
+        return fetch(
+          `https://firestore.googleapis.com/v1beta1/projects/pwa-todos-9fd3e/databases/(default)/documents/projects/${item.id}?key=${currentUser.apiKey}&updateMask.fieldPaths=syncStatus`,
+          {
+            method: 'patch',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${currentUser.stsTokenManager.accessToken}`,
+            },
+            body: `{
+              "fields": {
+                "syncStatus": {
+                  "stringValue": "Synced"
+                }
+              }
+            }`,
+          },
+        )
+          .then((res) => res.json())
+          .then((res) => {
+            if (!res || !res.fields) {
+              return;
+            }
+
+            const project = Object.keys(res.fields).reduce((acc, key) => {
+              acc[key] = res.fields[key].stringValue;
+
+              return acc;
+            }, {});
+
+            return db.put('projects', project);
+          });
+      }),
+    ),
   );
 };
