@@ -129,8 +129,22 @@ const syncProjects = async () => {
   return db.getAllFromIndex(storeName, 'idx_status', 'Cached').then((items) =>
     Promise.all(
       items.map(async (item) => {
+        const payload = Object.keys(item).reduce((acc, key) => {
+          if (key === 'syncStatus') {
+            acc[key] = {
+              stringValue: 'Synced',
+            };
+          } else {
+            acc[key] = {
+              stringValue: item[key],
+            };
+          }
+
+          return acc;
+        }, {});
+
         return fetch(
-          `https://firestore.googleapis.com/v1beta1/projects/pwa-todos-9fd3e/databases/(default)/documents/projects/${item.id}?key=${currentUser.apiKey}&updateMask.fieldPaths=syncStatus`,
+          `https://firestore.googleapis.com/v1beta1/projects/pwa-todos-9fd3e/databases/(default)/documents/projects/${item.id}?key=${currentUser.apiKey}&updateMask.fieldPaths=name&updateMask.fieldPaths=syncStatus`,
           {
             method: 'patch',
             headers: {
@@ -138,16 +152,14 @@ const syncProjects = async () => {
               Authorization: `Bearer ${currentUser.stsTokenManager.accessToken}`,
             },
             body: `{
-              "fields": {
-                "syncStatus": {
-                  "stringValue": "Synced"
-                }
-              }
+              "fields": ${JSON.stringify(payload)}
             }`,
           },
         )
           .then((res) => res.json())
           .then((res) => {
+            console.log(res);
+
             if (!res || !res.fields) {
               return;
             }
