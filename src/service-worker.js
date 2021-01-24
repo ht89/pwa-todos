@@ -144,7 +144,7 @@ const syncProjects = async () => {
         }, {});
 
         return fetch(
-          `https://firestore.googleapis.com/v1beta1/projects/pwa-todos-9fd3e/databases/(default)/documents/projects/${item.id}?key=${currentUser.apiKey}&updateMask.fieldPaths=name&updateMask.fieldPaths=syncStatus`,
+          `https://firestore.googleapis.com/v1beta1/projects/pwa-todos-9fd3e/databases/(default)/documents/projects/${item.id}?key=${currentUser.apiKey}&updateMask.fieldPaths=id&updateMask.fieldPaths=name&updateMask.fieldPaths=syncStatus`,
           {
             method: 'patch',
             headers: {
