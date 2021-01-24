@@ -120,6 +120,20 @@ const handlePages = (event) => {
   );
 };
 
+const createProjectUrl = (project) => {
+  const projectUrl = new URL(
+    `https://firestore.googleapis.com/v1beta1/projects/pwa-todos-9fd3e/databases/(default)/documents/projects/${project.id}`,
+  );
+
+  projectUrl.searchParams.append('key', currentUser.apiKey);
+
+  Object.keys(project).forEach((key) => {
+    projectUrl.searchParams.append('updateMask.fieldPaths', key);
+  });
+
+  return projectUrl;
+};
+
 const syncProjects = async () => {
   const storeName = 'projects';
   const db = await openDatabase();
@@ -143,19 +157,18 @@ const syncProjects = async () => {
           return acc;
         }, {});
 
-        return fetch(
-          `https://firestore.googleapis.com/v1beta1/projects/pwa-todos-9fd3e/databases/(default)/documents/projects/${item.id}?key=${currentUser.apiKey}&updateMask.fieldPaths=id&updateMask.fieldPaths=name&updateMask.fieldPaths=syncStatus`,
-          {
-            method: 'patch',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${currentUser.stsTokenManager.accessToken}`,
-            },
-            body: `{
+        const projectUrl = createProjectUrl(item);
+
+        return fetch(projectUrl, {
+          method: 'patch',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${currentUser.stsTokenManager.accessToken}`,
+          },
+          body: `{
               "fields": ${JSON.stringify(payload)}
             }`,
-          },
-        )
+        })
           .then((res) => res.json())
           .then((res) => {
             console.log(res);
