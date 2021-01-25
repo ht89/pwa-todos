@@ -1,8 +1,5 @@
 const adderallURL = 'https://cdnjs.cloudflare.com/ajax/libs/cache.adderall/1.0.0/cache.adderall.js';
 const idbURL = 'https://unpkg.com/idb@6.0.0/build/iife/index-min.js';
-const firebaseAppURL = 'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-app.js';
-const firebaseAuthURL = 'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-auth.js';
-const firebaseStoreURL = 'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-firestore.js';
 
 importScripts(adderallURL);
 importScripts(idbURL);
@@ -40,9 +37,9 @@ const MUTABLE_FILES = [
   // idb
   idbURL,
   // Firebase
-  firebaseAppURL,
-  firebaseAuthURL,
-  firebaseStoreURL,
+  'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-app.js',
+  'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-auth.js',
+  'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-firestore.js',
   '/app/auth/firebase/firebase-init.js',
   // App modules
   '/pages-tasks-tasks-module.js',
@@ -90,6 +87,7 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+/***************** Event Listeners ***************/
 self.addEventListener('sync', (event) => {
   if (event.tag === 'sync-projects') {
     event.waitUntil(syncProjects());
@@ -106,17 +104,19 @@ self.addEventListener('message', (event) => {
 
 /***************** Functions ***************/
 const handlePages = (event) => {
+  const indexFilePath = '/index.html';
+
   // Stratery: cache, falling back to network w frequent updates
   event.respondWith(
-    caches.open(CACHE_NAME).then(function (cache) {
-      return cache.match('/index.html').then(function (cachedResponse) {
-        var fetchPromise = fetch('/index.html').then(function (networkResponse) {
-          cache.put('/index.html', networkResponse.clone());
+    caches.open(CACHE_NAME).then((cache) =>
+      cache.match(indexFilePath).then((cachedResponse) => {
+        var fetchPromise = fetch(indexFilePath).then((networkResponse) => {
+          cache.put(indexFilePath, networkResponse.clone());
           return networkResponse;
         });
         return cachedResponse || fetchPromise;
-      });
-    }),
+      }),
+    ),
   );
 };
 
