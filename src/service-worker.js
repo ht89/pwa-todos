@@ -143,16 +143,11 @@ const syncProjects = async () => {
   return db.getAllFromIndex(storeName, 'idx_status', 'Cached').then((items) =>
     Promise.all(
       items.map(async (item) => {
+        item.syncStatus = 'Synced';
         const payload = Object.keys(item).reduce((acc, key) => {
-          if (key === 'syncStatus') {
-            acc[key] = {
-              stringValue: 'Synced',
-            };
-          } else {
-            acc[key] = {
-              stringValue: item[key],
-            };
-          }
+          acc[key] = {
+            stringValue: item[key],
+          };
 
           return acc;
         }, {});
@@ -171,8 +166,6 @@ const syncProjects = async () => {
         })
           .then((res) => res.json())
           .then((res) => {
-            console.log(res);
-
             if (!res || !res.fields) {
               return;
             }
