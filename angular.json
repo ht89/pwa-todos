@@ -29,8 +29,7 @@
               "src/manifest.json",
               "src/service-worker.js",
               "src/app/@core/indexed-db/common.js",
-              "src/app/auth/firebase/firebase-init.js",
-              "src/app/auth/firebase/common.js"
+              "src/app/auth/firebase/firebase-init.js"
             ],
             "styles": ["src/main.scss"],
             "scripts": []
