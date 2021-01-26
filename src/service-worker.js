@@ -57,6 +57,7 @@ let currentUser = null;
 
 /************ Lifecycle Handlers ******************/
 self.addEventListener('install', (event) => {
+  // cache only mutable files & reuse static files if they already exist
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => adderall.addAll(cache, STATIC_FILES, MUTABLE_FILES)));
 });
 
