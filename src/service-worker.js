@@ -60,17 +60,6 @@ self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => adderall.addAll(cache, STATIC_FILES, MUTABLE_FILES)));
 });
 
-self.addEventListener('fetch', (event) => {
-  const requestUrl = new URL(event.request.url);
-
-  if (['/', '/login', '/tasks', '/projects'].includes(requestUrl.pathname)) {
-    handlePages(event);
-  } else if ([...STATIC_FILES, ...MUTABLE_FILES].includes(requestUrl.pathname)) {
-    // Strategy: cache, falling back to network
-    event.respondWith(caches.match(event.request).then((response) => response || fetch(event.request)));
-  }
-});
-
 // when installed/waiting SW is ready to become active
 self.addEventListener('activate', (event) => {
   event.waitUntil(
@@ -85,6 +74,17 @@ self.addEventListener('activate', (event) => {
       );
     }),
   );
+});
+
+self.addEventListener('fetch', (event) => {
+  const requestUrl = new URL(event.request.url);
+
+  if (['/', '/login', '/tasks', '/projects'].includes(requestUrl.pathname)) {
+    handlePages(event);
+  } else if ([...STATIC_FILES, ...MUTABLE_FILES].includes(requestUrl.pathname)) {
+    // Strategy: cache, falling back to network
+    event.respondWith(caches.match(event.request).then((response) => response || fetch(event.request)));
+  }
 });
 
 /***************** Event Listeners ***************/
