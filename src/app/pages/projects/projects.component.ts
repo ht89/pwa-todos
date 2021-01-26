@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 // App
 import { Project } from './projects.model';
 import { DBUpgradePayload, PubSubChannel, StoreName, unsubscribe } from '@app/@shared';
-import { Logger, PublishSubscribeService } from '@app/@core';
+import { PublishSubscribeService } from '@app/@core';
 import { AppService, SyncStatus } from '@app/app.service';
 
 // Primeng
@@ -13,9 +13,6 @@ import { MessageService } from 'primeng/api';
 
 // Firebase
 import { deleteDocument, createDocumentRef, getUser } from '@app/auth/firebase/common.js';
-
-// Const
-const log = new Logger('Projects');
 
 @Component({
   selector: 'app-projects',
