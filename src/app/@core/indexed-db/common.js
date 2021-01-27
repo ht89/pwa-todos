@@ -26,7 +26,7 @@ const onProjectsUpgrade = (db, transaction) => {
 
   if (!db.objectStoreNames.contains('projects')) {
     store = db.createObjectStore('projects', {
-      keyPath: 'id',
+      keyPath: 'id', // unique identifier
     });
   } else {
     store = transaction.objectStore('projects');
