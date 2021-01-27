@@ -21,6 +21,20 @@ const STATIC_FILES = [
   '/assets/app/icons/favicon-16x16.png',
   '/assets/app/icons/todo.png',
   '/assets/app/icons/todo-lg.png',
+
+  /********** JSON ****************/
+  '/manifest.json',
+
+  /********** JS ****************/
+  // 3rd party
+  adderallURL,
+  // idb
+  idbURL,
+  // Firebase
+  'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-app.js',
+  'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-auth.js',
+  'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-firestore.js',
+  '/app/auth/firebase/firebase-init.js',
 ];
 
 const MUTABLE_FILES = [
@@ -32,15 +46,7 @@ const MUTABLE_FILES = [
   '/runtime.js',
   '/polyfills.js',
   '/main.js',
-  // 3rd party
-  adderallURL,
-  // idb
-  idbURL,
-  // Firebase
-  'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-app.js',
-  'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-auth.js',
-  'https://cdn.jsdelivr.net/npm/firebase@8.2.1/firebase-firestore.js',
-  '/app/auth/firebase/firebase-init.js',
+
   // App modules
   '/pages-tasks-tasks-module.js',
   '/pages-projects-projects-module.js',
@@ -48,9 +54,6 @@ const MUTABLE_FILES = [
 
   /********** CSS ****************/
   '/styles.css',
-
-  /********** JSON ****************/
-  '/manifest.json',
 ];
 
 let currentUser = null;
