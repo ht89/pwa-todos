@@ -64,12 +64,8 @@ export class TasksFormComponent implements OnInit {
         this.createTask.emit(model);
       }
 
-      const syncedItem = await this.appService.syncItem(model, StoreName.Tasks);
-      if (syncedItem) {
-        this.updateTask.emit(syncedItem);
-      }
-
       this.hideDialog.emit();
+      this.appService.syncItemsViaSW(StoreName.Tasks);
     } catch (err) {
       this.appService.notifyFailedUpdate(err);
     }

@@ -8,7 +8,7 @@ import { openDatabase } from '@core/indexed-db/common.js';
 import { Logger } from '@app/@core';
 
 // Firebase
-import { getDocuments, setDocument, getDocumentRef } from '@app/auth/firebase/common.js';
+import { getDocuments, getUser } from '@app/auth/firebase/common.js';
 
 // const
 const log = new Logger('AppService');
@@ -63,6 +63,17 @@ export class AppService {
   notifyFailedUpdate(err: string): void {
     log.warn(err);
     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Update failed.' });
+  }
+
+  syncItemsViaSW(storeName: string): void {
+    if ('serviceWorker' in navigator && 'SyncManager' in window) {
+      navigator.serviceWorker.controller.postMessage({
+        type: 'get-current-user',
+        user: getUser(),
+      });
+
+      navigator.serviceWorker.ready.then((registration) => registration.sync.register(`sync-${storeName}`));
+    }
   }
 
   // /* Private */

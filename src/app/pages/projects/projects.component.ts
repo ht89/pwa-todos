@@ -77,14 +77,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated.' });
 
-      if ('serviceWorker' in navigator && 'SyncManager' in window) {
-        navigator.serviceWorker.controller.postMessage({
-          type: 'get-current-user',
-          user: getUser(),
-        });
-
-        navigator.serviceWorker.ready.then((registration) => registration.sync.register('sync-projects'));
-      }
+      this.appService.syncItemsViaSW(StoreName.Projects);
     } catch (err) {
       this.appService.notifyFailedUpdate(err);
     }
