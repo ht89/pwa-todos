@@ -93,8 +93,13 @@ self.addEventListener('fetch', (event) => {
 
 /***************** Event Listeners ***************/
 self.addEventListener('sync', (event) => {
-  if (event.tag === 'sync-projects') {
-    event.waitUntil(syncProjects());
+  switch (event.tag) {
+    case 'sync-projects':
+      event.waitUntil(syncItems('projects'));
+      break;
+    case 'sync-tasks':
+      event.waitUntil(syncItems('tasks'));
+      break;
   }
 });
 
@@ -124,25 +129,24 @@ const handlePages = (event) => {
   );
 };
 
-const createProjectUrl = (project) => {
-  const projectUrl = new URL(
-    `https://firestore.googleapis.com/v1beta1/projects/pwa-todos-9fd3e/databases/(default)/documents/projects/${project.id}`,
+const createUrl = (storeName, item) => {
+  const url = new URL(
+    `https://firestore.googleapis.com/v1beta1/${storeName}/pwa-todos-9fd3e/databases/(default)/documents/${storeName}/${item.id}`,
   );
 
-  projectUrl.searchParams.append('key', currentUser.apiKey);
+  url.searchParams.append('key', currentUser.apiKey);
 
-  Object.keys(project).forEach((key) => {
-    projectUrl.searchParams.append('updateMask.fieldPaths', key);
+  Object.keys(item).forEach((key) => {
+    url.searchParams.append('updateMask.fieldPaths', key);
   });
 
-  return projectUrl;
+  return url;
 };
 
-const syncProjects = async () => {
-  const storeName = 'projects';
+const syncItems = async (storeName) => {
   const db = await openDatabase();
 
-  console.log('Syncing projects...');
+  console.log(`Syncing ${storeName}...`);
 
   return db.getAllFromIndex(storeName, 'idx_status', 'Cached').then((items) =>
     Promise.all(
@@ -156,9 +160,9 @@ const syncProjects = async () => {
           return acc;
         }, {});
 
-        const projectUrl = createProjectUrl(item);
+        const url = createUrl(storeName, item);
 
-        return fetch(projectUrl, {
+        return fetch(url, {
           method: 'patch',
           headers: {
             'Content-Type': 'application/json',
@@ -174,13 +178,13 @@ const syncProjects = async () => {
               return;
             }
 
-            const project = Object.keys(res.fields).reduce((acc, key) => {
+            const record = Object.keys(res.fields).reduce((acc, key) => {
               acc[key] = res.fields[key].stringValue;
 
               return acc;
             }, {});
 
-            return db.put('projects', project);
+            return db.put(storeName, record);
           });
       }),
     ),
