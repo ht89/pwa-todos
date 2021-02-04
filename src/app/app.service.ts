@@ -50,41 +50,6 @@ export class AppService {
     });
   }
 
-  async syncItem<T>({ ...item }: T, storeName: string): Promise<T> {
-    item['syncStatus'] = SyncStatus.Synced;
-
-    await setDocument(storeName, item);
-    this.updateItemInStore<T>(item, storeName);
-
-    return item;
-  }
-
-  async syncItems<T>(storeName: string): Promise<void[]> {
-    const db = await openDatabase();
-
-    const items: T[] = await db.getAllFromIndex(storeName, 'idx_status', SyncStatus.Cached);
-
-    if (items?.length === 0) {
-      throw `No pending ${storeName}.`;
-    }
-
-    return Promise.all(
-      items.map(async (item) => {
-        const docRef = getDocumentRef(storeName, item['id']);
-        const doc = await docRef.get();
-
-        if (doc.exists) {
-          doc.data().status = SyncStatus.Synced;
-          return db.put(storeName, doc.data());
-        }
-
-        item['syncStatus'] = SyncStatus.Synced;
-        await setDocument(storeName, item);
-        return db.put(storeName, item);
-      }),
-    );
-  }
-
   async updateItemInStore<T>(item: T, storeName: string): Promise<void> {
     const db = await openDatabase();
     return db.put(storeName, item);

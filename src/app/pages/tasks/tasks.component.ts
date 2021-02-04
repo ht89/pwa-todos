@@ -53,8 +53,6 @@ export class TasksComponent implements OnInit {
     this.projects = await this.appService.getItems(StoreName.Projects);
     this.taskProjects = await this.getTaskProjects(this.projects);
     this.expandedRows = this.getExpandedRows();
-
-    this.syncTaskProjects();
   }
 
   onAddBtnClick(): void {
@@ -199,14 +197,5 @@ export class TasksComponent implements OnInit {
         label: key,
         value: key,
       }));
-  }
-
-  private async syncTaskProjects() {
-    try {
-      await this.appService.syncItems(StoreName.Tasks);
-      this.taskProjects = await this.getTaskProjects(this.projects);
-    } catch (err) {
-      log.warn(err);
-    }
   }
 }
