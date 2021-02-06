@@ -131,7 +131,7 @@ const handlePages = (event) => {
 
 const createUrl = (storeName, item) => {
   const url = new URL(
-    `https://firestore.googleapis.com/v1beta1/${storeName}/pwa-todos-9fd3e/databases/(default)/documents/${storeName}/${item.id}`,
+    `https://firestore.googleapis.com/v1beta1/projects/pwa-todos-9fd3e/databases/(default)/documents/${storeName}/${item.id}`,
   );
 
   url.searchParams.append('key', currentUser.apiKey);
@@ -153,9 +153,15 @@ const syncItems = async (storeName) => {
       items.map(async (item) => {
         item.syncStatus = 'Synced';
         const payload = Object.keys(item).reduce((acc, key) => {
-          acc[key] = {
-            stringValue: item[key],
-          };
+          if (typeof item[key] === 'object' && item[key] !== null) {
+            acc[key] = {
+              mapValue: item[key],
+            };
+          } else {
+            acc[key] = {
+              stringValue: item[key],
+            };
+          }
 
           return acc;
         }, {});

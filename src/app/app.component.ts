@@ -21,7 +21,7 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Setup logger
     if (environment.production) {
-      Logger.enableProductionMode();
+      // Logger.enableProductionMode();
     }
 
     log.debug('init');

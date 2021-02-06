@@ -52,6 +52,7 @@ export class TasksComponent implements OnInit {
     this.statuses = this.getStatuses();
     this.projects = await this.appService.getItems(StoreName.Projects);
     this.taskProjects = await this.getTaskProjects(this.projects);
+    log.debug(this.taskProjects);
     this.expandedRows = this.getExpandedRows();
   }
 

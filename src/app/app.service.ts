@@ -43,7 +43,7 @@ export class AppService {
           resolve(data);
         }
       } catch (err) {
-        log.warn(err);
+        log.debug(err);
         const data = await this.getDataFromServer<T>(storeName);
         resolve(data);
       }
@@ -61,7 +61,7 @@ export class AppService {
   }
 
   notifyFailedUpdate(err: string): void {
-    log.warn(err);
+    log.debug(err);
     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Update failed.' });
   }
 
